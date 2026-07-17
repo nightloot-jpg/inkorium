@@ -24,10 +24,14 @@ function FriendsPage() {
     queryFn: async () => {
       const { data } = await supabase
         .from("friendships")
-        .select("requester_id, addressee_id, requester:profiles!friendships_requester_id_fkey(id, username, display_name, avatar_url), addressee:profiles!friendships_addressee_id_fkey(id, username, display_name, avatar_url)")
+        .select(
+          "requester_id, addressee_id, requester:profiles!friendships_requester_id_fkey(id, username, display_name, avatar_url), addressee:profiles!friendships_addressee_id_fkey(id, username, display_name, avatar_url)",
+        )
         .eq("status", "accepted")
         .or(`requester_id.eq.${userId},addressee_id.eq.${userId}`);
-      return (data ?? []).map((r) => (r.requester_id === userId ? r.addressee : r.requester) as unknown as Profile);
+      return (data ?? []).map(
+        (r) => (r.requester_id === userId ? r.addressee : r.requester) as unknown as Profile,
+      );
     },
   });
 
@@ -36,7 +40,9 @@ function FriendsPage() {
     queryFn: async () => {
       const { data } = await supabase
         .from("friendships")
-        .select("id, requester:profiles!friendships_requester_id_fkey(id, username, display_name, avatar_url)")
+        .select(
+          "id, requester:profiles!friendships_requester_id_fkey(id, username, display_name, avatar_url)",
+        )
         .eq("addressee_id", userId)
         .eq("status", "pending");
       return data ?? [];
@@ -102,7 +108,9 @@ function FriendsPage() {
             key={k}
             onClick={() => setTab(k)}
             className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-colors ${
-              tab === k ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+              tab === k
+                ? "bg-primary text-primary-foreground"
+                : "text-muted-foreground hover:text-foreground"
             }`}
           >
             {label}
