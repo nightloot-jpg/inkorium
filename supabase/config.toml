@@ -1,1 +1,22 @@
-project_id = "jgqujmhsqgrmqqmedbsi"
+project_id = "mgzajnjzzfilmbuptdrg"
+
+[auth]
+site_url = "https://inkorium.es"
+additional_redirect_urls = ["https://inkorium.es/*", "http://localhost:3000/*"]
+
+[auth.email]
+enable_signup = true
+double_confirm_changes = true
+enable_confirmations = true
+
+[auth.email.template.confirmation]
+subject = "Confirmar registro en Inkorium"
+content_path = "./supabase/templates/confirmation.html"
+
+[auth.email.template.recovery]
+subject = "Restablecer contraseña de Inkorium"
+content_path = "./supabase/templates/recovery.html"
+
+[auth.email.template.magic_link]
+subject = "Iniciar sesión en Inkorium"
+content_path = "./supabase/templates/magic_link.html"
