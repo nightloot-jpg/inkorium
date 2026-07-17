@@ -1,3 +1,4 @@
+import { ThemeToggle } from "@/components/ThemeToggle";
 import {
   createFileRoute,
   Outlet,
@@ -9,7 +10,17 @@ import {
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Search, Home, Users, MessageCircle, Bell, LogOut, UserCircle2 } from "lucide-react";
+import {
+  Search,
+  Home,
+  Users,
+  MessageCircle,
+  Bell,
+  LogOut,
+  UserCircle2,
+  ChevronDown,
+  Video,
+} from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
@@ -90,69 +101,71 @@ function AuthenticatedLayout() {
 
   return (
     <div className="min-h-screen bg-background text-foreground selection:bg-primary/10">
-      <header className="sticky top-0 z-50 bg-surface/80 backdrop-blur-md border-b border-border">
-        <div className="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-4 flex-1">
+      {/* Top Header - Like the screenshot (blue background) */}
+      <header className="sticky top-0 z-50 bg-[#2b65a5] dark:bg-[#1a416b] text-white shadow-sm border-b border-transparent">
+        <div className="max-w-[1400px] mx-auto px-4 h-14 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-6 h-full">
             <Link
               to="/feed"
-              className="text-primary font-semibold text-xl tracking-tighter shrink-0"
+              className="font-extrabold text-2xl tracking-tighter shrink-0 flex items-center gap-1"
             >
-              Inkorium
+              INKORIUM
             </Link>
-            <div className="relative w-full max-w-sm hidden md:block">
-              <Search className="absolute inset-y-0 left-3 my-auto size-4 text-muted-foreground pointer-events-none" />
-              <input
-                type="text"
-                placeholder="Buscar amigos..."
-                className="w-full bg-muted rounded-full py-1.5 pl-10 pr-4 text-sm focus:ring-2 focus:ring-ring transition outline-none"
+
+            <button className="hidden md:flex h-8 w-8 items-center justify-center rounded-md bg-white/10 hover:bg-white/20 transition-colors">
+              <span className="text-xl leading-none mb-1">+</span>
+            </button>
+
+            <nav className="hidden lg:flex items-center h-full">
+              <TopNavIcon to="/feed" label="Inicio" active={pathname === "/feed"} />
+              <TopNavIcon
+                to="/perfil/$username"
+                params={{ username: me?.username ?? "" }}
+                label="Perfil"
+                active={
+                  pathname.startsWith("/perfil/") && !!me && pathname === `/perfil/${me.username}`
+                }
               />
-            </div>
+              <TopNavIcon
+                to="/mensajes"
+                label="Mensajes"
+                active={pathname.startsWith("/mensajes")}
+                badge={unread}
+              />
+              <TopNavIcon
+                to="/amigos"
+                label="Personas"
+                active={pathname.startsWith("/amigos")}
+                badge={pendingRequests}
+              />
+              <TopNavIcon to="/feed" label="Vídeos" />
+            </nav>
           </div>
 
-          <nav className="flex items-center gap-1">
-            <NavIcon to="/feed" icon={Home} label="Inicio" active={pathname === "/feed"} />
-            <NavIcon
-              to="/amigos"
-              icon={Users}
-              label="Amigos"
-              active={pathname.startsWith("/amigos")}
-              badge={pendingRequests}
-            />
-            <NavIcon
-              to="/mensajes"
-              icon={MessageCircle}
-              label="Mensajes"
-              active={pathname.startsWith("/mensajes")}
-              badge={unread}
-            />
-            <NavIcon
-              to="/perfil/$username"
-              params={{ username: me?.username ?? "" }}
-              icon={UserCircle2}
-              label="Mi perfil"
-              active={
-                pathname.startsWith("/perfil/") && !!me && pathname === `/perfil/${me.username}`
-              }
-            />
-            <button
-              onClick={handleSignOut}
-              title="Salir"
-              className="p-2 text-muted-foreground hover:text-destructive transition-colors rounded-lg"
-            >
-              <LogOut className="size-5" />
-            </button>
-            <Link
-              to="/perfil/$username"
-              params={{ username: me?.username ?? "" }}
-              className="ml-2 size-8 bg-muted rounded-full overflow-hidden ring-1 ring-border grid place-items-center text-xs font-semibold text-muted-foreground"
-            >
-              {me?.avatar_url ? (
-                <img src={me.avatar_url} alt="" className="size-full object-cover" />
-              ) : (
-                (me?.display_name?.[0] ?? "?").toUpperCase()
-              )}
-            </Link>
-          </nav>
+          <div className="flex items-center gap-4 flex-1 justify-end">
+            <div className="relative w-full max-w-[300px] hidden md:block">
+              <input
+                type="text"
+                placeholder="Buscar personas, música, vídeos..."
+                className="w-full bg-[#1b4e85] dark:bg-[#0f2e51] text-white placeholder-white/70 rounded px-4 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-white/50 transition-shadow"
+              />
+              <Search className="absolute inset-y-0 right-3 my-auto size-4 text-white/70 pointer-events-none" />
+            </div>
+
+            <div className="flex items-center gap-3">
+              <ThemeToggle />
+              <button className="flex items-center gap-1 text-sm font-medium hover:bg-white/10 px-2 py-1.5 rounded transition-colors">
+                {me?.username || "Usuario"} <ChevronDown className="size-4" />
+              </button>
+              <button
+                onClick={handleSignOut}
+                title="Salir"
+                className="text-sm font-medium hover:bg-white/10 px-2 py-1.5 rounded transition-colors"
+              >
+                Salir
+              </button>
+            </div>
+          </div>
         </div>
       </header>
 
@@ -161,17 +174,15 @@ function AuthenticatedLayout() {
   );
 }
 
-function NavIcon({
+function TopNavIcon({
   to,
   params,
-  icon: Icon,
   label,
   active,
   badge,
 }: {
   to: string;
   params?: Record<string, string>;
-  icon: React.ComponentType<{ className?: string }>;
   label: string;
   active?: boolean;
   badge?: number;
@@ -180,14 +191,13 @@ function NavIcon({
     <Link
       to={to as never}
       params={params as never}
-      title={label}
-      className={`relative p-2 rounded-lg transition-colors ${
-        active ? "text-primary bg-accent" : "text-muted-foreground hover:text-primary"
+      className={`relative h-full flex items-center px-4 font-medium text-sm transition-colors border-b-2 ${
+        active ? "border-white bg-white/10" : "border-transparent hover:bg-white/5"
       }`}
     >
-      <Icon className="size-5" />
+      {label}
       {badge && badge > 0 ? (
-        <span className="absolute top-1 right-1 min-w-[16px] h-4 px-1 bg-destructive text-destructive-foreground text-[10px] font-semibold rounded-full ring-2 ring-surface grid place-items-center">
+        <span className="absolute top-2 right-1 min-w-[16px] h-4 px-1 bg-red-500 text-white text-[10px] font-bold rounded-full grid place-items-center">
           {badge > 9 ? "9+" : badge}
         </span>
       ) : null}
