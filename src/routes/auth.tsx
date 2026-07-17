@@ -1,3 +1,4 @@
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -58,13 +59,17 @@ function AuthPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#10161b] flex flex-col items-center justify-center p-4 font-sans text-slate-200">
+    <div className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center p-4 font-sans relative">
+      <div className="absolute top-4 right-4">
+        <ThemeToggle />
+      </div>
+
       <h1 className="text-4xl font-bold text-[#4295e4] mb-8 tracking-wide">INKORIUM</h1>
 
-      <div className="bg-[#1f2937] border border-slate-700/50 rounded-xl p-8 w-full max-w-md shadow-2xl">
+      <div className="bg-card border border-border rounded-xl p-8 w-full max-w-md shadow-2xl">
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="space-y-1.5">
-            <label htmlFor="email" className="block text-sm font-medium text-slate-200">
+            <label htmlFor="email" className="block text-sm font-medium text-card-foreground">
               Correo electrónico
             </label>
             <input
@@ -73,13 +78,13 @@ function AuthPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="tucorreo@ejemplo.com"
-              className="w-full bg-[#111827] border border-slate-700 text-white rounded-lg px-4 py-2.5 focus:outline-none focus:border-[#4295e4] focus:ring-1 focus:ring-[#4295e4] transition-colors placeholder:text-slate-500"
+              className="w-full bg-input border border-border text-foreground rounded-lg px-4 py-2.5 focus:outline-none focus:border-[#4295e4] focus:ring-1 focus:ring-[#4295e4] transition-colors placeholder:text-muted-foreground"
               required
             />
           </div>
 
           <div className="space-y-1.5">
-            <label htmlFor="password" className="block text-sm font-medium text-slate-200">
+            <label htmlFor="password" className="block text-sm font-medium text-card-foreground">
               Contraseña
             </label>
             <input
@@ -89,14 +94,17 @@ function AuthPage() {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
               minLength={6}
-              className="w-full bg-[#111827] border border-slate-700 text-white rounded-lg px-4 py-2.5 focus:outline-none focus:border-[#4295e4] focus:ring-1 focus:ring-[#4295e4] transition-colors placeholder:text-slate-500"
+              className="w-full bg-input border border-border text-foreground rounded-lg px-4 py-2.5 focus:outline-none focus:border-[#4295e4] focus:ring-1 focus:ring-[#4295e4] transition-colors placeholder:text-muted-foreground"
               required
             />
           </div>
 
           {mode === "signup" && (
             <div className="space-y-1.5">
-              <label htmlFor="repeatPassword" className="block text-sm font-medium text-slate-200">
+              <label
+                htmlFor="repeatPassword"
+                className="block text-sm font-medium text-card-foreground"
+              >
                 Repetir contraseña
               </label>
               <input
@@ -106,7 +114,7 @@ function AuthPage() {
                 onChange={(e) => setRepeatPassword(e.target.value)}
                 placeholder="••••••••"
                 minLength={6}
-                className="w-full bg-[#111827] border border-slate-700 text-white rounded-lg px-4 py-2.5 focus:outline-none focus:border-[#4295e4] focus:ring-1 focus:ring-[#4295e4] transition-colors placeholder:text-slate-500"
+                className="w-full bg-input border border-border text-foreground rounded-lg px-4 py-2.5 focus:outline-none focus:border-[#4295e4] focus:ring-1 focus:ring-[#4295e4] transition-colors placeholder:text-muted-foreground"
                 required
               />
             </div>
@@ -122,7 +130,7 @@ function AuthPage() {
         </form>
       </div>
 
-      <p className="mt-8 text-sm text-slate-400">
+      <p className="mt-8 text-sm text-muted-foreground">
         {mode === "login" ? "¿No tienes cuenta?" : "¿Ya tienes cuenta?"}{" "}
         <button
           type="button"
