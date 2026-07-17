@@ -21,7 +21,9 @@ export type FeedPost = {
 export async function fetchFeed(currentUserId: string): Promise<FeedPost[]> {
   const { data: posts, error } = await supabase
     .from("posts")
-    .select("id, content, image_url, created_at, author:profiles!posts_author_id_fkey(id, username, display_name, avatar_url)")
+    .select(
+      "id, content, image_url, created_at, author:profiles!posts_author_id_fkey(id, username, display_name, avatar_url)",
+    )
     .order("created_at", { ascending: false })
     .limit(50);
   if (error) throw error;

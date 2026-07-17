@@ -1,4 +1,11 @@
-import { createFileRoute, Outlet, redirect, Link, useRouterState, useNavigate } from "@tanstack/react-router";
+import {
+  createFileRoute,
+  Outlet,
+  redirect,
+  Link,
+  useRouterState,
+  useNavigate,
+} from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -86,7 +93,10 @@ function AuthenticatedLayout() {
       <header className="sticky top-0 z-50 bg-surface/80 backdrop-blur-md border-b border-border">
         <div className="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between gap-4">
           <div className="flex items-center gap-4 flex-1">
-            <Link to="/feed" className="text-primary font-semibold text-xl tracking-tighter shrink-0">
+            <Link
+              to="/feed"
+              className="text-primary font-semibold text-xl tracking-tighter shrink-0"
+            >
               Inkorium
             </Link>
             <div className="relative w-full max-w-sm hidden md:block">
@@ -120,7 +130,9 @@ function AuthenticatedLayout() {
               params={{ username: me?.username ?? "" }}
               icon={UserCircle2}
               label="Mi perfil"
-              active={pathname.startsWith("/perfil/") && !!me && pathname === `/perfil/${me.username}`}
+              active={
+                pathname.startsWith("/perfil/") && !!me && pathname === `/perfil/${me.username}`
+              }
             />
             <button
               onClick={handleSignOut}

@@ -151,7 +151,9 @@ function ConversationPage() {
                 }`}
               >
                 <p className="whitespace-pre-wrap break-words">{m.content}</p>
-                <p className={`text-[10px] mt-0.5 ${mine ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
+                <p
+                  className={`text-[10px] mt-0.5 ${mine ? "text-primary-foreground/70" : "text-muted-foreground"}`}
+                >
                   {timeAgo(m.created_at)}
                 </p>
               </div>

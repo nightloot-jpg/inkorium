@@ -84,12 +84,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:title", content: "Inkorium — La red social para reencontrarte" },
       {
         property: "og:description",
-        content: "Inkorium es la red social donde reencuentras a tus amigos: comparte tu día, sube fotos y chatea en privado.",
+        content:
+          "Inkorium es la red social donde reencuentras a tus amigos: comparte tu día, sube fotos y chatea en privado.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Inkorium — La red social para reencontrarte" },
-      { name: "twitter:description", content: "Inkorium es la red social donde reencuentras a tus amigos: comparte tu día, sube fotos y chatea en privado." },
+      {
+        name: "twitter:description",
+        content:
+          "Inkorium es la red social donde reencuentras a tus amigos: comparte tu día, sube fotos y chatea en privado.",
+      },
     ],
     links: [
       { rel: "stylesheet", href: appCss },

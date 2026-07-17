@@ -36,7 +36,9 @@ function FeedPage() {
     queryFn: async () => {
       const { data } = await supabase
         .from("friendships")
-        .select("id, requester:profiles!friendships_requester_id_fkey(id, username, display_name, avatar_url)")
+        .select(
+          "id, requester:profiles!friendships_requester_id_fkey(id, username, display_name, avatar_url)",
+        )
         .eq("addressee_id", userId)
         .eq("status", "pending")
         .limit(5);
@@ -49,13 +51,20 @@ function FeedPage() {
     queryFn: async () => {
       const { data } = await supabase
         .from("friendships")
-        .select("requester_id, addressee_id, requester:profiles!friendships_requester_id_fkey(id, username, display_name, avatar_url), addressee:profiles!friendships_addressee_id_fkey(id, username, display_name, avatar_url)")
+        .select(
+          "requester_id, addressee_id, requester:profiles!friendships_requester_id_fkey(id, username, display_name, avatar_url), addressee:profiles!friendships_addressee_id_fkey(id, username, display_name, avatar_url)",
+        )
         .eq("status", "accepted")
         .or(`requester_id.eq.${userId},addressee_id.eq.${userId}`)
         .limit(8);
       return (data ?? []).map((r) => {
         const other = r.requester_id === userId ? r.addressee : r.requester;
-        return other as unknown as { id: string; username: string; display_name: string; avatar_url: string | null };
+        return other as unknown as {
+          id: string;
+          username: string;
+          display_name: string;
+          avatar_url: string | null;
+        };
       });
     },
   });
@@ -103,13 +112,22 @@ function FeedPage() {
             </div>
           </div>
           <nav className="space-y-1 text-sm">
-            <Link to="/feed" className="flex px-2 py-1.5 rounded-lg font-medium text-primary bg-accent">
+            <Link
+              to="/feed"
+              className="flex px-2 py-1.5 rounded-lg font-medium text-primary bg-accent"
+            >
               Inicio
             </Link>
-            <Link to="/amigos" className="flex px-2 py-1.5 rounded-lg text-muted-foreground hover:bg-secondary transition-colors">
+            <Link
+              to="/amigos"
+              className="flex px-2 py-1.5 rounded-lg text-muted-foreground hover:bg-secondary transition-colors"
+            >
               Amigos
             </Link>
-            <Link to="/mensajes" className="flex px-2 py-1.5 rounded-lg text-muted-foreground hover:bg-secondary transition-colors">
+            <Link
+              to="/mensajes"
+              className="flex px-2 py-1.5 rounded-lg text-muted-foreground hover:bg-secondary transition-colors"
+            >
               Mensajes
             </Link>
           </nav>
@@ -119,7 +137,9 @@ function FeedPage() {
       {/* Feed */}
       <div className="space-y-4">
         <Composer userId={userId} avatar={me} />
-        {isLoading && <p className="text-sm text-muted-foreground text-center py-8">Cargando muro...</p>}
+        {isLoading && (
+          <p className="text-sm text-muted-foreground text-center py-8">Cargando muro...</p>
+        )}
         {!isLoading && posts.length === 0 && (
           <div className="bg-card p-8 rounded-2xl ring-1 ring-border text-center">
             <p className="text-sm text-muted-foreground">
@@ -139,7 +159,12 @@ function FeedPage() {
             <p className="text-xs text-muted-foreground italic">Sin solicitudes nuevas.</p>
           )}
           {pendingReqs.map((r) => {
-            const req = r.requester as unknown as { id: string; username: string; display_name: string; avatar_url: string | null };
+            const req = r.requester as unknown as {
+              id: string;
+              username: string;
+              display_name: string;
+              avatar_url: string | null;
+            };
             return <FriendRequestRow key={r.id} id={r.id} profile={req} />;
           })}
         </SidebarCard>
@@ -177,7 +202,13 @@ function FeedPage() {
   );
 }
 
-function Composer({ userId, avatar }: { userId: string; avatar: { display_name: string; avatar_url: string | null } | null | undefined }) {
+function Composer({
+  userId,
+  avatar,
+}: {
+  userId: string;
+  avatar: { display_name: string; avatar_url: string | null } | null | undefined;
+}) {
   const qc = useQueryClient();
   const [content, setContent] = useState("");
   const [imageUrl, setImageUrl] = useState("");
@@ -253,11 +284,21 @@ function Composer({ userId, avatar }: { userId: string; avatar: { display_name: 
   );
 }
 
-function SidebarCard({ title, badge, children }: { title: string; badge?: number; children: React.ReactNode }) {
+function SidebarCard({
+  title,
+  badge,
+  children,
+}: {
+  title: string;
+  badge?: number;
+  children: React.ReactNode;
+}) {
   return (
     <section className="bg-card p-4 rounded-2xl ring-1 ring-border shadow-card">
       <div className="flex items-center justify-between mb-3">
-        <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{title}</h4>
+        <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+          {title}
+        </h4>
         {typeof badge === "number" && badge > 0 && (
           <span className="text-[10px] bg-accent text-accent-foreground px-1.5 py-0.5 rounded-full font-medium">
             {badge}
@@ -269,7 +310,13 @@ function SidebarCard({ title, badge, children }: { title: string; badge?: number
   );
 }
 
-function FriendRequestRow({ id, profile }: { id: string; profile: { id: string; username: string; display_name: string; avatar_url: string | null } }) {
+function FriendRequestRow({
+  id,
+  profile,
+}: {
+  id: string;
+  profile: { id: string; username: string; display_name: string; avatar_url: string | null };
+}) {
   const qc = useQueryClient();
   const respond = useMutation({
     mutationFn: async (accept: boolean) => {
@@ -313,7 +360,13 @@ function FriendRequestRow({ id, profile }: { id: string; profile: { id: string; 
   );
 }
 
-function SuggestionRow({ profile, userId }: { profile: { id: string; username: string; display_name: string; avatar_url: string | null }; userId: string }) {
+function SuggestionRow({
+  profile,
+  userId,
+}: {
+  profile: { id: string; username: string; display_name: string; avatar_url: string | null };
+  userId: string;
+}) {
   const qc = useQueryClient();
   const send = useMutation({
     mutationFn: async () => {
@@ -337,7 +390,9 @@ function SuggestionRow({ profile, userId }: { profile: { id: string; username: s
       >
         <Avatar profile={profile} size={32} />
         <div className="flex flex-col min-w-0">
-          <span className="text-[13px] font-medium leading-none truncate">{profile.display_name}</span>
+          <span className="text-[13px] font-medium leading-none truncate">
+            {profile.display_name}
+          </span>
           <span className="text-[11px] text-muted-foreground">@{profile.username}</span>
         </div>
       </Link>

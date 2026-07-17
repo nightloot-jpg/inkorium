@@ -100,7 +100,8 @@ function ProfilePage() {
     },
   });
 
-  if (isLoading) return <p className="text-center py-16 text-sm text-muted-foreground">Cargando...</p>;
+  if (isLoading)
+    return <p className="text-center py-16 text-sm text-muted-foreground">Cargando...</p>;
   if (!profile) return null;
 
   return (
@@ -118,7 +119,9 @@ function ProfilePage() {
           <div className="flex-1 min-w-0">
             <h1 className="text-2xl font-semibold tracking-tight">{profile.display_name}</h1>
             <p className="text-sm text-muted-foreground">@{profile.username}</p>
-            {profile.bio && <p className="mt-2 text-sm text-foreground text-pretty">{profile.bio}</p>}
+            {profile.bio && (
+              <p className="mt-2 text-sm text-foreground text-pretty">{profile.bio}</p>
+            )}
           </div>
           <div className="flex gap-2">
             {isMe ? (
@@ -185,7 +188,11 @@ function ProfilePage() {
   );
 }
 
-function EditProfileButton({ profile }: { profile: { id: string; display_name: string; bio: string | null; avatar_url: string | null } }) {
+function EditProfileButton({
+  profile,
+}: {
+  profile: { id: string; display_name: string; bio: string | null; avatar_url: string | null };
+}) {
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [displayName, setDisplayName] = useState(profile.display_name);
@@ -219,7 +226,10 @@ function EditProfileButton({ profile }: { profile: { id: string; display_name: s
     );
   }
   return (
-    <div className="fixed inset-0 z-50 bg-black/40 grid place-items-center p-4" onClick={() => setOpen(false)}>
+    <div
+      className="fixed inset-0 z-50 bg-black/40 grid place-items-center p-4"
+      onClick={() => setOpen(false)}
+    >
       <div
         className="bg-card rounded-2xl p-6 w-full max-w-md ring-1 ring-border shadow-card space-y-4"
         onClick={(e) => e.stopPropagation()}
@@ -227,19 +237,44 @@ function EditProfileButton({ profile }: { profile: { id: string; display_name: s
         <h3 className="text-lg font-semibold">Editar perfil</h3>
         <div className="space-y-1.5">
           <label className="text-sm font-medium">Nombre</label>
-          <input value={displayName} onChange={(e) => setDisplayName(e.target.value)} className="w-full bg-secondary rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring" />
+          <input
+            value={displayName}
+            onChange={(e) => setDisplayName(e.target.value)}
+            className="w-full bg-secondary rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+          />
         </div>
         <div className="space-y-1.5">
           <label className="text-sm font-medium">Biografía</label>
-          <textarea value={bio} onChange={(e) => setBio(e.target.value)} rows={3} className="w-full bg-secondary rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring resize-none" />
+          <textarea
+            value={bio}
+            onChange={(e) => setBio(e.target.value)}
+            rows={3}
+            className="w-full bg-secondary rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring resize-none"
+          />
         </div>
         <div className="space-y-1.5">
           <label className="text-sm font-medium">URL de tu avatar</label>
-          <input value={avatarUrl} onChange={(e) => setAvatarUrl(e.target.value)} placeholder="https://..." className="w-full bg-secondary rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring" />
+          <input
+            value={avatarUrl}
+            onChange={(e) => setAvatarUrl(e.target.value)}
+            placeholder="https://..."
+            className="w-full bg-secondary rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+          />
         </div>
         <div className="flex justify-end gap-2 pt-2">
-          <button onClick={() => setOpen(false)} className="px-4 py-2 text-sm rounded-lg hover:bg-secondary">Cancelar</button>
-          <button onClick={() => save.mutate()} disabled={save.isPending} className="bg-primary text-primary-foreground px-4 py-2 text-sm rounded-lg hover:bg-primary-hover">Guardar</button>
+          <button
+            onClick={() => setOpen(false)}
+            className="px-4 py-2 text-sm rounded-lg hover:bg-secondary"
+          >
+            Cancelar
+          </button>
+          <button
+            onClick={() => save.mutate()}
+            disabled={save.isPending}
+            className="bg-primary text-primary-foreground px-4 py-2 text-sm rounded-lg hover:bg-primary-hover"
+          >
+            Guardar
+          </button>
         </div>
       </div>
     </div>
