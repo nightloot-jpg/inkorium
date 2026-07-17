@@ -1,0 +1,111 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Confirmar registro en Inkorium</title>
+    <style>
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        background-color: #f4f4f5;
+        margin: 0;
+        padding: 0;
+        line-height: 1.6;
+      }
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 40px 20px;
+      }
+      .card {
+        background-color: #ffffff;
+        border-radius: 8px;
+        padding: 40px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      }
+      .logo {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+      .logo img {
+        max-height: 50px;
+      }
+      .content {
+        color: #3f3f46;
+        text-align: left;
+      }
+      h1 {
+        color: #18181b;
+        font-size: 24px;
+        margin-bottom: 20px;
+        text-align: center;
+        font-weight: 600;
+      }
+      p {
+        margin-bottom: 20px;
+        font-size: 16px;
+      }
+      .btn-container {
+        text-align: center;
+        margin: 30px 0;
+      }
+      .btn {
+        display: inline-block;
+        background-color: #2c78de;
+        color: #ffffff;
+        text-decoration: none;
+        padding: 12px 24px;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 16px;
+        transition: background-color 0.2s;
+      }
+      .btn:hover {
+        background-color: #1a62c1;
+      }
+      .footer {
+        margin-top: 30px;
+        text-align: center;
+        color: #a1a1aa;
+        font-size: 14px;
+      }
+      .small-text {
+        font-size: 14px;
+        color: #71717a;
+        margin-top: 30px;
+        border-top: 1px solid #e4e4e7;
+        padding-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="card">
+        <div class="logo">
+          <img src="https://inkorium.es/logo.png" alt="Inkorium Logo" />
+        </div>
+        <div class="content">
+          <h1>¡Bienvenido a Inkorium!</h1>
+          <p>
+            Gracias por registrarte. Para completar tu registro y comenzar a usar tu cuenta, por
+            favor confirma tu dirección de correo electrónico haciendo clic en el siguiente botón:
+          </p>
+          <div class="btn-container">
+            <a href="{{ .ConfirmationURL }}" class="btn">Confirmar correo electrónico</a>
+          </div>
+          <p>Si no has creado una cuenta en Inkorium, puedes ignorar este correo con seguridad.</p>
+          <div class="small-text">
+            <p>
+              Si el botón no funciona, puedes copiar y pegar el siguiente enlace en tu navegador:
+            </p>
+            <p style="word-break: break-all; color: #2c78de">{{ .ConfirmationURL }}</p>
+          </div>
+        </div>
+      </div>
+      <div class="footer">
+        <p>&copy; 2026 Inkorium. Todos los derechos reservados.</p>
+      </div>
+    </div>
+  </body>
+</html>
