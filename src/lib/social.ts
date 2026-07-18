@@ -32,7 +32,7 @@ export async function fetchFeed(currentUserId: string): Promise<FeedPost[]> {
   const { data: posts, error } = await supabase
     .from("posts")
     .select(
-      "id, content, image_url, created_at, type, video_url, youtube_id, youtube_title, youtube_channel, youtube_duration, news_title, news_content, event_id, author:profiles!posts_author_id_fkey(id, username, display_name, avatar_url), event:events!posts_event_id_fkey(*)",
+      "id, content, image_url, created_at, author:profiles!posts_author_id_fkey(id, username, display_name, avatar_url)",
     )
     .order("created_at", { ascending: false })
     .limit(50);
@@ -54,12 +54,12 @@ export async function fetchFeed(currentUserId: string): Promise<FeedPost[]> {
   );
   const myLiked = new Set(myLikesRes.data?.map((l) => l.post_id) ?? []);
 
-  return posts.map((p) => ({
+  return posts.map((p: any) => ({
     id: p.id,
     content: p.content,
     image_url: p.image_url,
     created_at: p.created_at,
-    type: p.type as "status" | "photo" | "video" | "music" | "event" | "news",
+    type: (p.type || "status") as "status" | "photo" | "video" | "music" | "event" | "news",
     video_url: p.video_url,
     youtube_id: p.youtube_id,
     youtube_title: p.youtube_title,

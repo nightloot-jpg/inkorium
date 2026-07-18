@@ -16,29 +16,19 @@ export function CalendarCard({ userId }: { userId: string }) {
     mutationFn: async () => {
       if (!name || !date) throw new Error("Faltan campos obligatorios");
 
-      const { data: evt, error: evtErr } = await supabase
-        .from("events")
-        .insert({
+      const payload: any = {
           author_id: userId,
-          name: name,
-          event_date: date,
-          event_time: "12:00", // Default time as it's not in the design
-          location: location,
-          description: "",
-        })
+          content: name + " " + date + " " + location
+        };
+      const { data: evt, error: evtErr } = await supabase
+        .from("posts")
+        .insert(payload)
         .select()
         .single();
 
       if (evtErr) throw evtErr;
 
-      // also create a post for it
-      const { error: postErr } = await supabase.from("posts").insert({
-        author_id: userId,
-        type: "event",
-        content: "Nuevo evento creado",
-        event_id: evt.id,
-      });
-      if (postErr) throw postErr;
+
     },
     onSuccess: () => {
       setName("");

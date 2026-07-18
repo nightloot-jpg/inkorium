@@ -30,9 +30,7 @@ function FeedPage() {
     queryFn: async () => {
       const { data } = await supabase
         .from("profiles")
-        .select(
-          "id, username, display_name, avatar_url, bio, location, status_message, visits_count",
-        )
+        .select("id, username, display_name, avatar_url, bio")
         .eq("id", userId)
         .single();
       return data;
@@ -61,6 +59,20 @@ function FeedPage() {
         display_name: string;
         avatar_url: string | null;
       }>;
+    },
+  });
+
+  const { data: pendingReqs = [] } = useQuery({
+    queryKey: ["pendingRequests", userId],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("friendships")
+        .select(
+          "id, requester_id, requester:profiles!friendships_requester_id_fkey(id, username, display_name, avatar_url)",
+        )
+        .eq("addressee_id", userId)
+        .eq("status", "pending");
+      return data ?? [];
     },
   });
 
@@ -110,9 +122,7 @@ function FeedPage() {
           </div>
           <div className="p-3 text-xs text-muted-foreground flex justify-around border-b border-border">
             <div className="text-center">
-              <span className="block font-bold text-foreground text-sm">
-                {me?.visits_count || 0}
-              </span>
+              <span className="block font-bold text-foreground text-sm">{0}</span>
               visitas
             </div>
             <div className="text-center">
@@ -123,11 +133,11 @@ function FeedPage() {
           <div className="p-3 text-xs flex flex-col gap-2">
             <div className="flex items-center gap-2">
               <div className="size-2 rounded-full bg-online shrink-0" />
-              <span className="text-foreground truncate">{me?.status_message || "En línea"}</span>
+              <span className="text-foreground truncate">{"En línea"}</span>
             </div>
             <button className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground text-left">
               <MapPin className="size-3.5 shrink-0" />
-              <span className="truncate">{me?.location || "Añadir ubicación"}</span>
+              <span className="truncate">{"Añadir ubicación"}</span>
             </button>
           </div>
         </div>
@@ -215,7 +225,7 @@ function FeedPage() {
             <p className="text-sm text-muted-foreground mt-2">No tienes solicitudes pendientes.</p>
           ) : (
             <div className="space-y-3 mt-2">
-              {pendingReqs.map((r) => {
+              {pendingReqs.map((r: any) => {
                 const req = r.requester as unknown as {
                   id: string;
                   username: string;
@@ -284,7 +294,6 @@ function Composer({
       const payload: Record<string, unknown> = {
         author_id: userId,
         content: text || (activeTab === "photo" ? "ha añadido una foto." : ""),
-        type: activeTab,
       };
 
       if (activeTab === "photo") payload.image_url = mediaUrl.trim();
@@ -298,24 +307,7 @@ function Composer({
         payload.youtube_title = extraData.youtube_title;
       }
 
-      if (activeTab === "event") {
-        const { data: evt, error: evtErr } = await supabase
-          .from("events")
-          .insert({
-            author_id: userId,
-            name: extraData.name,
-            event_date: extraData.date,
-            event_time: extraData.time,
-            location: extraData.location,
-            description: text,
-          })
-          .select()
-          .single();
-        if (evtErr) throw evtErr;
-        payload.event_id = evt.id;
-      }
-
-      const { error } = await supabase.from("posts").insert(payload);
+      const { error } = await supabase.from("posts").insert(payload as any);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -497,7 +489,15 @@ function ComposerTab({
   );
 }
 
-function SidebarCard({ title, children }: { title: string; children: React.ReactNode }) {
+function SidebarCard({
+  title,
+  action,
+  children,
+}: {
+  title: string;
+  action?: React.ReactNode;
+  children: React.ReactNode;
+}) {
   return (
     <section className="bg-card p-3 rounded-2xl ring-1 ring-border shadow-card">
       <div className="flex items-center justify-between mb-3 border-b border-border pb-2">
@@ -551,6 +551,75 @@ function SuggestionRow({
       >
         Añadir
       </button>
+    </div>
+  );
+}
+
+function FriendRequestRow({
+  id,
+  profile,
+}: {
+  id: string;
+  profile: { id: string; username: string; display_name: string; avatar_url: string | null };
+}) {
+  const qc = useQueryClient();
+  const accept = useMutation({
+    mutationFn: async () => {
+      const { error } = await supabase
+        .from("friendships")
+        .update({ status: "accepted" })
+        .eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["pendingRequests"] });
+      qc.invalidateQueries({ queryKey: ["friends"] });
+      toast.success("Solicitud aceptada");
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Error"),
+  });
+  const reject = useMutation({
+    mutationFn: async () => {
+      const { error } = await supabase.from("friendships").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["pendingRequests"] });
+      toast.success("Solicitud rechazada");
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Error"),
+  });
+
+  return (
+    <div className="flex items-center justify-between gap-2">
+      <div className="flex items-center gap-2 min-w-0">
+        <Avatar profile={profile} size={32} />
+        <div className="flex flex-col min-w-0">
+          <Link
+            to="/perfil/$username"
+            params={{ username: profile.username }}
+            className="text-[13px] font-medium text-[#2F5FA7] hover:underline truncate"
+          >
+            {profile.display_name}
+          </Link>
+        </div>
+      </div>
+      <div className="flex gap-1 shrink-0">
+        <button
+          onClick={() => accept.mutate()}
+          disabled={accept.isPending || reject.isPending}
+          className="bg-[#2F5FA7] hover:bg-[#264d87] text-white px-2 py-1 rounded text-[11px] font-medium transition-colors disabled:opacity-50"
+        >
+          Aceptar
+        </button>
+        <button
+          onClick={() => reject.mutate()}
+          disabled={accept.isPending || reject.isPending}
+          className="bg-muted hover:bg-muted/80 text-foreground px-2 py-1 rounded text-[11px] font-medium transition-colors disabled:opacity-50"
+        >
+          Rechazar
+        </button>
+      </div>
     </div>
   );
 }
