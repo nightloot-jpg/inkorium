@@ -237,9 +237,11 @@ function FeedPage() {
           }
         >
           <div className="flex gap-3 mt-2">
+            {/* ⚡ Bolt: added loading="lazy" to defer offscreen images */}
             <img
               src="https://images.unsplash.com/photo-1540039155732-d68a1d74ea4c?w=100&h=100&q=80"
               alt="Evento"
+              loading="lazy"
               className="w-16 h-16 rounded object-cover shrink-0"
             />
             <div className="flex-1 min-w-0">

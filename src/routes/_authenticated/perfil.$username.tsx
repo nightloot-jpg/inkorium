@@ -111,7 +111,13 @@ function ProfilePage() {
         <div className="p-6 pt-0 flex flex-col md:flex-row md:items-end gap-4 -mt-10">
           <div className="size-24 rounded-2xl overflow-hidden ring-4 ring-card bg-muted grid place-items-center text-2xl font-semibold text-muted-foreground shrink-0">
             {profile.avatar_url ? (
-              <img src={profile.avatar_url} alt="" className="size-full object-cover" />
+              /* ⚡ Bolt: added loading="lazy" to defer offscreen images */
+              <img
+                src={profile.avatar_url}
+                alt=""
+                loading="lazy"
+                className="size-full object-cover"
+              />
             ) : (
               initials(profile.display_name)
             )}

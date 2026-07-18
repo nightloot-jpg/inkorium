@@ -75,7 +75,13 @@ export function PostCard({ post, currentUserId }: { post: FeedPost; currentUserI
       {post.type === "photo" && post.image_url && (
         <div className="px-4 pb-4">
           <div className="rounded-xl overflow-hidden ring-1 ring-border">
-            <img src={post.image_url} alt="Foto" className="w-full max-h-[520px] object-cover" />
+            {/* ⚡ Bolt: added loading="lazy" to defer offscreen images */}
+            <img
+              src={post.image_url}
+              alt="Foto"
+              loading="lazy"
+              className="w-full max-h-[520px] object-cover"
+            />
           </div>
         </div>
       )}
@@ -83,10 +89,12 @@ export function PostCard({ post, currentUserId }: { post: FeedPost; currentUserI
       {post.type === "video" && post.video_url && (
         <div className="px-4 pb-4">
           <div className="rounded-xl overflow-hidden ring-1 ring-border aspect-video bg-black relative">
+            {/* ⚡ Bolt: added loading="lazy" to defer offscreen iframes */}
             <iframe
               src={`https://www.youtube.com/embed/${getYouTubeID(post.video_url)}`}
               className="w-full h-full"
               allowFullScreen
+              loading="lazy"
             ></iframe>
           </div>
         </div>
@@ -96,9 +104,11 @@ export function PostCard({ post, currentUserId }: { post: FeedPost; currentUserI
         <div className="px-4 pb-4">
           <div className="rounded-xl ring-1 ring-border p-3 flex gap-4 bg-[#f8f9fa] items-center">
             <div className="w-20 h-20 bg-muted rounded-md shrink-0 relative overflow-hidden flex items-center justify-center">
+              {/* ⚡ Bolt: added loading="lazy" to defer offscreen images */}
               <img
                 src={`https://i.ytimg.com/vi/${post.youtube_id}/hqdefault.jpg`}
                 alt="Cover"
+                loading="lazy"
                 className="w-full h-full object-cover"
               />
               <PlayCircle className="size-8 text-white absolute bg-black/30 rounded-full" />
@@ -145,7 +155,15 @@ export function PostCard({ post, currentUserId }: { post: FeedPost; currentUserI
         <div className="px-4 pb-4">
           <div className="rounded-xl ring-1 ring-border overflow-hidden cursor-pointer hover:bg-secondary transition-colors">
             {post.image_url && (
-              <img src={post.image_url} alt="Noticia" className="w-full h-40 object-cover" />
+              <>
+                {/* ⚡ Bolt: added loading="lazy" to defer offscreen images */}
+                <img
+                  src={post.image_url}
+                  alt="Noticia"
+                  loading="lazy"
+                  className="w-full h-40 object-cover"
+                />
+              </>
             )}
             <div className="p-3">
               <h4 className="font-bold text-sm mb-1">{post.news_title}</h4>
@@ -199,7 +217,8 @@ export function Avatar({
       style={{ width: size, height: size }}
     >
       {profile?.avatar_url ? (
-        <img src={profile.avatar_url} alt="" className="size-full object-cover" />
+        /* ⚡ Bolt: added loading="lazy" to defer offscreen avatars */
+        <img src={profile.avatar_url} alt="" loading="lazy" className="size-full object-cover" />
       ) : (
         initials(profile?.display_name)
       )}
