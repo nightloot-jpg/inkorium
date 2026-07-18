@@ -203,33 +203,56 @@ function FeedPage() {
 
       {/* Sidebar derecho */}
       <aside className="space-y-4 hidden lg:block">
-        <SidebarCard title="Eventos patrocinados">
-          <div className="group block cursor-pointer rounded-xl overflow-hidden ring-1 ring-border">
+        <SidebarCard
+          title="SOLICITUDES"
+          action={
+            <span className="text-[#2F5FA7] font-normal cursor-pointer hover:underline text-xs">
+              Ver todos
+            </span>
+          }
+        >
+          {pendingReqs.length === 0 ? (
+            <p className="text-sm text-muted-foreground mt-2">No tienes solicitudes pendientes.</p>
+          ) : (
+            <div className="space-y-3 mt-2">
+              {pendingReqs.map((r) => {
+                const req = r.requester as unknown as {
+                  id: string;
+                  username: string;
+                  display_name: string;
+                  avatar_url: string | null;
+                };
+                return <FriendRequestRow key={r.id} id={r.id} profile={req} />;
+              })}
+            </div>
+          )}
+        </SidebarCard>
+
+        <SidebarCard
+          title="EVENTOS PATROCINADOS"
+          action={
+            <span className="text-[#2F5FA7] font-normal cursor-pointer hover:underline text-xs">
+              Ver todos
+            </span>
+          }
+        >
+          <div className="flex gap-3 mt-2">
             <img
-              src="https://images.unsplash.com/photo-1540039155732-d68a1d74ea4c?w=400&q=80"
+              src="https://images.unsplash.com/photo-1540039155732-d68a1d74ea4c?w=100&h=100&q=80"
               alt="Evento"
-              className="w-full h-32 object-cover group-hover:scale-105 transition-transform duration-500"
+              className="w-16 h-16 rounded object-cover shrink-0"
             />
-            <div className="p-3 bg-card">
-              <h5 className="font-bold text-[13px] mb-1 truncate text-[#2F5FA7]">
-                Festival de Verano 2026
+            <div className="flex-1 min-w-0">
+              <h5 className="font-bold text-[13px] text-[#2F5FA7] leading-tight">
+                Concierto Indie en Madrid
               </h5>
-              <p className="text-xs text-muted-foreground flex items-center gap-1">
-                <MapPin className="size-3" /> Madrid Central
-              </p>
-              <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
-                <CalendarIcon className="size-3" /> 15 Julio - 20:00h
-              </p>
-              <div className="mt-3 flex gap-2">
-                <button className="flex-1 bg-[#2F5FA7] hover:bg-[#264d87] text-white text-xs font-bold py-1.5 rounded transition-colors">
-                  Asistir
-                </button>
-                <button className="flex-1 bg-secondary hover:bg-muted text-secondary-foreground text-xs font-bold py-1.5 rounded transition-colors">
-                  Ver más
-                </button>
-              </div>
+              <p className="text-xs text-muted-foreground mt-1">Viernes, 24 de Mayo a las 21:00</p>
+              <p className="text-xs text-muted-foreground">Sala La Riviera</p>
             </div>
           </div>
+          <button className="w-fit border border-[#2F5FA7] text-[#2F5FA7] font-medium text-xs px-3 py-1.5 rounded-[18px] mt-3 hover:bg-accent transition-colors block ml-auto mr-auto">
+            Añadir a mi calendario
+          </button>
         </SidebarCard>
 
         <CalendarCard userId={userId} />
@@ -477,9 +500,10 @@ function ComposerTab({
 function SidebarCard({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="bg-card p-3 rounded-2xl ring-1 ring-border shadow-card">
-      <h4 className="text-[13px] font-bold text-[#2F5FA7] mb-3 border-b border-border pb-2">
-        {title}
-      </h4>
+      <div className="flex items-center justify-between mb-3 border-b border-border pb-2">
+        <h4 className="text-[13px] font-bold text-foreground">{title}</h4>
+        {action}
+      </div>
       <div className="space-y-2">{children}</div>
     </section>
   );
