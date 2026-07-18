@@ -14,6 +14,9 @@ import {
   Music,
   Calendar as CalendarIcon,
   Newspaper,
+  Users,
+  ChevronDown,
+  ArrowRight,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Route as AuthRoute } from "./route";
@@ -102,92 +105,121 @@ function FeedPage() {
       {/* Sidebar izquierdo */}
       <aside className="space-y-4">
         {/* Profile Card */}
-        <div className="bg-card rounded-2xl ring-1 ring-border shadow-card overflow-hidden">
-          <div className="p-4 flex gap-4 border-b border-border">
-            <div className="w-16 h-16 shrink-0 rounded ring-1 ring-border bg-muted overflow-hidden">
+        <div className="bg-card rounded-xl ring-1 ring-border shadow-sm overflow-hidden">
+          <div className="p-4 flex gap-4">
+            <div className="w-[64px] h-[64px] shrink-0 rounded ring-1 ring-border bg-muted overflow-hidden">
               <Avatar profile={me} size={64} />
             </div>
             <div className="flex flex-col flex-1 min-w-0">
-              <span className="font-bold text-[#2F5FA7] truncate text-[15px]">
+              <span className="font-bold text-foreground truncate text-[15px]">
                 {me?.display_name || "Usuario"}
               </span>
               <Link
                 to="/perfil/$username"
                 params={{ username: me?.username ?? "" }}
-                className="text-xs text-[#2F5FA7] hover:underline mt-0.5"
+                className="text-[13px] text-[#2F5FA7] hover:underline mt-0.5"
               >
                 Ver mi perfil
               </Link>
+              <div className="text-[11px] text-muted-foreground mt-2 font-medium">
+                <span className="font-bold text-foreground">1.842</span> visitas a tu perfil
+              </div>
+              <div className="text-[11px] text-muted-foreground mt-0.5 flex items-center gap-1.5 font-medium">
+                <Users className="size-3.5" />
+                <span>
+                  <span className="font-bold text-foreground">{friends.length}</span> amigos
+                </span>
+              </div>
             </div>
           </div>
-          <div className="p-3 text-xs text-muted-foreground flex justify-around border-b border-border">
-            <div className="text-center">
-              <span className="block font-bold text-foreground text-sm">{0}</span>
-              visitas
-            </div>
-            <div className="text-center">
-              <span className="block font-bold text-foreground text-sm">{friends.length}</span>
-              amigos
-            </div>
-          </div>
-          <div className="p-3 text-xs flex flex-col gap-2">
-            <div className="flex items-center gap-2">
+          <div className="border-t border-border p-4 flex flex-col gap-3">
+            <div className="flex items-center gap-2 cursor-pointer w-fit group">
               <div className="size-2 rounded-full bg-online shrink-0" />
-              <span className="text-foreground truncate">{"En línea"}</span>
+              <span className="text-[13px] text-muted-foreground font-medium flex items-center gap-1 group-hover:text-foreground transition-colors">
+                En línea <ChevronDown className="size-3" />
+              </span>
             </div>
-            <button className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground text-left">
-              <MapPin className="size-3.5 shrink-0" />
-              <span className="truncate">{"Añadir ubicación"}</span>
+            <input
+              type="text"
+              placeholder="¿Qué estás haciendo?"
+              className="w-full bg-secondary rounded px-3 py-2 text-[13px] outline-none focus:ring-1 focus:ring-ring border border-border/50 placeholder:text-muted-foreground/70"
+            />
+            <button className="flex items-center gap-1.5 text-[#2F5FA7] hover:underline text-left font-medium text-[13px]">
+              <MapPin className="size-4 shrink-0" />
+              <span className="truncate">Añadir ubicación</span>
             </button>
           </div>
         </div>
 
         {/* Amigos conectados */}
-        <SidebarCard title="Amigos conectados">
+        <SidebarCard title={`AMIGOS CONECTADOS (${friends.length})`}>
           {friends.length === 0 && (
             <p className="text-xs text-muted-foreground italic">No hay amigos en línea.</p>
           )}
-          <div className="space-y-1">
+          <div className="space-y-0.5">
             {friends.slice(0, 8).map((f) => (
               <Link
                 key={f.id}
                 to="/mensajes/$username"
                 params={{ username: f.username }}
-                className="flex items-center justify-between py-1.5 hover:bg-secondary rounded px-1.5 -mx-1.5 transition-colors"
+                className="flex items-center justify-between py-1.5 hover:bg-secondary rounded px-2 -mx-2 transition-colors"
               >
-                <div className="flex items-center gap-2 min-w-0">
-                  <Avatar profile={f} size={24} />
-                  <span className="text-[13px] text-foreground truncate">{f.display_name}</span>
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <Avatar profile={f} size={28} />
+                  <span className="text-[13px] font-medium text-foreground truncate">
+                    {f.display_name}
+                  </span>
                 </div>
                 <div className="size-2 rounded-full bg-online shrink-0" />
               </Link>
             ))}
           </div>
           {friends.length > 0 && (
-            <div className="mt-3 text-right">
-              <Link to="/amigos" className="text-xs font-medium text-[#2F5FA7] hover:underline">
-                Ver todos
+            <div className="mt-2 text-right">
+              <Link
+                to="/amigos"
+                className="text-[13px] font-medium text-[#2F5FA7] hover:underline flex items-center justify-end gap-1"
+              >
+                Ver todos <ArrowRight className="size-3.5" />
               </Link>
             </div>
           )}
         </SidebarCard>
 
         {/* Añadir amigos */}
-        <SidebarCard title="Añadir amigos">
+        <SidebarCard title="AÑADIR AMIGOS">
+          <p className="text-[13px] text-muted-foreground mb-3">
+            Encuentra a tus amigos en Inkorium
+          </p>
           {suggestions.length === 0 && (
             <p className="text-xs text-muted-foreground italic">Sin sugerencias.</p>
           )}
-          <div className="space-y-3">
-            {suggestions.map((s) => (
-              <SuggestionRow key={s.id} profile={s} userId={userId} />
-            ))}
-          </div>
-          <div className="mt-4">
+          {suggestions.length > 0 && (
+            <div className="grid grid-cols-4 gap-2 mb-4">
+              {suggestions.slice(0, 4).map((s) => (
+                <Link
+                  key={s.id}
+                  to="/perfil/$username"
+                  params={{ username: s.username }}
+                  className="block rounded ring-1 ring-border overflow-hidden"
+                >
+                  {s.avatar_url ? (
+                    <img src={s.avatar_url} className="w-full aspect-square object-cover" />
+                  ) : (
+                    <div className="w-full aspect-square bg-muted grid place-items-center text-[15px] font-bold text-[#2F5FA7]">
+                      {s.display_name.charAt(0).toUpperCase()}
+                    </div>
+                  )}
+                </Link>
+              ))}
+            </div>
+          )}
+          <div className="mt-1">
             <Link
               to="/amigos"
-              className="flex items-center justify-center gap-2 w-full bg-[#f1f3f6] hover:bg-[#e6eaf0] text-[#1c2331] text-[13px] font-medium py-2 rounded-lg border border-[#dbe0e8] transition-colors"
+              className="flex items-center justify-center gap-1.5 w-full bg-card hover:bg-secondary text-[#2F5FA7] text-[13px] font-medium py-1.5 rounded border border-[#e5e7eb] transition-colors"
             >
-              <Search className="size-4" /> Buscar amigos
+              Buscar amigos <ArrowRight className="size-3.5" />
             </Link>
           </div>
         </SidebarCard>
@@ -499,12 +531,14 @@ function SidebarCard({
   children: React.ReactNode;
 }) {
   return (
-    <section className="bg-card p-3 rounded-2xl ring-1 ring-border shadow-card">
-      <div className="flex items-center justify-between mb-3 border-b border-border pb-2">
-        <h4 className="text-[13px] font-bold text-foreground">{title}</h4>
+    <section className="bg-card p-4 rounded-xl ring-1 ring-border shadow-sm">
+      <div className="flex items-center justify-between mb-3">
+        <h4 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wide">
+          {title}
+        </h4>
         {action}
       </div>
-      <div className="space-y-2">{children}</div>
+      <div>{children}</div>
     </section>
   );
 }
