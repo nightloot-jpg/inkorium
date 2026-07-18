@@ -141,6 +141,7 @@ function AuthenticatedLayout() {
           </div>
 
           <div className="flex items-center gap-3">
+            <ThemeToggle />
             <button className="flex items-center gap-1 text-sm font-medium hover:bg-white/10 px-2 py-1.5 rounded transition-colors">
               Mi cuenta <ChevronDown className="size-4" />
             </button>

@@ -392,6 +392,13 @@ function Composer({
       <div className="p-3">
         <h3 className="text-[13px] font-bold text-[#2F5FA7] mb-2">¿Qué tienes en mente?</h3>
         <div className="space-y-3">
+          <input
+            type="file"
+            ref={fileInputRef}
+            className="hidden"
+            accept="image/*,video/*"
+            onChange={handleFileUpload}
+          />
           <textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
