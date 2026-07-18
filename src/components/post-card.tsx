@@ -1,5 +1,13 @@
 import { Link } from "@tanstack/react-router";
-import { Heart, MessageCircle, Trash2 } from "lucide-react";
+import {
+  Heart,
+  MessageCircle,
+  Trash2,
+  PlayCircle,
+  MapPin,
+  Calendar as CalendarIcon,
+  Clock,
+} from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -42,7 +50,7 @@ export function PostCard({ post, currentUserId }: { post: FeedPost; currentUserI
               <Link
                 to="/perfil/$username"
                 params={{ username: post.author.username }}
-                className="font-medium text-sm hover:underline block truncate"
+                className="font-bold text-[14px] text-[#2F5FA7] hover:underline block truncate"
               >
                 {post.author.display_name}
               </Link>
@@ -58,34 +66,109 @@ export function PostCard({ post, currentUserId }: { post: FeedPost; currentUserI
               </button>
             )}
           </div>
-          <p className="mt-2 text-[15px] leading-relaxed text-foreground text-pretty whitespace-pre-wrap">
+          <p className="mt-2 text-[14px] leading-relaxed text-foreground text-pretty whitespace-pre-wrap">
             {post.content}
           </p>
         </div>
       </div>
 
-      {post.image_url && (
+      {post.type === "photo" && post.image_url && (
         <div className="px-4 pb-4">
           <div className="rounded-xl overflow-hidden ring-1 ring-border">
-            <img src={post.image_url} alt="" className="w-full max-h-[520px] object-cover" />
+            <img src={post.image_url} alt="Foto" className="w-full max-h-[520px] object-cover" />
           </div>
         </div>
       )}
 
-      <div className="flex gap-4 px-4 py-2 border-t border-border">
+      {post.type === "video" && post.video_url && (
+        <div className="px-4 pb-4">
+          <div className="rounded-xl overflow-hidden ring-1 ring-border aspect-video bg-black relative">
+            <iframe
+              src={`https://www.youtube.com/embed/${getYouTubeID(post.video_url)}`}
+              className="w-full h-full"
+              allowFullScreen
+            ></iframe>
+          </div>
+        </div>
+      )}
+
+      {post.type === "music" && post.youtube_id && (
+        <div className="px-4 pb-4">
+          <div className="rounded-xl ring-1 ring-border p-3 flex gap-4 bg-[#f8f9fa] items-center">
+            <div className="w-20 h-20 bg-muted rounded-md shrink-0 relative overflow-hidden flex items-center justify-center">
+              <img
+                src={`https://i.ytimg.com/vi/${post.youtube_id}/hqdefault.jpg`}
+                alt="Cover"
+                className="w-full h-full object-cover"
+              />
+              <PlayCircle className="size-8 text-white absolute bg-black/30 rounded-full" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <h4 className="font-bold text-sm truncate">
+                {post.youtube_title || "Canción desconocida"}
+              </h4>
+              <p className="text-xs text-muted-foreground truncate">YouTube Music</p>
+              <div className="mt-2 h-1 bg-border rounded-full overflow-hidden">
+                <div className="h-full bg-[#2F5FA7] w-1/3"></div>
+              </div>
+            </div>
+            <button className="text-red-500 font-bold text-xs shrink-0 flex flex-col items-center gap-1">
+              <PlayCircle className="size-6" /> YouTube
+            </button>
+          </div>
+        </div>
+      )}
+
+      {post.type === "event" && post.event && (
+        <div className="px-4 pb-4">
+          <div className="rounded-xl ring-1 ring-border bg-accent/20 overflow-hidden">
+            <div className="bg-[#2F5FA7] text-white p-3">
+              <h4 className="font-bold text-sm truncate">{post.event.name}</h4>
+            </div>
+            <div className="p-3 text-sm space-y-2">
+              <div className="flex gap-2 text-muted-foreground">
+                <CalendarIcon className="size-4 text-[#2F5FA7]" /> {post.event.event_date}
+              </div>
+              <div className="flex gap-2 text-muted-foreground">
+                <Clock className="size-4 text-[#2F5FA7]" /> {post.event.event_time}
+              </div>
+              <div className="flex gap-2 text-muted-foreground">
+                <MapPin className="size-4 text-[#2F5FA7]" />{" "}
+                {post.event.location || "Sin ubicación"}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {post.type === "news" && (
+        <div className="px-4 pb-4">
+          <div className="rounded-xl ring-1 ring-border overflow-hidden cursor-pointer hover:bg-secondary transition-colors">
+            {post.image_url && (
+              <img src={post.image_url} alt="Noticia" className="w-full h-40 object-cover" />
+            )}
+            <div className="p-3">
+              <h4 className="font-bold text-sm mb-1">{post.news_title}</h4>
+              <p className="text-xs text-muted-foreground">Fuente: inkorium.com</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="flex gap-4 px-4 py-2 bg-secondary/30 border-t border-border">
         <button
           onClick={() => like.mutate()}
           disabled={like.isPending}
-          className={`flex items-center gap-1.5 text-xs font-medium py-1.5 px-2 rounded-md transition-colors ${
-            post.liked_by_me ? "text-primary" : "text-muted-foreground hover:text-primary"
+          className={`flex items-center gap-1.5 text-xs font-bold py-1.5 px-2 rounded-md transition-colors ${
+            post.liked_by_me ? "text-[#2F5FA7]" : "text-muted-foreground hover:text-[#2F5FA7]"
           }`}
         >
-          <Heart className={`size-4 ${post.liked_by_me ? "fill-primary" : ""}`} />
+          <Heart className={`size-4 ${post.liked_by_me ? "fill-[#2F5FA7]" : ""}`} />
           {post.like_count} Me gusta
         </button>
         <button
           onClick={() => setShowComments((v) => !v)}
-          className="flex items-center gap-1.5 text-xs font-medium py-1.5 px-2 rounded-md text-muted-foreground hover:text-primary transition-colors"
+          className="flex items-center gap-1.5 text-xs font-bold py-1.5 px-2 rounded-md text-muted-foreground hover:text-[#2F5FA7] transition-colors"
         >
           <MessageCircle className="size-4" />
           {post.comment_count} Comentarios
@@ -97,6 +180,12 @@ export function PostCard({ post, currentUserId }: { post: FeedPost; currentUserI
   );
 }
 
+function getYouTubeID(url: string) {
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+  const match = url.match(regExp);
+  return match && match[2].length === 11 ? match[2] : null;
+}
+
 export function Avatar({
   profile,
   size = 40,
@@ -106,7 +195,7 @@ export function Avatar({
 }) {
   return (
     <div
-      className="rounded-full overflow-hidden shrink-0 ring-1 ring-border bg-muted grid place-items-center text-xs font-semibold text-muted-foreground"
+      className="rounded-lg overflow-hidden shrink-0 ring-1 ring-border bg-muted grid place-items-center text-xs font-bold text-[#2F5FA7]"
       style={{ width: size, height: size }}
     >
       {profile?.avatar_url ? (
@@ -153,7 +242,7 @@ function Comments({ postId, currentUserId }: { postId: string; currentUserId: st
   });
 
   return (
-    <div className="px-4 pb-4 space-y-3 border-t border-border pt-3 bg-secondary/30">
+    <div className="px-4 pb-4 space-y-3 pt-3 bg-secondary/30">
       {comments.length === 0 && (
         <p className="text-xs text-muted-foreground italic">Sé el primero en comentar.</p>
       )}
@@ -166,15 +255,15 @@ function Comments({ postId, currentUserId }: { postId: string; currentUserId: st
         return (
           <div key={c.id} className="flex gap-2">
             <Avatar profile={author} size={28} />
-            <div className="flex-1 bg-surface rounded-xl px-3 py-2 text-sm">
+            <div className="flex-1 bg-surface rounded-lg px-3 py-2 text-[13px] ring-1 ring-border">
               <Link
                 to="/perfil/$username"
                 params={{ username: author.username }}
-                className="font-medium text-xs hover:underline"
+                className="font-bold text-[#2F5FA7] hover:underline mr-1.5"
               >
                 {author.display_name}
               </Link>
-              <p className="text-[13px] text-foreground whitespace-pre-wrap">{c.content}</p>
+              <span className="text-foreground whitespace-pre-wrap">{c.content}</span>
             </div>
           </div>
         );
@@ -190,14 +279,14 @@ function Comments({ postId, currentUserId }: { postId: string; currentUserId: st
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder="Escribe un comentario..."
-          className="flex-1 bg-surface ring-1 ring-border rounded-full text-sm px-3 py-1.5 outline-none focus:ring-2 focus:ring-ring"
+          className="flex-1 bg-surface ring-1 ring-border rounded-lg text-sm px-3 py-2 outline-none focus:ring-2 focus:ring-ring"
         />
         <button
           type="submit"
           disabled={!text.trim() || add.isPending}
-          className="text-xs font-medium text-primary px-3 disabled:opacity-40"
+          className="text-xs font-bold bg-[#2F5FA7] hover:bg-[#264d87] text-white px-4 rounded-lg disabled:opacity-40 transition-colors"
         >
-          Enviar
+          Comentar
         </button>
       </form>
     </div>

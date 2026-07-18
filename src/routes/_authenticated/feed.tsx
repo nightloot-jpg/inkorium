@@ -3,8 +3,18 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { fetchFeed } from "@/lib/social";
 import { PostCard, Avatar } from "@/components/post-card";
+import { CalendarCard } from "@/components/CalendarCard";
 import { useState } from "react";
-import { Image as ImageIcon, X } from "lucide-react";
+import {
+  Image as ImageIcon,
+  X,
+  MapPin,
+  Search,
+  Video,
+  Music,
+  Calendar as CalendarIcon,
+  Newspaper,
+} from "lucide-react";
 import { toast } from "sonner";
 import { Route as AuthRoute } from "./route";
 
@@ -20,7 +30,9 @@ function FeedPage() {
     queryFn: async () => {
       const { data } = await supabase
         .from("profiles")
-        .select("id, username, display_name, avatar_url, bio")
+        .select(
+          "id, username, display_name, avatar_url, bio, location, status_message, visits_count",
+        )
         .eq("id", userId)
         .single();
       return data;
@@ -29,21 +41,6 @@ function FeedPage() {
   const { data: posts = [], isLoading } = useQuery({
     queryKey: ["feed", userId],
     queryFn: () => fetchFeed(userId),
-  });
-
-  const { data: pendingReqs = [] } = useQuery({
-    queryKey: ["friendship-requests", userId],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from("friendships")
-        .select(
-          "id, requester:profiles!friendships_requester_id_fkey(id, username, display_name, avatar_url)",
-        )
-        .eq("addressee_id", userId)
-        .eq("status", "pending")
-        .limit(5);
-      return data ?? [];
-    },
   });
 
   const { data: friends = [] } = useQuery({
@@ -55,24 +52,21 @@ function FeedPage() {
           "requester_id, addressee_id, requester:profiles!friendships_requester_id_fkey(id, username, display_name, avatar_url), addressee:profiles!friendships_addressee_id_fkey(id, username, display_name, avatar_url)",
         )
         .eq("status", "accepted")
-        .or(`requester_id.eq.${userId},addressee_id.eq.${userId}`)
-        .limit(8);
-      return (data ?? []).map((r) => {
-        const other = r.requester_id === userId ? r.addressee : r.requester;
-        return other as unknown as {
-          id: string;
-          username: string;
-          display_name: string;
-          avatar_url: string | null;
-        };
-      });
+        .or(`requester_id.eq.${userId},addressee_id.eq.${userId}`);
+      return (data ?? []).map((r) =>
+        r.requester_id === userId ? r.addressee : r.requester,
+      ) as unknown as Array<{
+        id: string;
+        username: string;
+        display_name: string;
+        avatar_url: string | null;
+      }>;
     },
   });
 
   const { data: suggestions = [] } = useQuery({
     queryKey: ["suggestions", userId],
     queryFn: async () => {
-      // people who aren't me and aren't already in a friendship with me
       const { data: existing } = await supabase
         .from("friendships")
         .select("requester_id, addressee_id")
@@ -86,52 +80,107 @@ function FeedPage() {
         .from("profiles")
         .select("id, username, display_name, avatar_url")
         .not("id", "in", `(${Array.from(excluded).join(",")})`)
-        .limit(3);
+        .limit(5);
       return data ?? [];
     },
   });
 
   return (
-    <main className="max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-[240px_1fr_280px] gap-6">
+    <main className="grid grid-cols-1 md:grid-cols-[280px_minmax(0,1fr)] lg:grid-cols-[250px_minmax(0,1fr)_250px] gap-6 py-6 w-full">
       {/* Sidebar izquierdo */}
-      <aside className="space-y-4 hidden lg:block">
-        <div className="bg-card p-4 rounded-2xl ring-1 ring-border shadow-card">
-          <div className="flex items-center gap-3 mb-4">
-            <Avatar profile={me} size={48} />
-            <div className="min-w-0">
-              <p className="font-medium text-sm truncate">{me?.display_name}</p>
-              {me && (
-                <Link
-                  to="/perfil/$username"
-                  params={{ username: me.username }}
-                  className="text-[11px] text-muted-foreground hover:text-primary transition-colors"
-                >
-                  Ver mi perfil
-                </Link>
-              )}
+      <aside className="space-y-4">
+        {/* Profile Card */}
+        <div className="bg-card rounded-2xl ring-1 ring-border shadow-card overflow-hidden">
+          <div className="p-4 flex gap-4 border-b border-border">
+            <div className="w-16 h-16 shrink-0 rounded ring-1 ring-border bg-muted overflow-hidden">
+              <Avatar profile={me} size={64} />
+            </div>
+            <div className="flex flex-col flex-1 min-w-0">
+              <span className="font-bold text-[#2F5FA7] truncate text-[15px]">
+                {me?.display_name || "Usuario"}
+              </span>
+              <Link
+                to="/perfil/$username"
+                params={{ username: me?.username ?? "" }}
+                className="text-xs text-[#2F5FA7] hover:underline mt-0.5"
+              >
+                Ver mi perfil
+              </Link>
             </div>
           </div>
-          <nav className="space-y-1 text-sm">
-            <Link
-              to="/feed"
-              className="flex px-2 py-1.5 rounded-lg font-medium text-primary bg-accent"
-            >
-              Inicio
-            </Link>
+          <div className="p-3 text-xs text-muted-foreground flex justify-around border-b border-border">
+            <div className="text-center">
+              <span className="block font-bold text-foreground text-sm">
+                {me?.visits_count || 0}
+              </span>
+              visitas
+            </div>
+            <div className="text-center">
+              <span className="block font-bold text-foreground text-sm">{friends.length}</span>
+              amigos
+            </div>
+          </div>
+          <div className="p-3 text-xs flex flex-col gap-2">
+            <div className="flex items-center gap-2">
+              <div className="size-2 rounded-full bg-online shrink-0" />
+              <span className="text-foreground truncate">{me?.status_message || "En línea"}</span>
+            </div>
+            <button className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground text-left">
+              <MapPin className="size-3.5 shrink-0" />
+              <span className="truncate">{me?.location || "Añadir ubicación"}</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Amigos conectados */}
+        <SidebarCard title="Amigos conectados">
+          {friends.length === 0 && (
+            <p className="text-xs text-muted-foreground italic">No hay amigos en línea.</p>
+          )}
+          <div className="space-y-1">
+            {friends.slice(0, 8).map((f) => (
+              <Link
+                key={f.id}
+                to="/mensajes/$username"
+                params={{ username: f.username }}
+                className="flex items-center justify-between py-1.5 hover:bg-secondary rounded px-1.5 -mx-1.5 transition-colors"
+              >
+                <div className="flex items-center gap-2 min-w-0">
+                  <Avatar profile={f} size={24} />
+                  <span className="text-[13px] text-foreground truncate">{f.display_name}</span>
+                </div>
+                <div className="size-2 rounded-full bg-online shrink-0" />
+              </Link>
+            ))}
+          </div>
+          {friends.length > 0 && (
+            <div className="mt-3 text-right">
+              <Link to="/amigos" className="text-xs font-medium text-[#2F5FA7] hover:underline">
+                Ver todos
+              </Link>
+            </div>
+          )}
+        </SidebarCard>
+
+        {/* Añadir amigos */}
+        <SidebarCard title="Añadir amigos">
+          {suggestions.length === 0 && (
+            <p className="text-xs text-muted-foreground italic">Sin sugerencias.</p>
+          )}
+          <div className="space-y-3">
+            {suggestions.map((s) => (
+              <SuggestionRow key={s.id} profile={s} userId={userId} />
+            ))}
+          </div>
+          <div className="mt-4">
             <Link
               to="/amigos"
-              className="flex px-2 py-1.5 rounded-lg text-muted-foreground hover:bg-secondary transition-colors"
+              className="flex items-center justify-center gap-2 w-full bg-[#f1f3f6] hover:bg-[#e6eaf0] text-[#1c2331] text-[13px] font-medium py-2 rounded-lg border border-[#dbe0e8] transition-colors"
             >
-              Amigos
+              <Search className="size-4" /> Buscar amigos
             </Link>
-            <Link
-              to="/mensajes"
-              className="flex px-2 py-1.5 rounded-lg text-muted-foreground hover:bg-secondary transition-colors"
-            >
-              Mensajes
-            </Link>
-          </nav>
-        </div>
+          </div>
+        </SidebarCard>
       </aside>
 
       {/* Feed */}
@@ -154,49 +203,36 @@ function FeedPage() {
 
       {/* Sidebar derecho */}
       <aside className="space-y-4 hidden lg:block">
-        <SidebarCard title="Solicitudes">
-          {pendingReqs.length === 0 && (
-            <p className="text-xs text-muted-foreground italic">Sin solicitudes nuevas.</p>
-          )}
-          {pendingReqs.map((r) => {
-            const req = r.requester as unknown as {
-              id: string;
-              username: string;
-              display_name: string;
-              avatar_url: string | null;
-            };
-            return <FriendRequestRow key={r.id} id={r.id} profile={req} />;
-          })}
-        </SidebarCard>
-
-        <SidebarCard title="Amigos" badge={friends.length}>
-          {friends.length === 0 && (
-            <p className="text-xs text-muted-foreground italic">Añade amigos para verlos aquí.</p>
-          )}
-          {friends.map((f) => (
-            <Link
-              key={f.id}
-              to="/mensajes/$username"
-              params={{ username: f.username }}
-              className="flex items-center gap-3 py-1 hover:bg-secondary rounded-lg px-1 -mx-1 transition-colors"
-            >
-              <div className="relative">
-                <Avatar profile={f} size={32} />
-                <span className="absolute bottom-0 right-0 size-2.5 bg-[color:var(--online)] rounded-full ring-2 ring-card" />
+        <SidebarCard title="Eventos patrocinados">
+          <div className="group block cursor-pointer rounded-xl overflow-hidden ring-1 ring-border">
+            <img
+              src="https://images.unsplash.com/photo-1540039155732-d68a1d74ea4c?w=400&q=80"
+              alt="Evento"
+              className="w-full h-32 object-cover group-hover:scale-105 transition-transform duration-500"
+            />
+            <div className="p-3 bg-card">
+              <h5 className="font-bold text-[13px] mb-1 truncate text-[#2F5FA7]">
+                Festival de Verano 2026
+              </h5>
+              <p className="text-xs text-muted-foreground flex items-center gap-1">
+                <MapPin className="size-3" /> Madrid Central
+              </p>
+              <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
+                <CalendarIcon className="size-3" /> 15 Julio - 20:00h
+              </p>
+              <div className="mt-3 flex gap-2">
+                <button className="flex-1 bg-[#2F5FA7] hover:bg-[#264d87] text-white text-xs font-bold py-1.5 rounded transition-colors">
+                  Asistir
+                </button>
+                <button className="flex-1 bg-secondary hover:bg-muted text-secondary-foreground text-xs font-bold py-1.5 rounded transition-colors">
+                  Ver más
+                </button>
               </div>
-              <span className="text-sm text-foreground truncate">{f.display_name}</span>
-            </Link>
-          ))}
+            </div>
+          </div>
         </SidebarCard>
 
-        <SidebarCard title="Gente que podrías conocer">
-          {suggestions.length === 0 && (
-            <p className="text-xs text-muted-foreground italic">Sin sugerencias por ahora.</p>
-          )}
-          {suggestions.map((s) => (
-            <SuggestionRow key={s.id} profile={s} userId={userId} />
-          ))}
-        </SidebarCard>
+        <CalendarCard userId={userId} />
       </aside>
     </main>
   );
@@ -210,25 +246,60 @@ function Composer({
   avatar: { display_name: string; avatar_url: string | null } | null | undefined;
 }) {
   const qc = useQueryClient();
+  const [activeTab, setActiveTab] = useState<
+    "status" | "photo" | "video" | "music" | "event" | "news"
+  >("status");
   const [content, setContent] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
-  const [showImage, setShowImage] = useState(false);
+  const [mediaUrl, setMediaUrl] = useState("");
+  const [extraData, setExtraData] = useState<Record<string, string>>({});
 
   const publish = useMutation({
     mutationFn: async () => {
       const text = content.trim();
-      if (!text) throw new Error("Escribe algo antes de publicar.");
-      const { error } = await supabase.from("posts").insert({
+      if (!text && activeTab !== "photo") throw new Error("Añade algún contenido.");
+
+      const payload: Record<string, unknown> = {
         author_id: userId,
-        content: text,
-        image_url: imageUrl.trim() || null,
-      });
+        content: text || (activeTab === "photo" ? "ha añadido una foto." : ""),
+        type: activeTab,
+      };
+
+      if (activeTab === "photo") payload.image_url = mediaUrl.trim();
+      if (activeTab === "video") payload.video_url = mediaUrl.trim();
+      if (activeTab === "news") {
+        payload.news_title = extraData.title;
+        payload.image_url = mediaUrl.trim();
+      }
+      if (activeTab === "music") {
+        payload.youtube_id = extraData.youtube_id;
+        payload.youtube_title = extraData.youtube_title;
+      }
+
+      if (activeTab === "event") {
+        const { data: evt, error: evtErr } = await supabase
+          .from("events")
+          .insert({
+            author_id: userId,
+            name: extraData.name,
+            event_date: extraData.date,
+            event_time: extraData.time,
+            location: extraData.location,
+            description: text,
+          })
+          .select()
+          .single();
+        if (evtErr) throw evtErr;
+        payload.event_id = evt.id;
+      }
+
+      const { error } = await supabase.from("posts").insert(payload);
       if (error) throw error;
     },
     onSuccess: () => {
       setContent("");
-      setImageUrl("");
-      setShowImage(false);
+      setMediaUrl("");
+      setExtraData({});
+      setActiveTab("status");
       qc.invalidateQueries({ queryKey: ["feed"] });
       toast.success("¡Publicado!");
     },
@@ -237,45 +308,143 @@ function Composer({
 
   return (
     <div className="bg-card p-4 rounded-2xl ring-1 ring-border shadow-card">
-      <div className="flex gap-3">
-        <Avatar profile={avatar} size={40} />
-        <textarea
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          placeholder={`¿Qué tienes en mente${avatar?.display_name ? `, ${avatar.display_name.split(" ")[0]}` : ""}?`}
-          className="w-full bg-secondary rounded-xl p-3 text-sm resize-none min-h-[80px] outline-none focus:ring-2 focus:ring-ring placeholder:text-muted-foreground"
+      <div className="flex gap-4 border-b border-border pb-3 mb-3 overflow-x-auto no-scrollbar">
+        <ComposerTab
+          icon={<Search className="size-4" />}
+          label="Estado"
+          active={activeTab === "status"}
+          onClick={() => setActiveTab("status")}
+        />
+        <ComposerTab
+          icon={<ImageIcon className="size-4" />}
+          label="Foto"
+          active={activeTab === "photo"}
+          onClick={() => setActiveTab("photo")}
+        />
+        <ComposerTab
+          icon={<Video className="size-4" />}
+          label="Vídeo"
+          active={activeTab === "video"}
+          onClick={() => setActiveTab("video")}
+        />
+        <ComposerTab
+          icon={<Music className="size-4" />}
+          label="Música"
+          active={activeTab === "music"}
+          onClick={() => setActiveTab("music")}
+        />
+        <ComposerTab
+          icon={<CalendarIcon className="size-4" />}
+          label="Evento"
+          active={activeTab === "event"}
+          onClick={() => setActiveTab("event")}
+        />
+        <ComposerTab
+          icon={<Newspaper className="size-4" />}
+          label="Noticia"
+          active={activeTab === "news"}
+          onClick={() => setActiveTab("news")}
         />
       </div>
-      {showImage && (
-        <div className="mt-3 flex gap-2 items-center">
-          <input
-            value={imageUrl}
-            onChange={(e) => setImageUrl(e.target.value)}
-            placeholder="Pega una URL de imagen..."
-            className="flex-1 bg-secondary rounded-lg px-3 py-1.5 text-sm outline-none focus:ring-2 focus:ring-ring"
+
+      <div className="flex gap-3">
+        <Avatar profile={avatar} size={40} />
+        <div className="flex-1 space-y-3">
+          <textarea
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            placeholder={`¿Qué tienes en mente${avatar?.display_name ? `, ${avatar.display_name.split(" ")[0]}` : ""}?`}
+            className="w-full bg-secondary rounded-xl p-3 text-sm resize-none min-h-[80px] outline-none focus:ring-2 focus:ring-ring placeholder:text-muted-foreground"
           />
-          <button
-            onClick={() => {
-              setImageUrl("");
-              setShowImage(false);
-            }}
-            className="p-1.5 text-muted-foreground hover:text-foreground"
-          >
-            <X className="size-4" />
-          </button>
+
+          {activeTab === "photo" && (
+            <input
+              value={mediaUrl}
+              onChange={(e) => setMediaUrl(e.target.value)}
+              placeholder="URL de la imagen..."
+              className="w-full bg-secondary rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+            />
+          )}
+
+          {activeTab === "video" && (
+            <input
+              value={mediaUrl}
+              onChange={(e) => setMediaUrl(e.target.value)}
+              placeholder="URL del vídeo de YouTube..."
+              className="w-full bg-secondary rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+            />
+          )}
+
+          {activeTab === "music" && (
+            <div className="space-y-2">
+              <input
+                value={extraData.youtube_id || ""}
+                onChange={(e) => setExtraData({ ...extraData, youtube_id: e.target.value })}
+                placeholder="ID del vídeo de YouTube..."
+                className="w-full bg-secondary rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+              />
+              <input
+                value={extraData.youtube_title || ""}
+                onChange={(e) => setExtraData({ ...extraData, youtube_title: e.target.value })}
+                placeholder="Título de la canción..."
+                className="w-full bg-secondary rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+              />
+            </div>
+          )}
+
+          {activeTab === "event" && (
+            <div className="grid grid-cols-2 gap-2">
+              <input
+                value={extraData.name || ""}
+                onChange={(e) => setExtraData({ ...extraData, name: e.target.value })}
+                placeholder="Nombre del evento"
+                className="col-span-2 w-full bg-secondary rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+              />
+              <input
+                type="date"
+                value={extraData.date || ""}
+                onChange={(e) => setExtraData({ ...extraData, date: e.target.value })}
+                className="w-full bg-secondary rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+              />
+              <input
+                type="time"
+                value={extraData.time || ""}
+                onChange={(e) => setExtraData({ ...extraData, time: e.target.value })}
+                className="w-full bg-secondary rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+              />
+              <input
+                value={extraData.location || ""}
+                onChange={(e) => setExtraData({ ...extraData, location: e.target.value })}
+                placeholder="Lugar"
+                className="col-span-2 w-full bg-secondary rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+              />
+            </div>
+          )}
+
+          {activeTab === "news" && (
+            <div className="space-y-2">
+              <input
+                value={extraData.title || ""}
+                onChange={(e) => setExtraData({ ...extraData, title: e.target.value })}
+                placeholder="Título de la noticia"
+                className="w-full bg-secondary rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+              />
+              <input
+                value={mediaUrl}
+                onChange={(e) => setMediaUrl(e.target.value)}
+                placeholder="URL de la imagen (opcional)"
+                className="w-full bg-secondary rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+              />
+            </div>
+          )}
         </div>
-      )}
-      <div className="flex justify-between items-center mt-3 pt-3 border-t border-border">
-        <button
-          onClick={() => setShowImage((v) => !v)}
-          className="flex items-center gap-1.5 p-2 text-muted-foreground hover:text-primary hover:bg-secondary rounded-lg transition-colors text-xs font-medium"
-        >
-          <ImageIcon className="size-4" /> Añadir imagen
-        </button>
+      </div>
+
+      <div className="flex justify-end mt-3">
         <button
           onClick={() => publish.mutate()}
-          disabled={!content.trim() || publish.isPending}
-          className="bg-primary hover:bg-primary-hover text-primary-foreground text-sm font-medium py-1.5 px-4 rounded-lg transition-colors disabled:opacity-40"
+          disabled={publish.isPending || (activeTab === "status" && !content.trim())}
+          className="bg-[#2F5FA7] hover:bg-[#264d87] text-white text-[13px] font-bold py-2 px-6 rounded-lg transition-colors disabled:opacity-40 shadow-sm"
         >
           {publish.isPending ? "Publicando..." : "Publicar"}
         </button>
@@ -284,79 +453,35 @@ function Composer({
   );
 }
 
-function SidebarCard({
-  title,
-  badge,
-  children,
+function ComposerTab({
+  icon,
+  label,
+  active,
+  onClick,
 }: {
-  title: string;
-  badge?: number;
-  children: React.ReactNode;
+  icon: React.ReactNode;
+  label: string;
+  active: boolean;
+  onClick: () => void;
 }) {
   return (
-    <section className="bg-card p-4 rounded-2xl ring-1 ring-border shadow-card">
-      <div className="flex items-center justify-between mb-3">
-        <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-          {title}
-        </h4>
-        {typeof badge === "number" && badge > 0 && (
-          <span className="text-[10px] bg-accent text-accent-foreground px-1.5 py-0.5 rounded-full font-medium">
-            {badge}
-          </span>
-        )}
-      </div>
-      <div className="space-y-3">{children}</div>
-    </section>
+    <button
+      onClick={onClick}
+      className={`flex items-center gap-1.5 text-[13px] font-medium pb-1 border-b-2 transition-colors whitespace-nowrap ${active ? "text-[#2F5FA7] border-[#2F5FA7]" : "text-muted-foreground border-transparent hover:text-foreground"}`}
+    >
+      {icon} {label}
+    </button>
   );
 }
 
-function FriendRequestRow({
-  id,
-  profile,
-}: {
-  id: string;
-  profile: { id: string; username: string; display_name: string; avatar_url: string | null };
-}) {
-  const qc = useQueryClient();
-  const respond = useMutation({
-    mutationFn: async (accept: boolean) => {
-      if (accept) {
-        await supabase.from("friendships").update({ status: "accepted" }).eq("id", id);
-      } else {
-        await supabase.from("friendships").delete().eq("id", id);
-      }
-    },
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["friendship-requests"] });
-      qc.invalidateQueries({ queryKey: ["friendships-pending-count"] });
-      qc.invalidateQueries({ queryKey: ["friends"] });
-    },
-  });
+function SidebarCard({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="flex items-center justify-between gap-2">
-      <Link
-        to="/perfil/$username"
-        params={{ username: profile.username }}
-        className="flex items-center gap-2 min-w-0 hover:underline"
-      >
-        <Avatar profile={profile} size={32} />
-        <span className="text-sm font-medium truncate">{profile.display_name}</span>
-      </Link>
-      <div className="flex gap-1 shrink-0">
-        <button
-          onClick={() => respond.mutate(true)}
-          className="text-[10px] font-semibold uppercase tracking-wider bg-primary text-primary-foreground px-2 py-1 rounded-md hover:bg-primary-hover"
-        >
-          OK
-        </button>
-        <button
-          onClick={() => respond.mutate(false)}
-          className="text-[10px] font-semibold uppercase tracking-wider bg-secondary text-secondary-foreground px-2 py-1 rounded-md hover:bg-muted"
-        >
-          No
-        </button>
-      </div>
-    </div>
+    <section className="bg-card p-3 rounded-2xl ring-1 ring-border shadow-card">
+      <h4 className="text-[13px] font-bold text-[#2F5FA7] mb-3 border-b border-border pb-2">
+        {title}
+      </h4>
+      <div className="space-y-2">{children}</div>
+    </section>
   );
 }
 
@@ -383,25 +508,24 @@ function SuggestionRow({
   });
   return (
     <div className="flex items-center justify-between gap-2">
-      <Link
-        to="/perfil/$username"
-        params={{ username: profile.username }}
-        className="flex items-center gap-2 min-w-0 hover:underline"
-      >
+      <div className="flex items-center gap-2 min-w-0">
         <Avatar profile={profile} size={32} />
         <div className="flex flex-col min-w-0">
-          <span className="text-[13px] font-medium leading-none truncate">
+          <Link
+            to="/perfil/$username"
+            params={{ username: profile.username }}
+            className="text-[13px] font-medium text-[#2F5FA7] hover:underline truncate"
+          >
             {profile.display_name}
-          </span>
-          <span className="text-[11px] text-muted-foreground">@{profile.username}</span>
+          </Link>
         </div>
-      </Link>
+      </div>
       <button
         onClick={() => send.mutate()}
         disabled={send.isPending}
-        className="text-[11px] font-medium bg-secondary hover:bg-muted text-secondary-foreground px-2 py-1 rounded-md shrink-0"
+        className="text-[11px] font-medium bg-[#f1f3f6] border border-[#dbe0e8] hover:bg-[#e6eaf0] text-[#1c2331] px-2 py-1 rounded shrink-0 transition-colors"
       >
-        + Añadir
+        Añadir
       </button>
     </div>
   );

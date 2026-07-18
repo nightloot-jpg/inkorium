@@ -16,13 +16,23 @@ export type FeedPost = {
   like_count: number;
   comment_count: number;
   liked_by_me: boolean;
+  type: "status" | "photo" | "video" | "music" | "event" | "news";
+  video_url?: string;
+  youtube_id?: string;
+  youtube_title?: string;
+  youtube_channel?: string;
+  youtube_duration?: string;
+  news_title?: string;
+  news_content?: string;
+  event_id?: string;
+  event?: Record<string, unknown>; // To store joined event data if needed
 };
 
 export async function fetchFeed(currentUserId: string): Promise<FeedPost[]> {
   const { data: posts, error } = await supabase
     .from("posts")
     .select(
-      "id, content, image_url, created_at, author:profiles!posts_author_id_fkey(id, username, display_name, avatar_url)",
+      "id, content, image_url, created_at, type, video_url, youtube_id, youtube_title, youtube_channel, youtube_duration, news_title, news_content, event_id, author:profiles!posts_author_id_fkey(id, username, display_name, avatar_url), event:events!posts_event_id_fkey(*)",
     )
     .order("created_at", { ascending: false })
     .limit(50);
@@ -49,6 +59,16 @@ export async function fetchFeed(currentUserId: string): Promise<FeedPost[]> {
     content: p.content,
     image_url: p.image_url,
     created_at: p.created_at,
+    type: p.type as "status" | "photo" | "video" | "music" | "event" | "news",
+    video_url: p.video_url,
+    youtube_id: p.youtube_id,
+    youtube_title: p.youtube_title,
+    youtube_channel: p.youtube_channel,
+    youtube_duration: p.youtube_duration,
+    news_title: p.news_title,
+    news_content: p.news_content,
+    event_id: p.event_id,
+    event: p.event,
     author: p.author as unknown as ProfileLite,
     like_count: likeCounts.get(p.id) ?? 0,
     comment_count: commentCounts.get(p.id) ?? 0,
