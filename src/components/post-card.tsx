@@ -123,18 +123,18 @@ export function PostCard({ post, currentUserId }: { post: FeedPost; currentUserI
         <div className="px-4 pb-4">
           <div className="rounded-xl ring-1 ring-border bg-accent/20 overflow-hidden">
             <div className="bg-[#2F5FA7] text-white p-3">
-              <h4 className="font-bold text-sm truncate">{post.event.name}</h4>
+              <h4 className="font-bold text-sm truncate">{String(post.event.name || '')}</h4>
             </div>
             <div className="p-3 text-sm space-y-2">
               <div className="flex gap-2 text-muted-foreground">
-                <CalendarIcon className="size-4 text-[#2F5FA7]" /> {post.event.event_date}
+                <CalendarIcon className="size-4 text-[#2F5FA7]" /> {String(post.event.event_date || '')}
               </div>
               <div className="flex gap-2 text-muted-foreground">
-                <Clock className="size-4 text-[#2F5FA7]" /> {post.event.event_time}
+                <Clock className="size-4 text-[#2F5FA7]" /> {String(post.event.event_time || '')}
               </div>
               <div className="flex gap-2 text-muted-foreground">
                 <MapPin className="size-4 text-[#2F5FA7]" />{" "}
-                {post.event.location || "Sin ubicación"}
+                {String(post.event.location || "Sin ubicación")}
               </div>
             </div>
           </div>
