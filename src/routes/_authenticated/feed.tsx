@@ -232,7 +232,7 @@ function FeedPage() {
           <p className="text-sm text-muted-foreground text-center py-8">Cargando muro...</p>
         )}
         {!isLoading && posts.length === 0 && (
-          <div className="bg-card p-8 rounded-2xl ring-1 ring-border text-center">
+          <div className="bg-card p-8 rounded-xl ring-1 ring-border shadow-sm text-center">
             <p className="text-sm text-muted-foreground">
               Aún no hay nada por aquí. ¡Publica lo primero!
             </p>
@@ -356,7 +356,7 @@ function Composer({
   });
 
   return (
-    <div className="bg-card ring-1 ring-border shadow-sm flex flex-col">
+    <div className="bg-card ring-1 ring-border shadow-sm flex flex-col rounded-xl overflow-hidden">
       <div className="p-3">
         <h3 className="text-[13px] font-bold text-[#2F5FA7] mb-2">¿Qué tienes en mente?</h3>
         <div className="space-y-3">
