@@ -17,9 +17,9 @@ export function CalendarCard({ userId }: { userId: string }) {
       if (!name || !date) throw new Error("Faltan campos obligatorios");
 
       const payload: any = {
-          author_id: userId,
-          content: name + " " + date + " " + location
-        };
+        author_id: userId,
+        content: name + " " + date + " " + location,
+      };
       const { data: evt, error: evtErr } = await supabase
         .from("posts")
         .insert(payload)
@@ -27,8 +27,6 @@ export function CalendarCard({ userId }: { userId: string }) {
         .single();
 
       if (evtErr) throw evtErr;
-
-
     },
     onSuccess: () => {
       setName("");
