@@ -238,9 +238,11 @@ function FeedPage() {
             </p>
           </div>
         )}
-        {posts.map((p) => (
-          <PostCard key={p.id} post={p} currentUserId={userId} />
-        ))}
+        <div className="flex flex-col gap-6">
+          {posts.map((p) => (
+            <PostCard key={p.id} post={p} currentUserId={userId} />
+          ))}
+        </div>
       </div>
 
       {/* Sidebar derecho */}
@@ -354,8 +356,9 @@ function Composer({
   });
 
   return (
-    <div className="bg-card p-4 rounded-2xl ring-1 ring-border shadow-card">
-      <div className="flex gap-4 border-b border-border pb-3 mb-3 overflow-x-auto no-scrollbar">
+    <div className="bg-transparent flex flex-col">
+      <div className="flex gap-4 mb-2 overflow-x-auto no-scrollbar items-center">
+        <span className="text-[13px] font-bold mr-2">¿Qué tienes en mente?</span>
         <ComposerTab
           icon={<Search className="size-4" />}
           label="Estado"
@@ -394,14 +397,14 @@ function Composer({
         />
       </div>
 
-      <div className="flex gap-3">
+      <div className="bg-card ring-1 ring-border shadow-sm p-4 flex gap-3">
         <Avatar profile={avatar} size={40} />
         <div className="flex-1 space-y-3">
           <textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
             placeholder={`¿Qué tienes en mente${avatar?.display_name ? `, ${avatar.display_name.split(" ")[0]}` : ""}?`}
-            className="w-full bg-secondary rounded-xl p-3 text-sm resize-none min-h-[80px] outline-none focus:ring-2 focus:ring-ring placeholder:text-muted-foreground"
+            className="w-full bg-transparent p-0 text-[14px] resize-none min-h-[40px] outline-none placeholder:text-muted-foreground/70"
           />
 
           {activeTab === "photo" && (
@@ -491,7 +494,7 @@ function Composer({
         <button
           onClick={() => publish.mutate()}
           disabled={publish.isPending || (activeTab === "status" && !content.trim())}
-          className="bg-[#2F5FA7] hover:bg-[#264d87] text-white text-[13px] font-bold py-2 px-6 rounded-lg transition-colors disabled:opacity-40 shadow-sm"
+          className="bg-[#f8f9fa] border border-[#dbe0e8] hover:bg-[#e6eaf0] text-[#2F5FA7] text-[13px] font-bold py-1 px-4 transition-colors disabled:opacity-40"
         >
           {publish.isPending ? "Publicando..." : "Publicar"}
         </button>
@@ -514,7 +517,7 @@ function ComposerTab({
   return (
     <button
       onClick={onClick}
-      className={`flex items-center gap-1.5 text-[13px] font-medium pb-1 border-b-2 transition-colors whitespace-nowrap ${active ? "text-[#2F5FA7] border-[#2F5FA7]" : "text-muted-foreground border-transparent hover:text-foreground"}`}
+      className={`flex items-center gap-1.5 text-[13px] font-medium transition-colors whitespace-nowrap ${active ? "text-foreground font-bold" : "text-[#2F5FA7] hover:underline"}`}
     >
       {icon} {label}
     </button>

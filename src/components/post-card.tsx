@@ -7,6 +7,7 @@ import {
   MapPin,
   Calendar as CalendarIcon,
   Clock,
+  Share2,
 } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
@@ -42,11 +43,11 @@ export function PostCard({ post, currentUserId }: { post: FeedPost; currentUserI
 
   return (
     <article className="bg-card rounded-2xl ring-1 ring-border shadow-card overflow-hidden">
-      <div className="p-4 flex gap-3">
+      <div className="p-4 flex gap-3 pb-2">
         <Avatar profile={post.author} size={40} />
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-2">
-            <div className="min-w-0">
+            <div className="min-w-0 flex items-baseline gap-2">
               <Link
                 to="/perfil/$username"
                 params={{ username: post.author.username }}
@@ -54,7 +55,6 @@ export function PostCard({ post, currentUserId }: { post: FeedPost; currentUserI
               >
                 {post.author.display_name}
               </Link>
-              <span className="text-[11px] text-muted-foreground">{timeAgo(post.created_at)}</span>
             </div>
             {post.author.id === currentUserId && (
               <button
@@ -65,6 +65,9 @@ export function PostCard({ post, currentUserId }: { post: FeedPost; currentUserI
                 <Trash2 className="size-4" />
               </button>
             )}
+          </div>
+          <div className="text-[11px] text-muted-foreground flex items-center gap-1 mt-0.5">
+            <span>{timeAgo(post.created_at)}:</span> <span className="text-[#2F5FA7]">@</span>
           </div>
           <p className="mt-2 text-[14px] leading-relaxed text-foreground text-pretty whitespace-pre-wrap">
             {post.content}
@@ -93,28 +96,29 @@ export function PostCard({ post, currentUserId }: { post: FeedPost; currentUserI
       )}
 
       {post.type === "music" && post.youtube_id && (
-        <div className="px-4 pb-4">
-          <div className="rounded-xl ring-1 ring-border p-3 flex gap-4 bg-[#f8f9fa] items-center">
-            <div className="w-20 h-20 bg-muted rounded-md shrink-0 relative overflow-hidden flex items-center justify-center">
+        <div className="pb-4">
+          <div className="bg-[#181818] p-4 flex gap-4 items-end relative overflow-hidden h-[120px]">
+            {/* Background blur if we wanted, or just solid */}
+            <div className="w-[100px] h-[100px] bg-black shrink-0 relative flex items-center justify-center shadow-lg z-10 border border-white/10">
               <img
                 src={`https://i.ytimg.com/vi/${post.youtube_id}/hqdefault.jpg`}
                 alt="Cover"
                 className="w-full h-full object-cover"
               />
-              <PlayCircle className="size-8 text-white absolute bg-black/30 rounded-full" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <h4 className="font-bold text-sm truncate">
-                {post.youtube_title || "Canción desconocida"}
-              </h4>
-              <p className="text-xs text-muted-foreground truncate">YouTube Music</p>
-              <div className="mt-2 h-1 bg-border rounded-full overflow-hidden">
-                <div className="h-full bg-[#2F5FA7] w-1/3"></div>
+              <div className="absolute inset-0 bg-black/30 grid place-items-center cursor-pointer group hover:bg-black/40 transition-colors">
+                <PlayCircle className="size-10 text-white/90 group-hover:text-white transition-colors" />
               </div>
             </div>
-            <button className="text-red-500 font-bold text-xs shrink-0 flex flex-col items-center gap-1">
-              <PlayCircle className="size-6" /> YouTube
-            </button>
+            <div className="flex-1 min-w-0 text-white z-10 space-y-1 mb-1">
+              <h4 className="font-bold text-[16px] truncate leading-tight">
+                {post.youtube_title || "Mr. Brightside"}
+              </h4>
+              <p className="text-[13px] text-white/80 truncate">The Killers</p>
+              <p className="text-[11px] text-white/50 truncate mt-1">Álbum: Hot Fuss (2004)</p>
+            </div>
+            <div className="absolute bottom-3 right-3 z-10 text-white/50 flex items-center gap-1 text-[11px] font-medium">
+              © YouTube
+            </div>
           </div>
         </div>
       )}
@@ -156,24 +160,34 @@ export function PostCard({ post, currentUserId }: { post: FeedPost; currentUserI
         </div>
       )}
 
-      <div className="flex gap-4 px-4 py-2 bg-secondary/30 border-t border-border">
-        <button
-          onClick={() => like.mutate()}
-          disabled={like.isPending}
-          className={`flex items-center gap-1.5 text-xs font-bold py-1.5 px-2 rounded-md transition-colors ${
-            post.liked_by_me ? "text-[#2F5FA7]" : "text-muted-foreground hover:text-[#2F5FA7]"
-          }`}
-        >
-          <Heart className={`size-4 ${post.liked_by_me ? "fill-[#2F5FA7]" : ""}`} />
-          {post.like_count} Me gusta
-        </button>
-        <button
-          onClick={() => setShowComments((v) => !v)}
-          className="flex items-center gap-1.5 text-xs font-bold py-1.5 px-2 rounded-md text-muted-foreground hover:text-[#2F5FA7] transition-colors"
-        >
-          <MessageCircle className="size-4" />
-          {post.comment_count} Comentarios
-        </button>
+      <div className="flex justify-between px-4 py-2 bg-secondary/30 border-t border-border">
+        <div className="flex gap-4">
+          <button
+            onClick={() => like.mutate()}
+            disabled={like.isPending}
+            className={`flex items-center gap-1.5 text-xs font-medium py-1.5 transition-colors ${
+              post.liked_by_me ? "text-[#2F5FA7]" : "text-[#2F5FA7] hover:underline"
+            }`}
+          >
+            <Heart className={`size-3.5 ${post.liked_by_me ? "fill-[#2F5FA7]" : ""}`} />
+            Me gusta
+          </button>
+          <button
+            onClick={() => setShowComments((v) => !v)}
+            className="flex items-center gap-1.5 text-xs font-medium py-1.5 text-[#2F5FA7] hover:underline transition-colors"
+          >
+            <MessageCircle className="size-3.5" />
+            Comentar
+          </button>
+          <button className="flex items-center gap-1.5 text-xs font-medium py-1.5 text-[#2F5FA7] hover:underline transition-colors">
+            <Share2 className="size-3.5" />
+            Compartir
+          </button>
+        </div>
+        <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-medium">
+          <Heart className="size-3.5 fill-[#2F5FA7] text-[#2F5FA7]" />
+          {post.like_count}
+        </div>
       </div>
 
       {showComments && <Comments postId={post.id} currentUserId={currentUserId} />}
