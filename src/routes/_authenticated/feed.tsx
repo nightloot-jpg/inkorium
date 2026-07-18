@@ -11,6 +11,7 @@ import {
   MapPin,
   Search,
   Video,
+  Upload,
   Music,
   Calendar as CalendarIcon,
   Newspaper,
@@ -367,21 +368,39 @@ function Composer({
           />
 
           {activeTab === "photo" && (
-            <input
-              value={mediaUrl}
-              onChange={(e) => setMediaUrl(e.target.value)}
-              placeholder="URL de la imagen..."
-              className="w-full bg-secondary rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
-            />
+            <div className="flex gap-2">
+              <input
+                value={mediaUrl}
+                onChange={(e) => setMediaUrl(e.target.value)}
+                placeholder="URL de la imagen..."
+                className="flex-1 bg-secondary rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+              />
+              <button
+                type="button"
+                className="bg-secondary hover:bg-secondary/80 text-foreground px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 border border-border"
+              >
+                <Upload className="size-4" />
+                Subir
+              </button>
+            </div>
           )}
 
           {activeTab === "video" && (
-            <input
-              value={mediaUrl}
-              onChange={(e) => setMediaUrl(e.target.value)}
-              placeholder="URL del vídeo de YouTube..."
-              className="w-full bg-secondary rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
-            />
+            <div className="flex gap-2">
+              <input
+                value={mediaUrl}
+                onChange={(e) => setMediaUrl(e.target.value)}
+                placeholder="URL del vídeo de YouTube..."
+                className="flex-1 bg-secondary rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
+              />
+              <button
+                type="button"
+                className="bg-secondary hover:bg-secondary/80 text-foreground px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 border border-border"
+              >
+                <Upload className="size-4" />
+                Subir
+              </button>
+            </div>
           )}
 
           {activeTab === "music" && (
