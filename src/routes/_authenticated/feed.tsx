@@ -341,7 +341,7 @@ function Composer({
         payload.youtube_title = extraData.youtube_title;
       }
 
-      const { error } = await supabase.from("posts").insert(payload as any);
+      const { error } = await supabase.from("posts").insert(payload as never);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -356,54 +356,13 @@ function Composer({
   });
 
   return (
-    <div className="bg-transparent flex flex-col">
-      <div className="flex gap-4 mb-2 overflow-x-auto no-scrollbar items-center">
-        <span className="text-[13px] font-bold mr-2">¿Qué tienes en mente?</span>
-        <ComposerTab
-          icon={<Search className="size-4" />}
-          label="Estado"
-          active={activeTab === "status"}
-          onClick={() => setActiveTab("status")}
-        />
-        <ComposerTab
-          icon={<ImageIcon className="size-4" />}
-          label="Foto"
-          active={activeTab === "photo"}
-          onClick={() => setActiveTab("photo")}
-        />
-        <ComposerTab
-          icon={<Video className="size-4" />}
-          label="Vídeo"
-          active={activeTab === "video"}
-          onClick={() => setActiveTab("video")}
-        />
-        <ComposerTab
-          icon={<Music className="size-4" />}
-          label="Música"
-          active={activeTab === "music"}
-          onClick={() => setActiveTab("music")}
-        />
-        <ComposerTab
-          icon={<CalendarIcon className="size-4" />}
-          label="Evento"
-          active={activeTab === "event"}
-          onClick={() => setActiveTab("event")}
-        />
-        <ComposerTab
-          icon={<Newspaper className="size-4" />}
-          label="Noticia"
-          active={activeTab === "news"}
-          onClick={() => setActiveTab("news")}
-        />
-      </div>
-
-      <div className="bg-card ring-1 ring-border shadow-sm p-4 flex gap-3">
-        <Avatar profile={avatar} size={40} />
-        <div className="flex-1 space-y-3">
+    <div className="bg-card ring-1 ring-border shadow-sm flex flex-col">
+      <div className="p-3">
+        <h3 className="text-[13px] font-bold text-[#2F5FA7] mb-2">¿Qué tienes en mente?</h3>
+        <div className="space-y-3">
           <textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            placeholder={`¿Qué tienes en mente${avatar?.display_name ? `, ${avatar.display_name.split(" ")[0]}` : ""}?`}
             className="w-full bg-transparent p-0 text-[14px] resize-none min-h-[40px] outline-none placeholder:text-muted-foreground/70"
           />
 
@@ -490,14 +449,55 @@ function Composer({
         </div>
       </div>
 
-      <div className="flex justify-end mt-3">
-        <button
-          onClick={() => publish.mutate()}
-          disabled={publish.isPending || (activeTab === "status" && !content.trim())}
-          className="bg-[#f8f9fa] border border-[#dbe0e8] hover:bg-[#e6eaf0] text-[#2F5FA7] text-[13px] font-bold py-1 px-4 transition-colors disabled:opacity-40"
-        >
-          {publish.isPending ? "Publicando..." : "Publicar"}
-        </button>
+      <div className="bg-[#f1f3f6] border-t border-[#dbe0e8] px-3 py-2 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+        <div className="flex gap-4 overflow-x-auto no-scrollbar items-center">
+          <ComposerTab
+            icon={<Search className="size-4" />}
+            label="Estado"
+            active={activeTab === "status"}
+            onClick={() => setActiveTab("status")}
+          />
+          <ComposerTab
+            icon={<ImageIcon className="size-4" />}
+            label="Foto"
+            active={activeTab === "photo"}
+            onClick={() => setActiveTab("photo")}
+          />
+          <ComposerTab
+            icon={<Music className="size-4" />}
+            label="Música"
+            active={activeTab === "music"}
+            onClick={() => setActiveTab("music")}
+          />
+          <ComposerTab
+            icon={<Video className="size-4" />}
+            label="Vídeo"
+            active={activeTab === "video"}
+            onClick={() => setActiveTab("video")}
+          />
+          <ComposerTab
+            icon={<CalendarIcon className="size-4" />}
+            label="Evento"
+            active={activeTab === "event"}
+            onClick={() => setActiveTab("event")}
+          />
+          <ComposerTab
+            icon={<Newspaper className="size-4" />}
+            label="Noticia"
+            active={activeTab === "news"}
+            onClick={() => setActiveTab("news")}
+          />
+        </div>
+
+        <div className="flex justify-end shrink-0">
+          <button
+            onClick={() => publish.mutate()}
+            disabled={publish.isPending || (activeTab === "status" && !content.trim())}
+            className="bg-[#f8f9fa] border border-[#dbe0e8] hover:bg-[#e6eaf0] text-[#2F5FA7] text-[13px] font-bold py-1 px-4 transition-colors disabled:opacity-40"
+          >
+            {publish.isPending ? "Publicando..." : "Publicar"}
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -517,7 +517,7 @@ function ComposerTab({
   return (
     <button
       onClick={onClick}
-      className={`flex items-center gap-1.5 text-[13px] font-medium transition-colors whitespace-nowrap ${active ? "text-foreground font-bold" : "text-[#2F5FA7] hover:underline"}`}
+      className={`flex items-center gap-1.5 text-[12px] font-medium transition-colors whitespace-nowrap px-2 py-1 rounded-md ${active ? "bg-white border border-[#dbe0e8] text-foreground font-bold shadow-sm" : "text-[#2F5FA7] hover:bg-black/5"}`}
     >
       {icon} {label}
     </button>
