@@ -18,6 +18,7 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
           --rdp-day-width: 2.5rem;
           --rdp-outline-color: transparent;
           --rdp-background-color: transparent;
+          width: 100%;
         }
 
         .rdp-month_grid {
@@ -26,9 +27,9 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
         }
 
         .rdp-weekday {
-          color: #111827;
+          color: #4b5563;
           font-weight: bold;
-          font-size: 14px;
+          font-size: 11px;
           text-transform: capitalize;
           border-bottom: 1px solid #e6eaf0;
           padding: 0.5rem 0;
@@ -75,43 +76,32 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
           color: #00aeff;
         }
 
-        .rdp-nav {
-          display: flex;
-          justify-content: flex-start;
-          gap: 0.5rem;
-        }
-
         .rdp-month_caption {
           font-weight: bold;
           color: #2F5FA7;
           display: flex;
           justify-content: center;
+          align-items: center;
           margin-bottom: 1rem;
+          position: relative;
         }
 
-        /* The user wants arrows at the bottom. We might need to hide default nav and create custom footer if we really need it at bottom left, or we can just keep them together. Let's see if we can use CSS flex order to move the nav to the bottom */
-        .rdp-month {
-          display: flex;
-          flex-direction: column;
-        }
-
-        .rdp-month_grid {
-          order: 2;
+        .rdp-caption_label {
+          margin: 0;
+          text-align: center;
         }
 
         .rdp-nav {
-          order: 3;
-          margin-top: 0.5rem;
+          position: absolute;
+          right: 0;
+          top: 0;
+          display: flex;
+          gap: 0.25rem;
         }
-
-        .rdp-month_caption {
-          order: 1;
-        }
-
       `}</style>
       <DayPicker
         showOutsideDays={showOutsideDays}
-        className={className}
+        className={`w-full ${className || ""}`}
         components={{
           Chevron: (props) => {
             if (props.orientation === "left") {
