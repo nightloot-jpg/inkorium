@@ -25,15 +25,6 @@ function ProfilePage() {
   const { userId } = AuthRoute.useRouteContext();
   const qc = useQueryClient();
 
-  useEffect(() => {
-    if (profile && profile.id !== userId) {
-      // Increment visit count for the profile
-      supabase.rpc("increment_visit_count", { profile_id: profile.id }).then(({ error }) => {
-        if (error) console.error("Error incrementing view count:", error);
-      });
-    }
-  }, [profile?.id, userId]);
-
   const { data: profile, isLoading } = useQuery({
     queryKey: ["profile", username],
     queryFn: async () => {
@@ -51,12 +42,14 @@ function ProfilePage() {
   useEffect(() => {
     if (profile && profile.id !== userId) {
       // Increment visit count for the profile
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      supabase.rpc("increment_visit_count" as any, { profile_id: profile.id }).then(({ error }) => {
+      (supabase.rpc as unknown as { (rpc: string, args: unknown): Promise<{ error: unknown }> })(
+        "increment_visit_count",
+        { profile_id: profile.id },
+      ).then(({ error }) => {
         if (error) console.error("Error incrementing view count:", error);
       });
     }
-  }, [profile?.id, userId]);
+  }, [profile, profile?.id, userId]);
 
   const isMe = profile?.id === userId;
 

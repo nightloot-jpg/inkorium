@@ -19,6 +19,12 @@ import {
   ChevronDown,
   ArrowRight,
 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
 import { Route as AuthRoute } from "./route";
 
@@ -35,7 +41,7 @@ function FeedPage() {
       const { data } = await supabase
         .from("profiles")
         .select(
-          "id, username, display_name, avatar_url, bio, status_message, online_status, visits_count",
+          "id, username, display_name, avatar_url, bio, status_message, online_status, visits_count, location",
         )
         .eq("id", userId)
         .single();
@@ -170,20 +176,52 @@ function FeedPage() {
           </div>
           <div className="border-t border-[#f1f3f6] p-4 flex flex-col gap-3">
             <div className="flex items-center gap-2 cursor-pointer w-fit group relative">
-              <div
-                className={`size-2 rounded-full shrink-0 ${me?.online_status === "ocupado" ? "bg-red-500" : me?.online_status === "ausente" ? "bg-yellow-500" : me?.online_status === "desconectado" ? "bg-gray-400" : "bg-online"}`}
-              />
-              <select
-                value={me?.online_status || "online"}
-                onChange={(e) => updateOnlineStatus.mutate(e.target.value)}
-                className="text-[13px] text-muted-foreground font-medium bg-transparent outline-none cursor-pointer group-hover:text-foreground transition-colors appearance-none pr-4"
-              >
-                <option value="online">En línea</option>
-                <option value="ocupado">Ocupado</option>
-                <option value="ausente">Ausente</option>
-                <option value="desconectado">Desconectado</option>
-              </select>
-              <ChevronDown className="size-3 absolute right-0 pointer-events-none text-muted-foreground group-hover:text-foreground transition-colors" />
+              <DropdownMenu>
+                <DropdownMenuTrigger className="flex items-center gap-1.5 outline-none group">
+                  <div
+                    className={`size-2 rounded-full shrink-0 ${me?.online_status === "ocupado" ? "bg-red-500" : me?.online_status === "ausente" ? "bg-yellow-500" : me?.online_status === "desconectado" ? "bg-gray-400" : "bg-online"}`}
+                  />
+                  <span className="text-[13px] text-muted-foreground font-medium group-hover:text-foreground transition-colors">
+                    {me?.online_status === "ocupado"
+                      ? "Ocupado"
+                      : me?.online_status === "ausente"
+                        ? "Ausente"
+                        : me?.online_status === "desconectado"
+                          ? "Desconectado"
+                          : "En línea"}
+                  </span>
+                  <ChevronDown className="size-3 text-muted-foreground group-hover:text-foreground transition-colors" />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  align="start"
+                  className="w-[180px] bg-white border border-[#dbe0e8] shadow-sm rounded-none p-0 text-[13px]"
+                >
+                  <DropdownMenuItem
+                    onClick={() => updateOnlineStatus.mutate("online")}
+                    className="rounded-none cursor-pointer hover:bg-[#2F5FA7] hover:text-white focus:bg-[#2F5FA7] focus:text-white px-3 py-1.5 flex items-center gap-2"
+                  >
+                    <div className="size-2 rounded-full shrink-0 bg-online" /> En línea
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => updateOnlineStatus.mutate("ocupado")}
+                    className="rounded-none cursor-pointer hover:bg-[#2F5FA7] hover:text-white focus:bg-[#2F5FA7] focus:text-white px-3 py-1.5 flex items-center gap-2"
+                  >
+                    <div className="size-2 rounded-full shrink-0 bg-red-500" /> Ocupado
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => updateOnlineStatus.mutate("ausente")}
+                    className="rounded-none cursor-pointer hover:bg-[#2F5FA7] hover:text-white focus:bg-[#2F5FA7] focus:text-white px-3 py-1.5 flex items-center gap-2"
+                  >
+                    <div className="size-2 rounded-full shrink-0 bg-yellow-500" /> Ausente
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => updateOnlineStatus.mutate("desconectado")}
+                    className="rounded-none cursor-pointer hover:bg-[#2F5FA7] hover:text-white focus:bg-[#2F5FA7] focus:text-white px-3 py-1.5 flex items-center gap-2"
+                  >
+                    <div className="size-2 rounded-full shrink-0 bg-gray-400" /> Desconectado
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
             <input
               type="text"
@@ -198,9 +236,28 @@ function FeedPage() {
               placeholder="¿Qué estás haciendo?"
               className="w-full bg-secondary rounded px-3 py-2 text-[13px] outline-none focus:ring-1 focus:ring-[#2F5FA7] border border-border/50 placeholder:text-muted-foreground/70 transition-shadow"
             />
-            <button className="flex items-center gap-1.5 text-[#2F5FA7] hover:underline text-left font-medium text-[13px]">
+            <button
+              onClick={() => {
+                const loc = window.prompt("¿Dónde estás?");
+                if (loc) {
+                  // Update location in profile
+                  supabase
+                    .from("profiles")
+                    .update({ location: loc })
+                    .eq("id", userId)
+                    .then(({ error }) => {
+                      if (error) toast.error("Error al actualizar ubicación");
+                      else {
+                        toast.success("Ubicación actualizada");
+                        queryClient.invalidateQueries({ queryKey: ["me", userId] });
+                      }
+                    });
+                }
+              }}
+              className="flex items-center gap-1.5 text-[#2F5FA7] hover:underline text-left font-medium text-[13px]"
+            >
               <MapPin className="size-4 shrink-0" />
-              <span className="truncate">Añadir ubicación</span>
+              <span className="truncate">{me?.location || "Añadir ubicación"}</span>
             </button>
           </div>
         </div>
