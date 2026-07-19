@@ -16,6 +16,7 @@ export function CalendarCard({ userId }: { userId: string }) {
     mutationFn: async () => {
       if (!name || !date) throw new Error("Faltan campos obligatorios");
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const payload: any = {
         author_id: userId,
         content: name + " " + date + " " + location,

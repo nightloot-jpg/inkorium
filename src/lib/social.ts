@@ -54,26 +54,30 @@ export async function fetchFeed(currentUserId: string): Promise<FeedPost[]> {
   );
   const myLiked = new Set(myLikesRes.data?.map((l) => l.post_id) ?? []);
 
-  return posts.map((p: any) => ({
-    id: p.id,
-    content: p.content,
-    image_url: p.image_url,
-    created_at: p.created_at,
-    type: (p.type || "status") as "status" | "photo" | "video" | "music" | "event" | "news",
-    video_url: p.video_url,
-    youtube_id: p.youtube_id,
-    youtube_title: p.youtube_title,
-    youtube_channel: p.youtube_channel,
-    youtube_duration: p.youtube_duration,
-    news_title: p.news_title,
-    news_content: p.news_content,
-    event_id: p.event_id,
-    event: p.event,
-    author: p.author as unknown as ProfileLite,
-    like_count: likeCounts.get(p.id) ?? 0,
-    comment_count: commentCounts.get(p.id) ?? 0,
-    liked_by_me: myLiked.has(p.id),
-  }));
+  return posts.map(
+    (
+      p: any, // eslint-disable-line @typescript-eslint/no-explicit-any
+    ) => ({
+      id: p.id,
+      content: p.content,
+      image_url: p.image_url,
+      created_at: p.created_at,
+      type: (p.type || "status") as "status" | "photo" | "video" | "music" | "event" | "news",
+      video_url: p.video_url,
+      youtube_id: p.youtube_id,
+      youtube_title: p.youtube_title,
+      youtube_channel: p.youtube_channel,
+      youtube_duration: p.youtube_duration,
+      news_title: p.news_title,
+      news_content: p.news_content,
+      event_id: p.event_id,
+      event: p.event,
+      author: p.author as unknown as ProfileLite,
+      like_count: likeCounts.get(p.id) ?? 0,
+      comment_count: commentCounts.get(p.id) ?? 0,
+      liked_by_me: myLiked.has(p.id),
+    }),
+  );
 }
 
 export function timeAgo(iso: string): string {
