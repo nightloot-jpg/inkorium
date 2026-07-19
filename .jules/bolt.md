@@ -21,3 +21,9 @@
 **Learning:** It is crucial to read the specific visual reference provided for each step of a multi-stage request. In this stage, the user provided a different layout reference which required restoring the calendar navigation and standard text headers instead of dots. Combining visual structural changes (CSS) with functional changes (conditional rendering of inputs only when a date is selected) ensures the component aligns precisely with user intent.
 
 **Action:** Re-evaluate visual references with every new request rather than carrying forward assumptions from previous iterations. Use conditional rendering in React to naturally hide/show form fields based on state changes (e.g., date selection).
+
+## 2026-07-19 - Calendar Customization & Localization
+
+**Learning:** When customizing `react-day-picker` components to match detailed visual specs with specific localization requirements (like Spanish month names and abbreviated day headers), utilizing `date-fns` formatters is highly effective. Combining these formatters with targeted CSS variables (`--rdp-*`) allows for precise replication of custom designs like dark mode accents, circular day selections, and dot indicators for events, all without breaking the component's underlying accessibility.
+
+**Action:** Whenever tasked with aligning a third-party UI component exactly with a provided screenshot, inspect both the layout (CSS structure) and the text formatting (locale/date manipulation). Use `date-fns` alongside custom CSS to achieve a perfect visual match while maintaining structural integrity.
