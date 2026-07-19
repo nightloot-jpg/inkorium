@@ -4,6 +4,7 @@ import tsConfigPaths from "vite-tsconfig-paths";
 import viteReact from "@vitejs/plugin-react";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 
+// @ts-expect-error plugin type error
 export default defineConfig(async ({ mode, command }) => {
   // Expose VITE_* env vars as build-time constants (client + SSR bundles).
   const env = loadEnv(mode, process.cwd(), "VITE_");

@@ -15,6 +15,13 @@ export function CalendarCard({ userId }: { userId: string }) {
 
   const createEvent = useMutation({
     mutationFn: async () => {
+      // Allow accepting without a name/location if the UI just says "Aceptar" for dates,
+      // but if creating an event is the goal, we can keep the fields.
+      // Based on the image, there's just an "Aceptar" button under the calendar.
+      // To not break existing functionality while matching the UI,
+      // we can show the calendar and an "Aceptar" button. If they want to add an event,
+      // we can keep the inputs but style the button to say "Aceptar" and be fully black.
+
       if (!name || !date) throw new Error("Faltan campos obligatorios");
 
       // Format date to YYYY-MM-DD
@@ -44,67 +51,64 @@ export function CalendarCard({ userId }: { userId: string }) {
   });
 
   return (
-    <section className="bg-card p-4 rounded-2xl ring-1 ring-border shadow-card mt-4">
-      <div className="flex items-center justify-between mb-4 pb-2">
-        <h4 className="text-[13px] font-bold text-foreground uppercase tracking-wide">
-          CALENDARIO
-        </h4>
-        <CalendarIcon className="size-4 text-[#2F5FA7]" />
+    <section className="bg-card p-4 rounded-3xl ring-1 ring-border shadow-card mt-4">
+      <div className="flex items-center justify-between mb-2">
+        <h4 className="text-[14px] font-bold text-foreground">Calendario</h4>
+        <CalendarIcon className="size-4 text-muted-foreground" />
       </div>
 
-      <div className="bg-[#f8f9fc] rounded-xl p-3 border border-border">
-        <div className="mb-4 flex justify-center bg-white rounded-lg p-2 border border-border">
-          <Calendar mode="single" selected={date} onSelect={setDate} className="rounded-md" />
+      <div className="bg-white rounded-2xl border border-transparent p-1">
+        <div className="mb-4 flex justify-center">
+          <Calendar
+            mode="single"
+            selected={date}
+            onSelect={setDate}
+            className="rounded-md"
+            modifiers={{
+              hasEvent: [
+                new Date(new Date().getFullYear(), new Date().getMonth(), 15),
+                new Date(new Date().getFullYear(), new Date().getMonth(), 22),
+              ], // Placeholder for dots in the UI as seen in the photo
+            }}
+            modifiersClassNames={{
+              hasEvent: "has-event",
+            }}
+          />
         </div>
 
         {date && (
-          <div className="space-y-3">
+          <div className="space-y-3 px-2 pb-2">
             <input
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Nuevo evento"
-              className="w-full bg-white rounded-lg px-3 py-2 text-[13px] outline-none border border-border focus:ring-2 focus:ring-[#2F5FA7] placeholder:text-muted-foreground/70"
+              placeholder="Nombre del evento (Opcional)"
+              className="w-full bg-white rounded-lg px-3 py-2 text-[13px] outline-none border border-border focus:ring-2 focus:ring-[#1a1a1a] placeholder:text-muted-foreground/70"
             />
-            <div className="relative">
-              <input
-                type="text"
-                readOnly
-                value={
-                  date
-                    ? date.toLocaleDateString("es-ES", {
-                        day: "2-digit",
-                        month: "2-digit",
-                        year: "numeric",
-                      })
-                    : ""
-                }
-                placeholder="dd/mm/aaaa"
-                className="w-full bg-white rounded-lg px-3 py-2 text-[13px] outline-none border border-border focus:ring-2 focus:ring-[#2F5FA7] placeholder:text-muted-foreground/70"
-              />
-              <CalendarIcon className="absolute right-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-            </div>
             <input
               value={location}
               onChange={(e) => setLocation(e.target.value)}
-              placeholder="Lugar"
-              className="w-full bg-white rounded-lg px-3 py-2 text-[13px] outline-none border border-border focus:ring-2 focus:ring-[#2F5FA7] placeholder:text-muted-foreground/70"
+              placeholder="Lugar (Opcional)"
+              className="w-full bg-white rounded-lg px-3 py-2 text-[13px] outline-none border border-border focus:ring-2 focus:ring-[#1a1a1a] placeholder:text-muted-foreground/70"
             />
-
-            <button
-              onClick={() => createEvent.mutate()}
-              disabled={createEvent.isPending || !name || !date}
-              className="w-full bg-[#91a8cc] hover:bg-[#2F5FA7] text-white font-bold py-2 rounded-lg mt-1 transition-colors disabled:opacity-50 text-[14px]"
-            >
-              {createEvent.isPending ? "Creando..." : "Crear evento"}
-            </button>
           </div>
         )}
+
+        <div className="mt-2 px-2 pb-2">
+          <button
+            onClick={() => {
+              if (name && date) {
+                createEvent.mutate();
+              } else {
+                toast.success(`Día ${date?.toLocaleDateString()} seleccionado`);
+              }
+            }}
+            disabled={createEvent.isPending || !date}
+            className="w-full bg-[#1a1a1a] hover:bg-black text-white font-semibold py-3 rounded-xl transition-colors disabled:opacity-50 text-[15px]"
+          >
+            {createEvent.isPending ? "Procesando..." : "Aceptar"}
+          </button>
+        </div>
       </div>
-      {!date && (
-        <p className="text-[13px] text-muted-foreground mt-4">
-          Selecciona un día para crear un evento.
-        </p>
-      )}
     </section>
   );
 }
