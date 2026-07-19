@@ -32,3 +32,6 @@
 **Learning:** When applying massive CSS modifications to a generic component like `react-day-picker`, it's easier to use native CSS variables exposed by the library while overriding class styles directly rather than relying solely on Tailwind utility classes if the library has a specific nested structure.
 
 **Action:** Before redesigning component libraries, examine their CSS variable API (`.rdp-root { --rdp-accent-color: ... }`) to reduce the amount of `!important` overriding required.
+## 2024-07-19 - [Implement inline event creation form in calendar]
+**Learning:** Translating mobile-first UI mockups directly to an existing codebase requires understanding the context boundary (in this case, dropping the floating absolute UI for an inline layout within the calendar boundaries, and using appropriate standard icons).
+**Action:** Always test layout positioning closely when transitioning absolute layered components into relative flex flow to prevent UI jumps or z-index overflow.
