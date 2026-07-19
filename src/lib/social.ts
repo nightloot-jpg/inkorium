@@ -29,10 +29,12 @@ export type FeedPost = {
 };
 
 export async function fetchFeed(currentUserId: string): Promise<FeedPost[]> {
+  // ⚡ Bolt Optimization: Use aggregate counts in a single query
+  // Reduces network roundtrips from 4 to 2, and drastically reduces payload size by avoiding downloading all likes and comments rows.
   const { data: posts, error } = await supabase
     .from("posts")
     .select(
-      "id, content, image_url, type, video_url, youtube_id, youtube_title, youtube_channel, youtube_duration, news_title, news_content, event_id, event, created_at, author:profiles!posts_author_id_fkey(id, username, display_name, avatar_url)",
+      "id, content, image_url, type, video_url, youtube_id, youtube_title, youtube_channel, youtube_duration, news_title, news_content, event_id, event, created_at, author:profiles!posts_author_id_fkey(id, username, display_name, avatar_url), likes:likes(count), comments:comments(count)",
     )
     .order("created_at", { ascending: false })
     .limit(50);
@@ -40,19 +42,13 @@ export async function fetchFeed(currentUserId: string): Promise<FeedPost[]> {
   if (!posts || posts.length === 0) return [];
 
   const ids = posts.map((p) => p.id);
-  const [likesRes, commentsRes, myLikesRes] = await Promise.all([
-    supabase.from("likes").select("post_id").in("post_id", ids),
-    supabase.from("comments").select("post_id").in("post_id", ids),
-    supabase.from("likes").select("post_id").in("post_id", ids).eq("user_id", currentUserId),
-  ]);
+  const { data: myLikesRes } = await supabase
+    .from("likes")
+    .select("post_id")
+    .in("post_id", ids)
+    .eq("user_id", currentUserId);
 
-  const likeCounts = new Map<string, number>();
-  likesRes.data?.forEach((l) => likeCounts.set(l.post_id, (likeCounts.get(l.post_id) ?? 0) + 1));
-  const commentCounts = new Map<string, number>();
-  commentsRes.data?.forEach((c) =>
-    commentCounts.set(c.post_id, (commentCounts.get(c.post_id) ?? 0) + 1),
-  );
-  const myLiked = new Set(myLikesRes.data?.map((l) => l.post_id) ?? []);
+  const myLiked = new Set(myLikesRes?.map((l) => l.post_id) ?? []);
 
   return posts.map(
     (
@@ -73,8 +69,8 @@ export async function fetchFeed(currentUserId: string): Promise<FeedPost[]> {
       event_id: p.event_id,
       event: p.event,
       author: p.author as unknown as ProfileLite,
-      like_count: likeCounts.get(p.id) ?? 0,
-      comment_count: commentCounts.get(p.id) ?? 0,
+      like_count: p.likes?.[0]?.count ?? 0,
+      comment_count: p.comments?.[0]?.count ?? 0,
       liked_by_me: myLiked.has(p.id),
     }),
   );
