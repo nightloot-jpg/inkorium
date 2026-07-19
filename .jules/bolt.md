@@ -50,6 +50,11 @@
 **Action:** When performing full-page overhauls, structure the component hierarchically and modularly. Use `lg:grid` for complex structural boundaries.
 
 ## 2024-05-18 - Supabase Schema Mapping
-**Learning:** Hard-coded select statements in `.select("foo, bar")` are strictly evaluated by PostgREST at runtime, not just at compile-time. If you add columns in a mockup UI, you *must not* fetch them from the database API unless a corresponding SQL migration has run, otherwise it returns 400 Bad Request and breaks the route.
+
+**Learning:** Hard-coded select statements in `.select("foo, bar")` are strictly evaluated by PostgREST at runtime, not just at compile-time. If you add columns in a mockup UI, you _must not_ fetch them from the database API unless a corresponding SQL migration has run, otherwise it returns 400 Bad Request and breaks the route.
 **Action:** Always check `types.ts` as the absolute source of truth for safe columns, and avoid querying placeholder/mocked fields against the database API.
+
 ## 2026-07-19 - Added cover_url to Supabase Profiles\n\n**Learning:** The frontend code (`perfil.$username.tsx`) and TypeScript definitions (`types.ts`) expected a `cover_url` field in the `profiles` table, but it was missing from the Supabase database schema. This mismatch caused a 400 Bad Request error when fetching the profile, preventing the profile page from loading entirely.\n\n**Action:** Applied a database migration to add the missing `cover_url` column (`text`) to the `profiles` table. When encountering 400 Bad Request errors on data fetching from Supabase, immediately verify that the requested columns actually exist in the database schema.
+## 2024-03-22 - [Profile Status Implementation]
+**Learning:** Added dynamic state fields directly within existing Supabase mappings requiring precise type matching to pass `tsc`. Popovers handle their own internal state to prevent messy parent component states.
+**Action:** Always verify `profiles` type compatibility before writing the query to ensure `tsc` doesn’t bark about `unknown` conversions.
