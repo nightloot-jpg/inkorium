@@ -234,31 +234,39 @@ function FeedPage() {
                 }
               }}
               placeholder="¿Qué estás haciendo?"
-              className="w-full bg-secondary rounded px-3 py-2 text-[13px] outline-none focus:ring-1 focus:ring-[#2F5FA7] border border-border/50 placeholder:text-muted-foreground/70 transition-shadow"
+              className="w-full bg-transparent text-[13px] outline-none placeholder:text-muted-foreground placeholder:italic italic text-muted-foreground"
             />
-            <button
-              onClick={() => {
-                const loc = window.prompt("¿Dónde estás?");
-                if (loc) {
-                  // Update location in profile
-                  supabase
-                    .from("profiles")
-                    .update({ location: loc })
-                    .eq("id", userId)
-                    .then(({ error }) => {
-                      if (error) toast.error("Error al actualizar ubicación");
-                      else {
-                        toast.success("Ubicación actualizada");
-                        queryClient.invalidateQueries({ queryKey: ["me", userId] });
-                      }
-                    });
-                }
-              }}
-              className="flex items-center gap-1.5 text-[#2F5FA7] hover:underline text-left font-medium text-[13px]"
-            >
-              <MapPin className="size-4 shrink-0" />
-              <span className="truncate">{me?.location || "Añadir ubicación"}</span>
-            </button>
+
+            <div className="flex items-start gap-1.5 text-[#2F5FA7] font-medium text-[13px] mt-1">
+              <MapPin className="size-4 shrink-0 mt-0.5" />
+              <input
+                type="text"
+                placeholder="Añadir ubicación"
+                defaultValue={me?.location || ""}
+                onBlur={(e) => {
+                  const loc = e.target.value.trim();
+                  if (loc !== (me?.location || "")) {
+                    supabase
+                      .from("profiles")
+                      .update({ location: loc })
+                      .eq("id", userId)
+                      .then(({ error }) => {
+                        if (error) toast.error("Error al actualizar ubicación");
+                        else {
+                          toast.success("Ubicación actualizada");
+                          queryClient.invalidateQueries({ queryKey: ["me", userId] });
+                        }
+                      });
+                  }
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.currentTarget.blur();
+                  }
+                }}
+                className="w-full bg-transparent outline-none placeholder:text-[#2F5FA7] hover:underline cursor-text truncate"
+              />
+            </div>
           </div>
         </div>
 

@@ -32,7 +32,7 @@ export async function fetchFeed(currentUserId: string): Promise<FeedPost[]> {
   const { data: posts, error } = await supabase
     .from("posts")
     .select(
-      "id, content, image_url, type, video_url, youtube_id, youtube_title, youtube_channel, youtube_duration, news_title, news_content, event_id, event, created_at, author:profiles!posts_author_id_fkey(id, username, display_name, avatar_url)",
+      "id, content, image_url, type, video_url, youtube_id, youtube_title, youtube_channel, youtube_duration, news_title, news_content, event_id, created_at, author:profiles!posts_author_id_fkey(id, username, display_name, avatar_url)",
     )
     .order("created_at", { ascending: false })
     .limit(50);
