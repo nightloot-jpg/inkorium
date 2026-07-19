@@ -164,6 +164,43 @@ export type Database = {
           },
         ];
       };
+
+      profile_visits: {
+        Row: {
+          id: string;
+          profile_id: string;
+          visitor_id: string;
+          visited_at: string;
+        };
+        Insert: {
+          id?: string;
+          profile_id: string;
+          visitor_id: string;
+          visited_at?: string;
+        };
+        Update: {
+          id?: string;
+          profile_id?: string;
+          visitor_id?: string;
+          visited_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "profile_visits_profile_id_fkey";
+            columns: ["profile_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "profile_visits_visitor_id_fkey";
+            columns: ["visitor_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       posts: {
         Row: {
           author_id: string;
@@ -236,6 +273,7 @@ export type Database = {
           status_message: string | null;
           online_status: string | null;
           visits_count: number | null;
+          age: number | null;
         };
         Insert: {
           avatar_url?: string | null;
@@ -249,6 +287,7 @@ export type Database = {
           status_message?: string | null;
           online_status?: string | null;
           visits_count?: number | null;
+          age?: number | null;
         };
         Update: {
           avatar_url?: string | null;
@@ -270,7 +309,19 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
-      [_ in never]: never;
+      record_visit: {
+        Args: {
+          p_profile_id: string;
+          p_visitor_id?: string;
+        };
+        Returns: undefined;
+      };
+      increment_visit_count: {
+        Args: {
+          profile_id: string;
+        };
+        Returns: undefined;
+      };
     };
     Enums: {
       friendship_status: "pending" | "accepted";
