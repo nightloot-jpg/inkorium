@@ -57,48 +57,54 @@ export function CalendarCard({ userId }: { userId: string }) {
           <Calendar mode="single" selected={date} onSelect={setDate} className="rounded-md" />
         </div>
 
-        <div className="space-y-3">
-          <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Nuevo evento"
-            className="w-full bg-white rounded-lg px-3 py-2 text-[13px] outline-none border border-border focus:ring-2 focus:ring-[#2F5FA7] placeholder:text-muted-foreground/70"
-          />
-          <div className="relative">
+        {date && (
+          <div className="space-y-3">
             <input
-              type="text"
-              readOnly
-              value={
-                date
-                  ? date.toLocaleDateString("es-ES", {
-                      day: "2-digit",
-                      month: "2-digit",
-                      year: "numeric",
-                    })
-                  : ""
-              }
-              placeholder="dd/mm/aaaa"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Nuevo evento"
               className="w-full bg-white rounded-lg px-3 py-2 text-[13px] outline-none border border-border focus:ring-2 focus:ring-[#2F5FA7] placeholder:text-muted-foreground/70"
             />
-            <CalendarIcon className="absolute right-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-          </div>
-          <input
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            placeholder="Lugar"
-            className="w-full bg-white rounded-lg px-3 py-2 text-[13px] outline-none border border-border focus:ring-2 focus:ring-[#2F5FA7] placeholder:text-muted-foreground/70"
-          />
+            <div className="relative">
+              <input
+                type="text"
+                readOnly
+                value={
+                  date
+                    ? date.toLocaleDateString("es-ES", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                      })
+                    : ""
+                }
+                placeholder="dd/mm/aaaa"
+                className="w-full bg-white rounded-lg px-3 py-2 text-[13px] outline-none border border-border focus:ring-2 focus:ring-[#2F5FA7] placeholder:text-muted-foreground/70"
+              />
+              <CalendarIcon className="absolute right-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+            </div>
+            <input
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              placeholder="Lugar"
+              className="w-full bg-white rounded-lg px-3 py-2 text-[13px] outline-none border border-border focus:ring-2 focus:ring-[#2F5FA7] placeholder:text-muted-foreground/70"
+            />
 
-          <button
-            onClick={() => createEvent.mutate()}
-            disabled={createEvent.isPending || !name || !date}
-            className="w-full bg-[#91a8cc] hover:bg-[#2F5FA7] text-white font-bold py-2 rounded-lg mt-1 transition-colors disabled:opacity-50 text-[14px]"
-          >
-            {createEvent.isPending ? "Creando..." : "Crear evento"}
-          </button>
-        </div>
+            <button
+              onClick={() => createEvent.mutate()}
+              disabled={createEvent.isPending || !name || !date}
+              className="w-full bg-[#91a8cc] hover:bg-[#2F5FA7] text-white font-bold py-2 rounded-lg mt-1 transition-colors disabled:opacity-50 text-[14px]"
+            >
+              {createEvent.isPending ? "Creando..." : "Crear evento"}
+            </button>
+          </div>
+        )}
       </div>
-      <p className="text-[13px] text-muted-foreground mt-4">Aún no hay eventos.</p>
+      {!date && (
+        <p className="text-[13px] text-muted-foreground mt-4">
+          Selecciona un día para crear un evento.
+        </p>
+      )}
     </section>
   );
 }

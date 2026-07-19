@@ -12,11 +12,11 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
     <>
       <style>{`
         .rdp-root {
-          --rdp-accent-color: #00aeff;
-          --rdp-accent-background-color: #00aeff;
+          --rdp-accent-color: transparent;
+          --rdp-accent-background-color: transparent;
           --rdp-day-height: 2.5rem;
           --rdp-day-width: 2.5rem;
-          --rdp-outline-color: #00aeff;
+          --rdp-outline-color: transparent;
           --rdp-background-color: transparent;
         }
 
@@ -26,46 +26,27 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
         }
 
         .rdp-weekday {
+          color: #111827;
+          font-weight: bold;
+          font-size: 14px;
+          text-transform: capitalize;
           border-bottom: 1px solid #e6eaf0;
-          color: transparent !important; /* Hide standard text */
-          position: relative;
-          padding-bottom: 0.5rem;
-        }
-
-        .rdp-weekday::before {
-          content: '';
-          display: block;
-          width: 6px;
-          height: 6px;
-          background-color: #d1d5db;
-          border-radius: 50%;
-          margin: 0 auto;
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-        }
-        .rdp-weekday:nth-child(6)::before,
-        .rdp-weekday:nth-child(7)::before {
-          background-color: #00aeff;
-        }
-
-        .rdp-week {
-          border-bottom: 1px solid #e6eaf0;
-        }
-
-        .rdp-week:last-child {
-          border-bottom: none;
+          padding: 0.5rem 0;
         }
 
         .rdp-day {
-          border-right: 1px solid #e6eaf0;
           font-weight: bold;
-          font-size: 13px;
+          font-size: 14px;
+          border-right: 1px solid #e6eaf0;
         }
-
         .rdp-day:last-child {
           border-right: none;
+        }
+        .rdp-week {
+          border-bottom: 1px solid #e6eaf0;
+        }
+        .rdp-week:last-child {
+          border-bottom: none;
         }
 
         .rdp-day_button {
@@ -76,7 +57,8 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
         }
 
         .rdp-day_button:hover:not([disabled]):not(.rdp-selected) {
-          background-color: #f1f3f6;
+          background-color: transparent;
+          color: #00aeff;
         }
 
         .rdp-outside {
@@ -89,17 +71,43 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
           font-weight: 800;
         }
 
+        .rdp-selected {
+          color: #00aeff;
+        }
+
         .rdp-nav {
           display: flex;
-          justify-content: space-between;
+          justify-content: flex-start;
+          gap: 0.5rem;
         }
 
         .rdp-month_caption {
           font-weight: bold;
           color: #2F5FA7;
-          display: none; /* User image shows no caption, maybe we should hide it or style it */
+          display: flex;
+          justify-content: center;
+          margin-bottom: 1rem;
         }
-        /* Wait, the user image shows the nav arrows at the bottom left, and the caption at top? No, the user image shows NO caption and just the grid, or a caption "July 2026" at the top and arrows at the bottom? The image has no top caption in the snippet, just days. Ah, the image provided does have a caption and arrows. Wait, let's look at the image again... Actually the image provided has "25 26 27 28 29 30 1...". It's just a grid. Let's hide the standard caption and put our own or just let it be. Wait, let's keep the standard caption if it's there. */
+
+        /* The user wants arrows at the bottom. We might need to hide default nav and create custom footer if we really need it at bottom left, or we can just keep them together. Let's see if we can use CSS flex order to move the nav to the bottom */
+        .rdp-month {
+          display: flex;
+          flex-direction: column;
+        }
+
+        .rdp-month_grid {
+          order: 2;
+        }
+
+        .rdp-nav {
+          order: 3;
+          margin-top: 0.5rem;
+        }
+
+        .rdp-month_caption {
+          order: 1;
+        }
+
       `}</style>
       <DayPicker
         showOutsideDays={showOutsideDays}
@@ -107,9 +115,9 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
         components={{
           Chevron: (props) => {
             if (props.orientation === "left") {
-              return <ChevronLeft className="h-4 w-4 text-[#2F5FA7]" {...props} />;
+              return <ChevronLeft className="h-5 w-5 text-black" strokeWidth={3} {...props} />;
             }
-            return <ChevronRight className="h-4 w-4 text-[#2F5FA7]" {...props} />;
+            return <ChevronRight className="h-5 w-5 text-black" strokeWidth={3} {...props} />;
           },
         }}
         {...props}
