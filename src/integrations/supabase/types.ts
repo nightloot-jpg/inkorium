@@ -180,7 +180,6 @@ export type Database = {
           news_title: string | null;
           news_content: string | null;
           event_id: string | null;
-          event: Record<string, unknown> | null;
         };
         Insert: {
           author_id: string;
@@ -197,7 +196,6 @@ export type Database = {
           news_title: string | null;
           news_content: string | null;
           event_id: string | null;
-          event: Record<string, unknown> | null;
         };
         Update: {
           author_id?: string;
@@ -214,7 +212,6 @@ export type Database = {
           news_title: string | null;
           news_content: string | null;
           event_id: string | null;
-          event: Record<string, unknown> | null;
         };
         Relationships: [
           {
