@@ -48,3 +48,7 @@
 
 **Learning:** Rebuilding a full responsive layout that mimics a complex 3-column legacy UI involves integrating real data queries into heavily structured flex/grid containers. Ensure database queries map accurately to types and we avoid querying non-existent columns unless type-checked.
 **Action:** When performing full-page overhauls, structure the component hierarchically and modularly. Use `lg:grid` for complex structural boundaries.
+
+## 2024-05-18 - Supabase Schema Mapping
+**Learning:** Hard-coded select statements in `.select("foo, bar")` are strictly evaluated by PostgREST at runtime, not just at compile-time. If you add columns in a mockup UI, you *must not* fetch them from the database API unless a corresponding SQL migration has run, otherwise it returns 400 Bad Request and breaks the route.
+**Action:** Always check `types.ts` as the absolute source of truth for safe columns, and avoid querying placeholder/mocked fields against the database API.
