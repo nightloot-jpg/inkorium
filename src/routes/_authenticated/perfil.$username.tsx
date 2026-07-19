@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { fetchFeed, initials } from "@/lib/social";
 import { PostCard, Avatar } from "@/components/post-card";
 import { Route as AuthRoute } from "./route";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   UserPlus,
   MessageCircle,
@@ -30,9 +30,13 @@ import {
   Quote,
   Cake,
   Globe,
+  Camera,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Link } from "@tanstack/react-router";
+import ReactCrop, { type Crop } from "react-image-crop";
+import "react-image-crop/dist/ReactCrop.css";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 export const Route = createFileRoute("/_authenticated/perfil/$username")({
   head: ({ params }) => ({ meta: [{ title: `${params.username} — Inkorium` }] }),
@@ -55,7 +59,9 @@ function ProfilePage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("profiles")
-        .select("id, username, display_name, bio, avatar_url, created_at")
+        .select(
+          "id, username, display_name, bio, avatar_url, cover_url, created_at, location, visits_count",
+        )
         .eq("username", username)
         .maybeSingle();
       if (error) throw error;
@@ -150,22 +156,32 @@ function ProfilePage() {
         <div className="space-y-4 hidden lg:block">
           {/* Profile Card */}
           <div className="bg-card rounded-md ring-1 ring-border shadow-sm overflow-hidden">
-            <div className="h-28 bg-gradient-to-r from-orange-400 via-pink-500 to-purple-500 relative">
-              {/* Mock Cover Image */}
-              <img
-                src="https://images.unsplash.com/photo-1543783207-ec64e4d95325?q=80&w=1000&auto=format&fit=crop"
-                alt="Cover"
-                className="w-full h-full object-cover"
-              />
-            </div>
+            <CoverImage
+              currentUserId={userId}
+              isMe={isMe}
+              profile={
+                profile as unknown as {
+                  id: string;
+                  display_name: string;
+                  avatar_url: string | null;
+                  cover_url: string | null;
+                }
+              }
+            />
             <div className="px-4 pb-4 relative">
-              <div className="size-20 rounded-md overflow-hidden ring-2 ring-card bg-muted grid place-items-center text-3xl font-semibold text-white bg-[#6F779E] shrink-0 absolute -top-10">
-                {profile.avatar_url ? (
-                  <img src={profile.avatar_url} alt="" className="size-full object-cover" />
-                ) : (
-                  initials(profile.display_name)
-                )}
-              </div>
+              <AvatarImage
+                currentUserId={userId}
+                isMe={isMe}
+                profile={
+                  profile as unknown as {
+                    id: string;
+                    display_name: string;
+                    avatar_url: string | null;
+                    cover_url: string | null;
+                  }
+                }
+              />
+
               <div className="pt-12">
                 <h1 className="text-lg font-bold tracking-tight text-foreground">
                   {profile.display_name}
@@ -774,5 +790,286 @@ function EditProfileButton({
         </div>
       </div>
     </div>
+  );
+}
+
+// Subcomponents for Cover and Avatar logic
+function CoverImage({
+  isMe,
+  profile,
+  currentUserId,
+}: {
+  isMe: boolean;
+  profile: {
+    id: string;
+    display_name: string;
+    avatar_url: string | null;
+    cover_url: string | null;
+  };
+  currentUserId: string;
+}) {
+  const [hover, setHover] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [cropData, setCropData] = useState<{ src: string; file: File } | null>(null);
+
+  const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+      const src = URL.createObjectURL(file);
+      setCropData({ src, file });
+    }
+  };
+
+  return (
+    <>
+      <div
+        className="h-28 bg-gradient-to-r from-orange-400 via-pink-500 to-purple-500 relative group cursor-pointer"
+        onMouseEnter={() => setHover(true)}
+        onMouseLeave={() => setHover(false)}
+        onClick={() => {
+          if (isMe) fileInputRef.current?.click();
+        }}
+      >
+        <img
+          src={
+            profile.cover_url ||
+            "https://images.unsplash.com/photo-1543783207-ec64e4d95325?q=80&w=1000&auto=format&fit=crop"
+          }
+          alt="Cover"
+          className="w-full h-full object-cover"
+        />
+
+        {isMe && hover && (
+          <div className="absolute inset-0 bg-black/30 flex flex-col items-center justify-center transition-all">
+            <button className="bg-black/50 text-white flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold backdrop-blur-sm hover:bg-black/70">
+              <Camera className="size-4" /> Cambiar portada
+            </button>
+          </div>
+        )}
+      </div>
+      <input
+        type="file"
+        ref={fileInputRef}
+        className="hidden"
+        accept="image/*"
+        onChange={onFileChange}
+      />
+
+      {cropData && (
+        <CropModal
+          open={true}
+          onOpenChange={(v) => !v && setCropData(null)}
+          src={cropData.src}
+          aspect={1000 / 280}
+          field="cover_url"
+          profileId={profile.id}
+          onSuccess={() => setCropData(null)}
+        />
+      )}
+    </>
+  );
+}
+
+function AvatarImage({
+  isMe,
+  profile,
+  currentUserId,
+}: {
+  isMe: boolean;
+  profile: {
+    id: string;
+    display_name: string;
+    avatar_url: string | null;
+    cover_url: string | null;
+  };
+  currentUserId: string;
+}) {
+  const [hover, setHover] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [cropData, setCropData] = useState<{ src: string; file: File } | null>(null);
+
+  const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+      const src = URL.createObjectURL(file);
+      setCropData({ src, file });
+    }
+  };
+
+  return (
+    <>
+      <div
+        className="size-20 rounded-md overflow-hidden ring-2 ring-card bg-muted grid place-items-center text-3xl font-semibold text-white bg-[#6F779E] shrink-0 absolute -top-10 group cursor-pointer"
+        onMouseEnter={() => setHover(true)}
+        onMouseLeave={() => setHover(false)}
+        onClick={() => {
+          if (isMe) fileInputRef.current?.click();
+        }}
+      >
+        {profile.avatar_url ? (
+          <img src={profile.avatar_url} alt="" className="size-full object-cover" />
+        ) : (
+          initials(profile.display_name)
+        )}
+
+        {isMe && hover && (
+          <div className="absolute inset-0 bg-black/40 grid place-items-center transition-all">
+            <div className="bg-black/60 p-1.5 rounded-full text-white">
+              <Camera className="size-4" />
+            </div>
+          </div>
+        )}
+      </div>
+      <input
+        type="file"
+        ref={fileInputRef}
+        className="hidden"
+        accept="image/*"
+        onChange={onFileChange}
+      />
+
+      {cropData && (
+        <CropModal
+          open={true}
+          onOpenChange={(v) => !v && setCropData(null)}
+          src={cropData.src}
+          aspect={1}
+          field="avatar_url"
+          profileId={profile.id}
+          onSuccess={() => setCropData(null)}
+        />
+      )}
+    </>
+  );
+}
+
+function CropModal({
+  open,
+  onOpenChange,
+  src,
+  aspect,
+  field,
+  profileId,
+  onSuccess,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  src: string;
+  aspect: number;
+  field: "avatar_url" | "cover_url";
+  profileId: string;
+  onSuccess: () => void;
+}) {
+  const [crop, setCrop] = useState<Crop>({ unit: "%", width: 50, height: 50, x: 25, y: 25 });
+  const [completedCrop, setCompletedCrop] = useState<Crop | null>(null);
+  const imgRef = useRef<HTMLImageElement>(null);
+  const qc = useQueryClient();
+  const [loading, setLoading] = useState(false);
+
+  const save = async () => {
+    if (!completedCrop || !imgRef.current) return;
+    setLoading(true);
+
+    try {
+      const canvas = document.createElement("canvas");
+      const scaleX = imgRef.current.naturalWidth / imgRef.current.width;
+      const scaleY = imgRef.current.naturalHeight / imgRef.current.height;
+      const ctx = canvas.getContext("2d");
+
+      if (!ctx) throw new Error("No 2d context");
+
+      canvas.width = completedCrop.width * scaleX;
+      canvas.height = completedCrop.height * scaleY;
+
+      ctx.drawImage(
+        imgRef.current,
+        completedCrop.x * scaleX,
+        completedCrop.y * scaleY,
+        completedCrop.width * scaleX,
+        completedCrop.height * scaleY,
+        0,
+        0,
+        completedCrop.width * scaleX,
+        completedCrop.height * scaleY,
+      );
+
+      const blob = await new Promise<Blob>((resolve, reject) => {
+        canvas.toBlob(
+          (b) => (b ? resolve(b) : reject(new Error("Canvas toBlob error"))),
+          "image/jpeg",
+          0.9,
+        );
+      });
+
+      const fileName = `${field}s/${profileId}-${Date.now()}.jpg`;
+
+      // Upload to supabase
+      const { error: uploadError } = await supabase.storage.from("media").upload(fileName, blob);
+
+      if (uploadError) throw uploadError;
+
+      const { data: publicUrlData } = supabase.storage.from("media").getPublicUrl(fileName);
+
+      // Update profile
+      const { error: updateError } = await supabase
+        .from("profiles")
+        .update(
+          field === "avatar_url"
+            ? { avatar_url: publicUrlData.publicUrl }
+            : { cover_url: publicUrlData.publicUrl },
+        )
+        .eq("id", profileId);
+
+      if (updateError) throw updateError;
+
+      toast.success("Imagen actualizada");
+      qc.invalidateQueries({ queryKey: ["profile"] });
+      onSuccess();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Error al guardar imagen");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-xl">
+        <DialogHeader>
+          <DialogTitle>Recortar imagen</DialogTitle>
+        </DialogHeader>
+        <div className="flex flex-col items-center gap-4 mt-2">
+          <ReactCrop
+            crop={crop}
+            onChange={(c) => setCrop(c)}
+            onComplete={(c) => setCompletedCrop(c)}
+            aspect={aspect}
+          >
+            <img
+              ref={imgRef}
+              src={src}
+              alt="Crop preview"
+              className="max-h-[60vh] object-contain"
+            />
+          </ReactCrop>
+
+          <div className="flex justify-end gap-2 w-full pt-2">
+            <button
+              onClick={() => onOpenChange(false)}
+              className="px-4 py-2 text-sm rounded-lg hover:bg-secondary"
+            >
+              Cancelar
+            </button>
+            <button
+              onClick={save}
+              disabled={loading || !completedCrop}
+              className="bg-[#2F5FA7] text-white px-4 py-2 text-sm rounded-lg hover:bg-[#264d87] disabled:opacity-50 flex items-center gap-2"
+            >
+              {loading ? "Guardando..." : "Guardar"}
+            </button>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }
