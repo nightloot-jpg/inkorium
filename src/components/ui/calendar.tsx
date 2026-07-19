@@ -174,6 +174,56 @@ function Calendar({
           position: relative;
         }
 
+
+
+        .rdp-nav > * {
+          pointer-events: auto;
+        }
+
+
+        .rdp-nav_button_previous, .rdp-nav_button_next, .rdp-button_previous, .rdp-button_next, .rdp-nav_button {
+          background: transparent;
+          border: none;
+          cursor: pointer;
+          padding: 8px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 9999px;
+          transition: background-color 0.2s;
+          pointer-events: auto !important;
+          z-index: 50;
+          position: absolute;
+          top: 0;
+        }
+
+        .rdp-button_previous, .rdp-nav_button_previous {
+           left: 0;
+        }
+
+        .rdp-button_next, .rdp-nav_button_next {
+           right: 0;
+        }
+
+        .rdp-nav_button_previous:hover, .rdp-nav_button_next:hover, .rdp-button_previous:hover, .rdp-button_next:hover, .rdp-nav_button:hover {
+          background-color: var(--color-secondary);
+        }
+
+        .rdp-nav {
+          display: flex;
+          align-items: center;
+          position: static;
+          width: 100%;
+          justify-content: space-between;
+          pointer-events: none;
+          z-index: 40;
+        }
+
+
+        .rdp-nav_button_previous:hover, .rdp-nav_button_next:hover, .rdp-button_previous:hover, .rdp-button_next:hover, .rdp-nav_button:hover {
+          background-color: var(--color-secondary);
+        }
+
         .rdp-nav {
           display: flex;
           align-items: center;
@@ -183,28 +233,10 @@ function Calendar({
           top: 0;
           justify-content: center;
           pointer-events: none;
-          gap: 120px; /* Space arrows around the title */
+          gap: 140px; /* Space arrows around the title */
+          z-index: 10;
         }
 
-        .rdp-nav > * {
-          pointer-events: auto;
-        }
-
-        .rdp-button_previous, .rdp-button_next {
-          background: transparent;
-          border: none;
-          cursor: pointer;
-          padding: 4px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          border-radius: 9999px;
-          transition: background-color 0.2s;
-        }
-
-        .rdp-button_previous:hover, .rdp-button_next:hover {
-          background-color: var(--color-secondary);
-        }
 
         /* Support for modifier indicators (dots) */
         .has-event .rdp-day_button {

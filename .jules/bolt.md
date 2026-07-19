@@ -35,3 +35,7 @@
 ## 2024-07-19 - [Implement inline event creation form in calendar]
 **Learning:** Translating mobile-first UI mockups directly to an existing codebase requires understanding the context boundary (in this case, dropping the floating absolute UI for an inline layout within the calendar boundaries, and using appropriate standard icons).
 **Action:** Always test layout positioning closely when transitioning absolute layered components into relative flex flow to prevent UI jumps or z-index overflow.
+
+## 2024-07-19 - [Fix calendar arrow interaction]
+**Learning:** Re-styling nested 3rd party components (like react-day-picker `rdp-nav`) requires understanding their internal DOM structure. By applying `pointer-events: none` to the parent to allow clicks to pass through to the caption, you must also explicitly set `pointer-events: auto` and a higher `z-index` on the buttons themselves so they remain interactive.
+**Action:** Whenever applying `pointer-events: none` to wrapper components for visual overlay hacking, ensure all interactive children explicitly restore `pointer-events: auto`.
