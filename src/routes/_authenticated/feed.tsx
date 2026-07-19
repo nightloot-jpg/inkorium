@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { fetchFeed } from "@/lib/social";
 import { PostCard, Avatar } from "@/components/post-card";
 import { CalendarCard } from "@/components/CalendarCard";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   Image as ImageIcon,
   X,
@@ -34,7 +34,9 @@ function FeedPage() {
     queryFn: async () => {
       const { data } = await supabase
         .from("profiles")
-        .select("id, username, display_name, avatar_url, bio")
+        .select(
+          "id, username, display_name, avatar_url, bio, status_message, online_status, visits_count",
+        )
         .eq("id", userId)
         .single();
       return data;
@@ -101,6 +103,38 @@ function FeedPage() {
     },
   });
 
+  const [statusMessage, setStatusMessage] = useState("");
+  useEffect(() => {
+    if (me?.status_message) setStatusMessage(me.status_message);
+  }, [me?.status_message]);
+
+  const updateStatus = useMutation({
+    mutationFn: async (val: string) => {
+      const { error } = await supabase
+        .from("profiles")
+        .update({ status_message: val })
+        .eq("id", userId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Estado actualizado");
+    },
+  });
+
+  const updateOnlineStatus = useMutation({
+    mutationFn: async (val: string) => {
+      const { error } = await supabase
+        .from("profiles")
+        .update({ online_status: val })
+        .eq("id", userId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["me", userId] });
+    },
+  });
+
+  const queryClient = useQueryClient();
   return (
     <main className="grid grid-cols-1 md:grid-cols-[280px_minmax(0,1fr)] lg:grid-cols-[250px_minmax(0,1fr)_250px] gap-6 py-6 w-full">
       {/* Sidebar izquierdo */}
@@ -123,7 +157,8 @@ function FeedPage() {
                 Ver mi perfil
               </Link>
               <div className="text-[11px] text-muted-foreground mt-2 font-medium">
-                <span className="font-bold text-foreground">1.842</span> visitas a tu perfil
+                <span className="font-bold text-foreground">{me?.visits_count || 0}</span> visitas a
+                tu perfil
               </div>
               <div className="text-[11px] text-muted-foreground mt-0.5 flex items-center gap-1.5 font-medium">
                 <Users className="size-3.5" />
@@ -133,17 +168,35 @@ function FeedPage() {
               </div>
             </div>
           </div>
-          <div className="border-t border-border p-4 flex flex-col gap-3">
-            <div className="flex items-center gap-2 cursor-pointer w-fit group">
-              <div className="size-2 rounded-full bg-online shrink-0" />
-              <span className="text-[13px] text-muted-foreground font-medium flex items-center gap-1 group-hover:text-foreground transition-colors">
-                En línea <ChevronDown className="size-3" />
-              </span>
+          <div className="border-t border-[#f1f3f6] p-4 flex flex-col gap-3">
+            <div className="flex items-center gap-2 cursor-pointer w-fit group relative">
+              <div
+                className={`size-2 rounded-full shrink-0 ${me?.online_status === "ocupado" ? "bg-red-500" : me?.online_status === "ausente" ? "bg-yellow-500" : me?.online_status === "desconectado" ? "bg-gray-400" : "bg-online"}`}
+              />
+              <select
+                value={me?.online_status || "online"}
+                onChange={(e) => updateOnlineStatus.mutate(e.target.value)}
+                className="text-[13px] text-muted-foreground font-medium bg-transparent outline-none cursor-pointer group-hover:text-foreground transition-colors appearance-none pr-4"
+              >
+                <option value="online">En línea</option>
+                <option value="ocupado">Ocupado</option>
+                <option value="ausente">Ausente</option>
+                <option value="desconectado">Desconectado</option>
+              </select>
+              <ChevronDown className="size-3 absolute right-0 pointer-events-none text-muted-foreground group-hover:text-foreground transition-colors" />
             </div>
             <input
               type="text"
+              value={statusMessage}
+              onChange={(e) => setStatusMessage(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  updateStatus.mutate(statusMessage);
+                  e.currentTarget.blur();
+                }
+              }}
               placeholder="¿Qué estás haciendo?"
-              className="w-full bg-secondary rounded px-3 py-2 text-[13px] outline-none focus:ring-1 focus:ring-ring border border-border/50 placeholder:text-muted-foreground/70"
+              className="w-full bg-secondary rounded px-3 py-2 text-[13px] outline-none focus:ring-1 focus:ring-[#2F5FA7] border border-border/50 placeholder:text-muted-foreground/70 transition-shadow"
             />
             <button className="flex items-center gap-1.5 text-[#2F5FA7] hover:underline text-left font-medium text-[13px]">
               <MapPin className="size-4 shrink-0" />
@@ -260,7 +313,7 @@ function FeedPage() {
             <p className="text-sm text-muted-foreground mt-2">No tienes solicitudes pendientes.</p>
           ) : (
             <div className="space-y-3 mt-2">
-              {pendingReqs.map((r: any) => {
+              {pendingReqs.map((r: { id: string; requester_id: string; requester: unknown }) => {
                 const req = r.requester as unknown as {
                   id: string;
                   username: string;
@@ -314,12 +367,11 @@ function Composer({
   avatar: { display_name: string; avatar_url: string | null } | null | undefined;
 }) {
   const qc = useQueryClient();
-  const [activeTab, setActiveTab] = useState<
-    "status" | "photo" | "video" | "music" | "event" | "news"
-  >("status");
+  const [activeTab, setActiveTab] = useState("status");
   const [content, setContent] = useState("");
   const [mediaUrl, setMediaUrl] = useState("");
-  const [extraData, setExtraData] = useState<Record<string, string>>({});
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [extraData, setExtraData] = useState<any>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
 
@@ -345,7 +397,10 @@ function Composer({
       setMediaUrl(publicUrlData.publicUrl);
       toast.success("Archivo subido correctamente");
     } catch (err) {
-      toast.error("Error al subir archivo");
+      console.error(err);
+      toast.error(
+        "Error al subir archivo: " + (err instanceof Error ? err.message : "Desconocido"),
+      );
     } finally {
       setIsUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
@@ -355,25 +410,42 @@ function Composer({
   const publish = useMutation({
     mutationFn: async () => {
       const text = content.trim();
-      if (!text && activeTab !== "photo") throw new Error("Añade algún contenido.");
+      if (!text && activeTab !== "photo" && activeTab !== "video")
+        throw new Error("Añade algún contenido.");
 
-      const payload: Record<string, unknown> = {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const payload: any = {
         author_id: userId,
-        content: text || (activeTab === "photo" ? "ha añadido una foto." : ""),
+        content: text,
+        type: activeTab,
       };
 
-      if (activeTab === "photo") payload.image_url = mediaUrl.trim();
-      if (activeTab === "video") payload.video_url = mediaUrl.trim();
-      if (activeTab === "news") {
-        payload.news_title = extraData.title;
-        payload.image_url = mediaUrl.trim();
+      if (activeTab === "photo") {
+        if (!mediaUrl) throw new Error("Añade una URL de imagen o sube un archivo.");
+        payload.image_url = mediaUrl;
+      }
+      if (activeTab === "video") {
+        if (!extraData.video_url && !mediaUrl)
+          throw new Error("Añade una URL de YouTube o sube un vídeo.");
+        payload.video_url = mediaUrl || extraData.video_url;
       }
       if (activeTab === "music") {
+        if (!extraData.youtube_id) throw new Error("Añade el ID de YouTube.");
         payload.youtube_id = extraData.youtube_id;
         payload.youtube_title = extraData.youtube_title;
       }
+      if (activeTab === "event") {
+        payload.event_name = extraData.name;
+        payload.event_date = extraData.date;
+        payload.event_time = extraData.time;
+        payload.event_location = extraData.location;
+      }
+      if (activeTab === "news") {
+        payload.news_title = extraData.title;
+        payload.image_url = mediaUrl;
+      }
 
-      const { error } = await supabase.from("posts").insert(payload as never);
+      const { error } = await supabase.from("posts").insert(payload);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -382,132 +454,138 @@ function Composer({
       setExtraData({});
       setActiveTab("status");
       qc.invalidateQueries({ queryKey: ["feed"] });
-      toast.success("¡Publicado!");
+      toast.success("Publicado correctamente");
     },
-    onError: (err) => toast.error(err instanceof Error ? err.message : "Error"),
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Error al publicar"),
   });
 
   return (
-    <div className="bg-card ring-1 ring-border shadow-sm flex flex-col rounded-xl overflow-hidden">
-      <div className="p-3">
-        <h3 className="text-[13px] font-bold text-[#2F5FA7] mb-2">¿Qué tienes en mente?</h3>
-        <div className="space-y-3">
-          <input
-            type="file"
-            ref={fileInputRef}
-            className="hidden"
-            accept="image/*,video/*"
-            onChange={handleFileUpload}
-          />
-          <textarea
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            className="w-full bg-transparent p-0 text-[14px] resize-none min-h-[40px] outline-none placeholder:text-muted-foreground/70"
-          />
+    <div className="bg-card rounded-xl ring-1 ring-border shadow-sm overflow-hidden flex flex-col">
+      <div className="px-4 py-3">
+        <h3 className="text-[14px] font-bold text-[#2F5FA7]">¿Qué tienes en mente?</h3>
+      </div>
 
-          {activeTab === "photo" && (
-            <div className="flex gap-2">
-              <input
-                value={mediaUrl}
-                onChange={(e) => setMediaUrl(e.target.value)}
-                placeholder="URL de la imagen..."
-                className="flex-1 bg-secondary rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
-              />
-              <button
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-                disabled={isUploading}
-                className="bg-secondary hover:bg-secondary/80 text-foreground px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 border border-border disabled:opacity-50"
-              >
-                <Upload className="size-4" />
-                {isUploading ? "Subiendo..." : "Subir"}
-              </button>
-            </div>
-          )}
+      <div className="px-4 pb-4 flex gap-3 flex-col">
+        <input
+          type="file"
+          ref={fileInputRef}
+          className="hidden"
+          accept={activeTab === "video" ? "video/*" : "image/*"}
+          onChange={handleFileUpload}
+        />
 
-          {activeTab === "video" && (
-            <div className="flex gap-2">
-              <input
-                value={mediaUrl}
-                onChange={(e) => setMediaUrl(e.target.value)}
-                placeholder="URL del vídeo de YouTube..."
-                className="flex-1 bg-secondary rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
-              />
-              <button
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-                disabled={isUploading}
-                className="bg-secondary hover:bg-secondary/80 text-foreground px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 border border-border disabled:opacity-50"
-              >
-                <Upload className="size-4" />
-                {isUploading ? "Subiendo..." : "Subir"}
-              </button>
-            </div>
-          )}
+        <textarea
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          className="w-full bg-transparent p-0 text-[14px] resize-none min-h-[40px] outline-none placeholder:text-muted-foreground/70"
+          placeholder=""
+        />
 
-          {activeTab === "music" && (
-            <div className="space-y-2">
-              <input
-                value={extraData.youtube_id || ""}
-                onChange={(e) => setExtraData({ ...extraData, youtube_id: e.target.value })}
-                placeholder="ID del vídeo de YouTube..."
-                className="w-full bg-secondary rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
-              />
-              <input
-                value={extraData.youtube_title || ""}
-                onChange={(e) => setExtraData({ ...extraData, youtube_title: e.target.value })}
-                placeholder="Título de la canción..."
-                className="w-full bg-secondary rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
-              />
-            </div>
-          )}
+        {activeTab === "photo" && (
+          <div className="flex gap-2">
+            <input
+              value={mediaUrl}
+              onChange={(e) => setMediaUrl(e.target.value)}
+              placeholder="URL de la imagen..."
+              className="flex-1 bg-secondary rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring border border-transparent"
+            />
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={isUploading}
+              className="bg-secondary hover:bg-secondary/80 text-foreground px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 border border-border disabled:opacity-50"
+            >
+              <Upload className="size-4" />
+              {isUploading ? "Subiendo..." : "Subir"}
+            </button>
+          </div>
+        )}
 
-          {activeTab === "event" && (
-            <div className="grid grid-cols-2 gap-2">
-              <input
-                value={extraData.name || ""}
-                onChange={(e) => setExtraData({ ...extraData, name: e.target.value })}
-                placeholder="Nombre del evento"
-                className="col-span-2 w-full bg-secondary rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
-              />
-              <input
-                type="date"
-                value={extraData.date || ""}
-                onChange={(e) => setExtraData({ ...extraData, date: e.target.value })}
-                className="w-full bg-secondary rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
-              />
-              <input
-                type="time"
-                value={extraData.time || ""}
-                onChange={(e) => setExtraData({ ...extraData, time: e.target.value })}
-                className="w-full bg-secondary rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
-              />
-              <input
-                value={extraData.location || ""}
-                onChange={(e) => setExtraData({ ...extraData, location: e.target.value })}
-                placeholder="Lugar"
-                className="col-span-2 w-full bg-secondary rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
-              />
-            </div>
-          )}
+        {activeTab === "video" && (
+          <div className="flex gap-2">
+            <input
+              value={mediaUrl || extraData.video_url || ""}
+              onChange={(e) => {
+                setMediaUrl("");
+                setExtraData({ ...extraData, video_url: e.target.value });
+              }}
+              placeholder="URL del vídeo de YouTube o archivo..."
+              className="flex-1 bg-secondary rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring border border-transparent"
+            />
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={isUploading}
+              className="bg-secondary hover:bg-secondary/80 text-foreground px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 border border-border disabled:opacity-50"
+            >
+              <Upload className="size-4" />
+              {isUploading ? "Subiendo..." : "Subir"}
+            </button>
+          </div>
+        )}
 
-          {activeTab === "news" && (
-            <div className="space-y-2">
-              <input
-                value={extraData.title || ""}
-                onChange={(e) => setExtraData({ ...extraData, title: e.target.value })}
-                placeholder="Título de la noticia"
-                className="w-full bg-secondary rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
-              />
-              <input
-                value={mediaUrl}
-                onChange={(e) => setMediaUrl(e.target.value)}
-                placeholder="URL de la imagen (opcional)"
-                className="w-full bg-secondary rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
-              />
-            </div>
-          )}
-        </div>
+        {activeTab === "music" && (
+          <div className="space-y-2">
+            <input
+              value={extraData.youtube_id || ""}
+              onChange={(e) => setExtraData({ ...extraData, youtube_id: e.target.value })}
+              placeholder="ID del vídeo de YouTube..."
+              className="w-full bg-secondary rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring border border-transparent"
+            />
+            <input
+              value={extraData.youtube_title || ""}
+              onChange={(e) => setExtraData({ ...extraData, youtube_title: e.target.value })}
+              placeholder="Título de la canción..."
+              className="w-full bg-secondary rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring border border-transparent"
+            />
+          </div>
+        )}
+
+        {activeTab === "event" && (
+          <div className="grid grid-cols-2 gap-2">
+            <input
+              value={extraData.name || ""}
+              onChange={(e) => setExtraData({ ...extraData, name: e.target.value })}
+              placeholder="Nombre del evento"
+              className="col-span-2 w-full bg-secondary rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring border border-transparent"
+            />
+            <input
+              type="date"
+              value={extraData.date || ""}
+              onChange={(e) => setExtraData({ ...extraData, date: e.target.value })}
+              className="w-full bg-secondary rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring border border-transparent"
+            />
+            <input
+              type="time"
+              value={extraData.time || ""}
+              onChange={(e) => setExtraData({ ...extraData, time: e.target.value })}
+              className="w-full bg-secondary rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring border border-transparent"
+            />
+            <input
+              value={extraData.location || ""}
+              onChange={(e) => setExtraData({ ...extraData, location: e.target.value })}
+              placeholder="Lugar"
+              className="col-span-2 w-full bg-secondary rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring border border-transparent"
+            />
+          </div>
+        )}
+
+        {activeTab === "news" && (
+          <div className="space-y-2">
+            <input
+              value={extraData.title || ""}
+              onChange={(e) => setExtraData({ ...extraData, title: e.target.value })}
+              placeholder="Título de la noticia"
+              className="w-full bg-secondary rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring border border-transparent"
+            />
+            <input
+              value={mediaUrl}
+              onChange={(e) => setMediaUrl(e.target.value)}
+              placeholder="URL de la imagen (opcional)"
+              className="w-full bg-secondary rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring border border-transparent"
+            />
+          </div>
+        )}
       </div>
 
       <div className="bg-[#f1f3f6] border-t border-[#dbe0e8] px-3 py-2 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">

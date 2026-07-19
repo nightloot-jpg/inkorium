@@ -67,7 +67,7 @@ export function PostCard({ post, currentUserId }: { post: FeedPost; currentUserI
             )}
           </div>
           <div className="text-[11px] text-muted-foreground flex items-center gap-1 mt-0.5">
-            <span>{timeAgo(post.created_at)}:</span> <span className="text-[#2F5FA7]">@</span>
+            <span>{timeAgo(post.created_at)} -</span> <span className="text-[#2F5FA7]">@</span>
           </div>
           <p className="mt-2 text-[14px] leading-relaxed text-foreground text-pretty whitespace-pre-wrap">
             {post.content}
@@ -86,11 +86,15 @@ export function PostCard({ post, currentUserId }: { post: FeedPost; currentUserI
       {post.type === "video" && post.video_url && (
         <div className="px-4 pb-4">
           <div className="rounded-xl overflow-hidden ring-1 ring-border aspect-video bg-black relative">
-            <iframe
-              src={`https://www.youtube.com/embed/${getYouTubeID(post.video_url)}`}
-              className="w-full h-full"
-              allowFullScreen
-            ></iframe>
+            {getYouTubeID(post.video_url) ? (
+              <iframe
+                src={`https://www.youtube.com/embed/${getYouTubeID(post.video_url)}`}
+                className="w-full h-full"
+                allowFullScreen
+              ></iframe>
+            ) : (
+              <video src={post.video_url} controls className="w-full h-full object-contain" />
+            )}
           </div>
         </div>
       )}
@@ -160,32 +164,32 @@ export function PostCard({ post, currentUserId }: { post: FeedPost; currentUserI
         </div>
       )}
 
-      <div className="flex justify-between px-4 py-2 bg-secondary/30 border-t border-border">
+      <div className="flex justify-between px-4 py-2 mt-2">
         <div className="flex gap-4">
           <button
             onClick={() => like.mutate()}
             disabled={like.isPending}
-            className={`flex items-center gap-1.5 text-xs font-medium py-1.5 transition-colors ${
-              post.liked_by_me ? "text-[#2F5FA7]" : "text-[#2F5FA7] hover:underline"
+            className={`flex items-center gap-1.5 text-[13px] font-bold transition-colors ${
+              post.liked_by_me ? "text-[#2F5FA7]" : "text-[#a9a9a9] hover:text-[#2F5FA7]"
             }`}
           >
-            <Heart className={`size-3.5 ${post.liked_by_me ? "fill-[#2F5FA7]" : ""}`} />
+            <Heart className={`size-4 ${post.liked_by_me ? "fill-[#2F5FA7]" : "text-[#a9a9a9]"}`} />
             Me gusta
           </button>
           <button
             onClick={() => setShowComments((v) => !v)}
-            className="flex items-center gap-1.5 text-xs font-medium py-1.5 text-[#2F5FA7] hover:underline transition-colors"
+            className="flex items-center gap-1.5 text-[13px] font-bold text-[#a9a9a9] hover:text-[#2F5FA7] transition-colors"
           >
-            <MessageCircle className="size-3.5" />
+            <MessageCircle className="size-4" />
             Comentar
           </button>
-          <button className="flex items-center gap-1.5 text-xs font-medium py-1.5 text-[#2F5FA7] hover:underline transition-colors">
-            <Share2 className="size-3.5" />
+          <button className="flex items-center gap-1.5 text-[13px] font-bold text-[#a9a9a9] hover:text-[#2F5FA7] transition-colors">
+            <Share2 className="size-4" />
             Compartir
           </button>
         </div>
-        <div className="flex items-center gap-1.5 text-xs text-muted-foreground font-medium">
-          <Heart className="size-3.5 fill-[#2F5FA7] text-[#2F5FA7]" />
+        <div className="flex items-center gap-1.5 text-[13px] text-[#a9a9a9] font-bold">
+          <Heart className="size-4" />
           {post.like_count}
         </div>
       </div>
@@ -210,7 +214,7 @@ export function Avatar({
 }) {
   return (
     <div
-      className="rounded-lg overflow-hidden shrink-0 ring-1 ring-border bg-muted grid place-items-center text-xs font-bold text-[#2F5FA7]"
+      className="rounded-full overflow-hidden shrink-0 ring-1 ring-border bg-muted grid place-items-center text-xs font-bold text-[#2F5FA7]"
       style={{ width: size, height: size }}
     >
       {profile?.avatar_url ? (

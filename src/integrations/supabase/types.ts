@@ -204,6 +204,10 @@ export type Database = {
           display_name: string;
           id: string;
           username: string;
+          location: string | null;
+          status_message: string | null;
+          online_status: string | null;
+          visits_count: number | null;
         };
         Insert: {
           avatar_url?: string | null;
@@ -212,6 +216,10 @@ export type Database = {
           display_name: string;
           id: string;
           username: string;
+          location?: string | null;
+          status_message?: string | null;
+          online_status?: string | null;
+          visits_count?: number | null;
         };
         Update: {
           avatar_url?: string | null;
@@ -220,6 +228,10 @@ export type Database = {
           display_name?: string;
           id?: string;
           username?: string;
+          location?: string | null;
+          status_message?: string | null;
+          online_status?: string | null;
+          visits_count?: number | null;
         };
         Relationships: [];
       };
