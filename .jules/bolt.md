@@ -9,3 +9,9 @@
 **Learning:** When users provide visual designs for a specific component (like replacing manual date inputs with a date picker calendar), we need to check if the UI library already has a corresponding component (e.g. `Calendar` from `react-day-picker` / Radix). When integrating `react-day-picker` version 9+ with `lucide-react` icons, note that the way to override chevron icons has changed from `IconLeft` / `IconRight` to a `Chevron` component that takes an `orientation` prop.
 
 **Action:** Ensure third-party component props (like `react-day-picker`) match their installed version. Read the package.json to verify the version before making assumptions about its API.
+
+## 2026-07-19 - Calendar UI Adjustments
+
+**Learning:** When users provide exact visual specs, such as a grid calendar layout with specific border styles and dot headers, we can leverage standard CSS inside `<style>` blocks alongside Tailwind utilities in the class map. Avoid trying to use inline JS logic if a pure CSS approach (like `::before` pseudo elements) resolves the styling cleanly.
+
+**Action:** Be meticulous about mapping visual structures in Tailwind. Ensure you use standard CSS when Tailwind limits complex logic like `nth-child` dynamic styling on internal library structures.
