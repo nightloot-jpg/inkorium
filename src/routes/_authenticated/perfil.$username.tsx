@@ -37,6 +37,7 @@ import { Link } from "@tanstack/react-router";
 import ReactCrop, { type Crop } from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 
 export const Route = createFileRoute("/_authenticated/perfil/$username")({
   head: ({ params }) => ({ meta: [{ title: `${params.username} — Inkorium` }] }),
@@ -60,7 +61,7 @@ function ProfilePage() {
       const { data, error } = await supabase
         .from("profiles")
         .select(
-          "id, username, display_name, bio, avatar_url, cover_url, created_at, location, visits_count",
+          "id, username, display_name, bio, avatar_url, cover_url, created_at, location, visits_count, status_message",
         )
         .eq("username", username)
         .maybeSingle();
@@ -165,6 +166,7 @@ function ProfilePage() {
                   display_name: string;
                   avatar_url: string | null;
                   cover_url: string | null;
+                  status_message: string | null;
                 }
               }
             />
@@ -178,6 +180,7 @@ function ProfilePage() {
                     display_name: string;
                     avatar_url: string | null;
                     cover_url: string | null;
+                    status_message: string | null;
                   }
                 }
               />
@@ -190,6 +193,11 @@ function ProfilePage() {
                   <span className="size-2 rounded-full bg-green-500"></span>
                   <span className="text-muted-foreground">En línea</span>
                 </div>
+                <StatusMessageEditor
+                  profileId={profile.id}
+                  initialStatus={profile.status_message}
+                  isMe={isMe}
+                />
               </div>
 
               <div className="mt-4 space-y-2.5 text-xs text-foreground/80">
@@ -805,6 +813,7 @@ function CoverImage({
     display_name: string;
     avatar_url: string | null;
     cover_url: string | null;
+    status_message: string | null;
   };
   currentUserId: string;
 }) {
@@ -881,6 +890,7 @@ function AvatarImage({
     display_name: string;
     avatar_url: string | null;
     cover_url: string | null;
+    status_message: string | null;
   };
   currentUserId: string;
 }) {
@@ -1071,5 +1081,80 @@ function CropModal({
         </div>
       </DialogContent>
     </Dialog>
+  );
+}
+
+function StatusMessageEditor({
+  profileId,
+  initialStatus,
+  isMe,
+}: {
+  profileId: string;
+  initialStatus: string | null;
+  isMe: boolean;
+}) {
+  const [status, setStatus] = useState(initialStatus || "");
+  const [isOpen, setIsOpen] = useState(false);
+  const qc = useQueryClient();
+
+  const updateStatus = useMutation({
+    mutationFn: async (newStatus: string) => {
+      const { error } = await supabase
+        .from("profiles")
+        .update({ status_message: newStatus })
+        .eq("id", profileId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Estado actualizado");
+      qc.invalidateQueries({ queryKey: ["profile"] });
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Error al actualizar estado"),
+  });
+
+  const handleSave = () => {
+    if (status !== initialStatus) {
+      updateStatus.mutate(status);
+    }
+    setIsOpen(false);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleSave();
+    }
+  };
+
+  if (!isMe) {
+    if (!initialStatus) return null;
+    return <div className="mt-2 text-sm text-foreground/90 italic">{initialStatus}</div>;
+  }
+
+  return (
+    <Popover open={isOpen} onOpenChange={setIsOpen}>
+      <PopoverTrigger asChild>
+        <button className="mt-2 text-sm text-foreground/90 italic hover:underline text-left block w-full">
+          {initialStatus || "Añade un estado personalizado..."}
+        </button>
+      </PopoverTrigger>
+      <PopoverContent className="w-64 p-3" align="start">
+        <div className="space-y-2">
+          <label className="text-xs font-semibold text-muted-foreground">
+            Estado personalizado
+          </label>
+          <input
+            autoFocus
+            value={status}
+            onChange={(e) => setStatus(e.target.value)}
+            onKeyDown={handleKeyDown}
+            onBlur={handleSave}
+            maxLength={100}
+            placeholder="¿Qué estás pensando?"
+            className="w-full bg-secondary rounded-md px-2.5 py-1.5 text-sm outline-none focus:ring-2 focus:ring-ring"
+          />
+          <div className="text-[10px] text-muted-foreground text-right">{status.length}/100</div>
+        </div>
+      </PopoverContent>
+    </Popover>
   );
 }
