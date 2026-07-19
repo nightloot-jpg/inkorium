@@ -38,6 +38,7 @@ import ReactCrop, { type Crop } from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
+import { HoverCard, HoverCardTrigger, HoverCardContent } from "@/components/ui/hover-card";
 
 export const Route = createFileRoute("/_authenticated/perfil/$username")({
   head: ({ params }) => ({ meta: [{ title: `${params.username} — Inkorium` }] }),
@@ -61,7 +62,7 @@ function ProfilePage() {
       const { data, error } = await supabase
         .from("profiles")
         .select(
-          "id, username, display_name, bio, avatar_url, cover_url, created_at, location, visits_count, status_message",
+          "id, username, display_name, bio, avatar_url, cover_url, created_at, location, visits_count, status_message, age",
         )
         .eq("username", username)
         .maybeSingle();
@@ -75,10 +76,10 @@ function ProfilePage() {
     if (profile && profile.id !== userId) {
       // Increment visit count for the profile
       (supabase.rpc as unknown as { (rpc: string, args: unknown): Promise<{ error: unknown }> })(
-        "increment_visit_count",
-        { profile_id: profile.id },
+        "record_visit",
+        { p_profile_id: profile.id, p_visitor_id: userId },
       ).then(({ error }) => {
-        if (error) console.error("Error incrementing view count:", error);
+        if (error) console.error("Error recording view:", error);
       });
     }
   }, [profile, profile?.id, userId]);
@@ -91,6 +92,23 @@ function ProfilePage() {
     queryFn: async () => {
       const all = await fetchFeed(userId);
       return all.filter((p) => p.author.id === profile!.id);
+    },
+  });
+
+  const { data: recentVisitors = [] } = useQuery({
+    queryKey: ["profile_visitors", profile?.id],
+    enabled: !!profile,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("profile_visits")
+        .select(
+          "visited_at, visitor:profiles!profile_visits_visitor_id_fkey(username, display_name)",
+        )
+        .eq("profile_id", profile!.id)
+        .order("visited_at", { ascending: false })
+        .limit(10);
+      if (error) throw error;
+      return data;
     },
   });
 
@@ -201,10 +219,12 @@ function ProfilePage() {
               </div>
 
               <div className="mt-4 space-y-2.5 text-xs text-foreground/80">
-                <div className="flex items-center gap-2">
-                  <Cake className="size-3.5 text-[#2F5FA7]" />
-                  <span>24 años, Madrid</span>
-                </div>
+                <ProfileDetailsEditor
+                  profileId={profile.id}
+                  initialAge={(profile as unknown as { age: number | null }).age}
+                  initialLocation={profile.location}
+                  isMe={isMe}
+                />
                 <div className="flex items-center gap-2">
                   <Calendar className="size-3.5 text-[#2F5FA7]" />
                   <span>
@@ -215,14 +235,47 @@ function ProfilePage() {
                     })}
                   </span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Users className="size-3.5 text-[#2F5FA7]" />
-                  <span>
-                    {((profile as unknown as Record<string, unknown>).visits_count as number) ||
-                      1842}{" "}
-                    visitas a tu perfil
-                  </span>
-                </div>
+                <HoverCard>
+                  <HoverCardTrigger asChild>
+                    <div className="flex items-center gap-2 cursor-pointer hover:underline">
+                      <Users className="size-3.5 text-[#2F5FA7]" />
+                      <span>
+                        {((profile as unknown as Record<string, unknown>).visits_count as number) ||
+                          0}{" "}
+                        visitas a tu perfil
+                      </span>
+                    </div>
+                  </HoverCardTrigger>
+                  <HoverCardContent className="w-56" align="start">
+                    <div className="space-y-2">
+                      <h4 className="text-sm font-semibold">Visitas recientes</h4>
+                      {recentVisitors.length > 0 ? (
+                        <ul className="text-xs space-y-1">
+                          {recentVisitors.map(
+                            (
+                              v: {
+                                visitor: { display_name?: string; username?: string } | null;
+                                visited_at: string;
+                              },
+                              i: number,
+                            ) => (
+                              <li key={i} className="flex justify-between items-center">
+                                <span className="font-medium truncate mr-2">
+                                  {v.visitor?.display_name || v.visitor?.username}
+                                </span>
+                                <span className="text-muted-foreground shrink-0 text-[10px]">
+                                  {new Date(v.visited_at).toLocaleDateString()}
+                                </span>
+                              </li>
+                            ),
+                          )}
+                        </ul>
+                      ) : (
+                        <p className="text-xs text-muted-foreground">No hay visitas recientes</p>
+                      )}
+                    </div>
+                  </HoverCardContent>
+                </HoverCard>
                 <div className="flex items-center gap-2">
                   <Users className="size-3.5 text-[#2F5FA7]" />
                   <span>348 amigos</span>
@@ -1081,6 +1134,100 @@ function CropModal({
         </div>
       </DialogContent>
     </Dialog>
+  );
+}
+
+function ProfileDetailsEditor({
+  profileId,
+  initialAge,
+  initialLocation,
+  isMe,
+}: {
+  profileId: string;
+  initialAge: number | null;
+  initialLocation: string | null;
+  isMe: boolean;
+}) {
+  const [age, setAge] = useState(initialAge?.toString() || "");
+  const [location, setLocation] = useState(initialLocation || "");
+  const [isOpen, setIsOpen] = useState(false);
+  const qc = useQueryClient();
+
+  const updateProfile = useMutation({
+    mutationFn: async (data: { age: number | null; location: string | null }) => {
+      const { error } = await supabase
+        .from("profiles")
+        .update(data as never)
+        .eq("id", profileId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Perfil actualizado");
+      qc.invalidateQueries({ queryKey: ["profile"] });
+      setIsOpen(false);
+    },
+    onError: (e) => toast.error(e instanceof Error ? e.message : "Error al actualizar perfil"),
+  });
+
+  const handleSave = () => {
+    const ageNum = parseInt(age);
+    updateProfile.mutate({
+      age: isNaN(ageNum) ? null : ageNum,
+      location: location.trim() === "" ? null : location.trim(),
+    });
+  };
+
+  const displayString = `${initialAge ? initialAge + " años" : "Sin edad"}${initialLocation ? ", " + initialLocation : ""}`;
+
+  if (!isMe) {
+    return (
+      <div className="flex items-center gap-2">
+        <Cake className="size-3.5 text-[#2F5FA7]" />
+        <span>{displayString}</span>
+      </div>
+    );
+  }
+
+  return (
+    <Popover open={isOpen} onOpenChange={setIsOpen}>
+      <PopoverTrigger asChild>
+        <button className="flex items-center gap-2 hover:underline text-left">
+          <Cake className="size-3.5 text-[#2F5FA7]" />
+          <span>{displayString}</span>
+        </button>
+      </PopoverTrigger>
+      <PopoverContent className="w-64 p-3" align="start">
+        <div className="space-y-3">
+          <div className="space-y-1">
+            <label className="text-xs font-semibold text-muted-foreground">Edad</label>
+            <input
+              type="number"
+              value={age}
+              onChange={(e) => setAge(e.target.value)}
+              placeholder="Ej. 24"
+              className="w-full bg-secondary rounded-md px-2.5 py-1.5 text-sm outline-none focus:ring-2 focus:ring-ring"
+            />
+          </div>
+          <div className="space-y-1">
+            <label className="text-xs font-semibold text-muted-foreground">Ubicación</label>
+            <input
+              type="text"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              placeholder="Ej. Madrid"
+              className="w-full bg-secondary rounded-md px-2.5 py-1.5 text-sm outline-none focus:ring-2 focus:ring-ring"
+            />
+          </div>
+          <button
+            onClick={handleSave}
+            disabled={updateProfile.isPending}
+            className="w-full bg-[#2F5FA7] text-white py-1.5 text-xs font-semibold rounded-md hover:bg-[#264d87] disabled:opacity-50"
+          >
+            {updateProfile.isPending ? "Guardando..." : "Guardar"}
+          </button>
+        </div>
+      </PopoverContent>
+    </Popover>
   );
 }
 
