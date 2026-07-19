@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useState, useRef, useCallback } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { DayPicker } from "react-day-picker";
 import { es } from "date-fns/locale/es";
@@ -9,15 +10,76 @@ import "react-day-picker/style.css";
 
 export type CalendarProps = React.ComponentProps<typeof DayPicker>;
 
-function Calendar({ className, classNames, showOutsideDays = true, ...props }: CalendarProps) {
+function Calendar({
+  className,
+  classNames,
+  showOutsideDays = true,
+  month: defaultMonth,
+  onMonthChange,
+  ...props
+}: CalendarProps) {
+  const [currentMonth, setCurrentMonth] = useState<Date>(defaultMonth || new Date());
+  const touchStartX = useRef<number | null>(null);
+
+  const handleMonthChange = useCallback(
+    (newMonth: Date) => {
+      setCurrentMonth(newMonth);
+      if (onMonthChange) {
+        onMonthChange(newMonth);
+      }
+    },
+    [onMonthChange],
+  );
+
+  const handleWheel = useCallback(
+    (e: React.WheelEvent) => {
+      if (e.deltaY > 0) {
+        handleMonthChange(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1));
+      } else if (e.deltaY < 0) {
+        handleMonthChange(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1));
+      }
+    },
+    [currentMonth, handleMonthChange],
+  );
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  }, []);
+
+  const handleTouchEnd = useCallback(
+    (e: React.TouchEvent) => {
+      if (touchStartX.current === null) return;
+      const touchEndX = e.changedTouches[0].clientX;
+      const diff = touchStartX.current - touchEndX;
+
+      if (Math.abs(diff) > 50) {
+        // threshold
+        if (diff > 0) {
+          // Swipe left -> next month
+          handleMonthChange(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1));
+        } else {
+          // Swipe right -> prev month
+          handleMonthChange(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1));
+        }
+      }
+      touchStartX.current = null;
+    },
+    [currentMonth, handleMonthChange],
+  );
+
   return (
-    <>
+    <div
+      className="relative group calendar-wrapper"
+      onWheel={handleWheel}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+    >
       <style>{`
         .rdp-root {
-          --rdp-accent-color: #1a1a1a;
-          --rdp-accent-background-color: #1a1a1a;
-          --rdp-day-height: 40px;
-          --rdp-day-width: 40px;
+          --rdp-accent-color: var(--color-primary);
+          --rdp-accent-background-color: var(--color-primary);
+          --rdp-day-height: 36px;
+          --rdp-day-width: 36px;
           --rdp-outline-color: transparent;
           --rdp-background-color: transparent;
           width: 100%;
@@ -30,18 +92,20 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
         }
 
         .rdp-weekday {
-          color: #9ca3af;
+          color: var(--color-muted-foreground);
           font-weight: 500;
           font-size: 13px;
           text-transform: uppercase;
           border-bottom: none;
           padding: 0.5rem 0;
+          text-align: center;
         }
 
         .rdp-day {
           font-weight: 500;
-          font-size: 15px;
+          font-size: 14px;
           border-right: none;
+          text-align: center;
         }
 
         .rdp-week {
@@ -58,10 +122,11 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
           align-items: center;
           justify-content: center;
           transition: background-color 0.2s, color 0.2s;
+          margin: 0 auto;
         }
 
         .rdp-day_button:hover:not([disabled]):not(.rdp-selected) {
-          background-color: #f3f4f6; /* Hover color */
+          background-color: var(--color-secondary); /* Hover color */
           color: inherit;
         }
 
@@ -69,29 +134,30 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
           color: #d1d5db;
         }
 
-        .rdp-today:not(.rdp-outside) {
-          color: #1a1a1a;
-          font-weight: 700;
+        .rdp-today:not(.rdp-outside) .rdp-day_button {
+          background-color: var(--color-accent);
+          color: var(--color-accent-foreground);
+          font-weight: 600;
         }
 
         .rdp-selected {
-          color: #ffffff;
+          color: var(--color-primary-foreground);
         }
 
         .rdp-selected .rdp-day_button {
-          background-color: #1a1a1a;
-          color: #ffffff;
+          background-color: var(--color-primary);
+          color: var(--color-primary-foreground);
         }
 
         .rdp-month_caption {
           font-weight: 600;
-          color: #1a1a1a;
+          color: var(--color-foreground);
           display: flex;
           justify-content: space-between;
           align-items: center;
           margin-bottom: 1rem;
           padding: 0 0.5rem;
-          font-size: 16px;
+          font-size: 15px;
         }
 
         .rdp-caption_label {
@@ -132,7 +198,7 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
         }
 
         .rdp-button_previous:hover, .rdp-button_next:hover {
-          background-color: #f3f4f6;
+          background-color: var(--color-secondary);
         }
 
         /* Support for modifier indicators (dots) */
@@ -142,21 +208,23 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
         .has-event .rdp-day_button::after {
           content: "";
           position: absolute;
-          bottom: 6px;
+          bottom: 4px;
           left: 50%;
           transform: translateX(-50%);
           width: 4px;
           height: 4px;
-          background-color: #d1d5db;
+          background-color: var(--color-primary);
           border-radius: 50%;
         }
         .rdp-selected.has-event .rdp-day_button::after {
-          background-color: #ffffff;
+          background-color: var(--color-primary-foreground);
         }
-      `}</style>
+`}</style>
       <DayPicker
         showOutsideDays={showOutsideDays}
         locale={es}
+        month={currentMonth}
+        onMonthChange={handleMonthChange}
         className={`w-full ${className || ""}`}
         formatters={{
           formatWeekdayName: (date) => {
@@ -164,21 +232,33 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
             return days[date.getDay()];
           },
           formatCaption: (date) => {
-            const month = format(date, "LLLL", { locale: es });
-            return month.charAt(0).toUpperCase() + month.slice(1) + " " + date.getFullYear();
+            const monthStr = format(date, "LLLL", { locale: es });
+            return monthStr.charAt(0).toUpperCase() + monthStr.slice(1) + " " + date.getFullYear();
           },
         }}
         components={{
           Chevron: (props) => {
             if (props.orientation === "left") {
-              return <ChevronLeft className="h-5 w-5 text-black" strokeWidth={2} {...props} />;
+              return (
+                <ChevronLeft
+                  className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity"
+                  strokeWidth={2}
+                  {...props}
+                />
+              );
             }
-            return <ChevronRight className="h-5 w-5 text-black" strokeWidth={2} {...props} />;
+            return (
+              <ChevronRight
+                className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity"
+                strokeWidth={2}
+                {...props}
+              />
+            );
           },
         }}
         {...props}
       />
-    </>
+    </div>
   );
 }
 Calendar.displayName = "Calendar";

@@ -27,3 +27,8 @@
 **Learning:** When customizing `react-day-picker` components to match detailed visual specs with specific localization requirements (like Spanish month names and abbreviated day headers), utilizing `date-fns` formatters is highly effective. Combining these formatters with targeted CSS variables (`--rdp-*`) allows for precise replication of custom designs like dark mode accents, circular day selections, and dot indicators for events, all without breaking the component's underlying accessibility.
 
 **Action:** Whenever tasked with aligning a third-party UI component exactly with a provided screenshot, inspect both the layout (CSS structure) and the text formatting (locale/date manipulation). Use `date-fns` alongside custom CSS to achieve a perfect visual match while maintaining structural integrity.
+## 2024-05-18 - Calendar Redesign
+
+**Learning:** When applying massive CSS modifications to a generic component like `react-day-picker`, it's easier to use native CSS variables exposed by the library while overriding class styles directly rather than relying solely on Tailwind utility classes if the library has a specific nested structure.
+
+**Action:** Before redesigning component libraries, examine their CSS variable API (`.rdp-root { --rdp-accent-color: ... }`) to reduce the amount of `!important` overriding required.
