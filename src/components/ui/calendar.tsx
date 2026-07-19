@@ -95,7 +95,7 @@ function Calendar({
           color: var(--color-muted-foreground);
           font-weight: 500;
           font-size: 13px;
-          text-transform: uppercase;
+          text-transform: capitalize;
           border-bottom: none;
           padding: 0.5rem 0;
           text-align: center;
@@ -150,23 +150,27 @@ function Calendar({
         }
 
         .rdp-month_caption {
-          font-weight: 600;
+          font-weight: 500;
           color: var(--color-foreground);
           display: flex;
-          justify-content: space-between;
+          justify-content: center;
           align-items: center;
-          margin-bottom: 1rem;
-          padding: 0 0.5rem;
-          font-size: 15px;
+          margin-bottom: 0.5rem;
+          padding: 0;
+          font-size: 16px;
         }
 
         .rdp-caption_label {
           margin: 0;
           text-align: center;
-          flex: 1;
+          padding: 0 1rem;
         }
 
         .rdp-months {
+          position: relative;
+        }
+
+        .rdp-month {
           position: relative;
         }
 
@@ -174,11 +178,12 @@ function Calendar({
           display: flex;
           align-items: center;
           position: absolute;
-          width: calc(100% - 1rem);
-          left: 0.5rem;
+          width: 100%;
+          left: 0;
           top: 0;
-          justify-content: space-between;
+          justify-content: center;
           pointer-events: none;
+          gap: 120px; /* Space arrows around the title */
         }
 
         .rdp-nav > * {
@@ -219,8 +224,9 @@ function Calendar({
         .rdp-selected.has-event .rdp-day_button::after {
           background-color: var(--color-primary-foreground);
         }
-`}</style>
+      `}</style>
       <DayPicker
+        weekStartsOn={1}
         showOutsideDays={showOutsideDays}
         locale={es}
         month={currentMonth}
@@ -228,7 +234,7 @@ function Calendar({
         className={`w-full ${className || ""}`}
         formatters={{
           formatWeekdayName: (date) => {
-            const days = ["D", "L", "M", "X", "J", "V", "S"];
+            const days = ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa"];
             return days[date.getDay()];
           },
           formatCaption: (date) => {
@@ -241,7 +247,7 @@ function Calendar({
             if (props.orientation === "left") {
               return (
                 <ChevronLeft
-                  className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity"
+                  className="h-5 w-5 text-foreground transition-opacity"
                   strokeWidth={2}
                   {...props}
                 />
@@ -249,7 +255,7 @@ function Calendar({
             }
             return (
               <ChevronRight
-                className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity"
+                className="h-5 w-5 text-foreground transition-opacity"
                 strokeWidth={2}
                 {...props}
               />
