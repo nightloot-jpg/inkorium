@@ -171,6 +171,16 @@ export type Database = {
           created_at: string;
           id: string;
           image_url: string | null;
+          type: Database["public"]["Enums"]["post_type"];
+          video_url: string | null;
+          youtube_id: string | null;
+          youtube_title: string | null;
+          youtube_channel: string | null;
+          youtube_duration: string | null;
+          news_title: string | null;
+          news_content: string | null;
+          event_id: string | null;
+          event: Record<string, unknown> | null;
         };
         Insert: {
           author_id: string;
@@ -178,6 +188,16 @@ export type Database = {
           created_at?: string;
           id?: string;
           image_url?: string | null;
+          type?: Database["public"]["Enums"]["post_type"];
+          video_url: string | null;
+          youtube_id: string | null;
+          youtube_title: string | null;
+          youtube_channel: string | null;
+          youtube_duration: string | null;
+          news_title: string | null;
+          news_content: string | null;
+          event_id: string | null;
+          event: Record<string, unknown> | null;
         };
         Update: {
           author_id?: string;
@@ -185,6 +205,16 @@ export type Database = {
           created_at?: string;
           id?: string;
           image_url?: string | null;
+          type?: Database["public"]["Enums"]["post_type"];
+          video_url: string | null;
+          youtube_id: string | null;
+          youtube_title: string | null;
+          youtube_channel: string | null;
+          youtube_duration: string | null;
+          news_title: string | null;
+          news_content: string | null;
+          event_id: string | null;
+          event: Record<string, unknown> | null;
         };
         Relationships: [
           {
@@ -244,6 +274,7 @@ export type Database = {
     };
     Enums: {
       friendship_status: "pending" | "accepted";
+      post_type: "status" | "photo" | "video" | "music" | "event" | "news";
     };
     CompositeTypes: {
       [_ in never]: never;
