@@ -37,6 +37,28 @@ function SidebarLayout() {
     },
   });
 
+  const { data: friends = [] } = useQuery({
+    queryKey: ["friends", userId],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("friendships")
+        .select(
+          "requester_id, addressee_id, requester:profiles!friendships_requester_id_fkey(id, username, display_name, avatar_url, online_status), addressee:profiles!friendships_addressee_id_fkey(id, username, display_name, avatar_url, online_status)",
+        )
+        .eq("status", "accepted")
+        .or(`requester_id.eq.${userId},addressee_id.eq.${userId}`);
+      return (data ?? []).map((r) =>
+        r.requester_id === userId ? r.addressee : r.requester,
+      ) as unknown as Array<{
+        id: string;
+        username: string;
+        display_name: string;
+        avatar_url: string | null;
+        online_status: string | null;
+      }>;
+    },
+  });
+
   return (
     <main className="flex flex-col lg:grid lg:grid-cols-[minmax(240px,280px)_minmax(0,1fr)] lg:justify-center gap-6 py-4 w-full">
       <aside className="space-y-4 hidden lg:block">
@@ -88,6 +110,36 @@ function SidebarLayout() {
           <SidebarLink to="/encuestas" icon={BarChart2} label="Encuestas" />
           <SidebarLink to="/guardados" icon={Bookmark} label="Guardados" />
           <SidebarLink to="/configuracion" icon={Settings} label="Configuración" />
+        </div>
+
+        <div className="bg-card rounded-sm border border-[#c2c9d6] p-4 flex flex-col gap-3">
+          <h4 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wide">
+            Amigos conectados ({friends.length})
+          </h4>
+          <div className="flex flex-col gap-2.5">
+            {friends.slice(0, 5).map((friend) => (
+              <div key={friend.id} className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2 min-w-0">
+                  <Avatar profile={friend} size={28} />
+                  <Link
+                    to="/perfil/$username"
+                    params={{ username: friend.username }}
+                    className="text-[13px] font-bold text-foreground hover:underline truncate"
+                  >
+                    {friend.display_name}
+                  </Link>
+                </div>
+                <div
+                  className={`size-2 rounded-full shrink-0 ${friend.online_status === "ocupado" ? "bg-red-500" : friend.online_status === "ausente" ? "bg-yellow-500" : friend.online_status === "desconectado" ? "bg-gray-400" : "bg-online"}`}
+                />
+              </div>
+            ))}
+          </div>
+          <div className="flex justify-end mt-1">
+            <Link to="/amigos" className="text-[12px] font-bold text-[#0b439c] hover:underline">
+              Ver todos »
+            </Link>
+          </div>
         </div>
 
         <div className="bg-card rounded-sm border border-[#c2c9d6] p-4 flex flex-col gap-3">

@@ -115,3 +115,9 @@
 **Learning:** When requested to balance columns using percentages (e.g. 55% for feed, 25% for sidebar) within nested grid definitions, using `minmax(minPx, 1fr)` for the main content area correctly delegates the job of absorbing remaining layout space to CSS Grid without having to perform manual fraction math against the parent container's width.
 
 **Action:** Use `1fr` instead of max-width bounds when the goal is to make a central column absorb the remaining layout space perfectly.
+
+## 2024-05-18 - Nested Grid Queries and Imports
+
+**Learning:** When moving or creating a new section (like the friends list) in a layout component that originally didn't have data fetching, it is critical to ensure that all dependencies, components, and variables (e.g., `supabase`, `Avatar`, `Link`) are correctly imported. Omitting these causes fatal runtime crashes in React (ReferenceError).
+
+**Action:** Always cross-reference the required dependencies when copying JSX code or custom logic to a different file, ensuring all necessary imports exist.
