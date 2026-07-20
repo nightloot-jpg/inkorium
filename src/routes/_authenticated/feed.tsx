@@ -142,9 +142,9 @@ function FeedPage() {
 
   const queryClient = useQueryClient();
   return (
-    <main className="grid grid-cols-1 md:grid-cols-[280px_minmax(0,1fr)] lg:grid-cols-[200px_minmax(0,1fr)_220px] gap-4 py-4 w-full max-w-[980px] mx-auto">
+    <main className="flex flex-col lg:grid lg:grid-cols-[200px_minmax(0,1fr)_220px] gap-4 py-4 w-full max-w-[980px] mx-auto px-2 lg:px-0">
       {/* Sidebar izquierdo */}
-      <aside className="space-y-4">
+      <aside className="space-y-4 hidden lg:block">
         {/* Profile Card */}
         <div className="bg-card rounded-sm border border-[#c2c9d6]  overflow-hidden">
           <div className="p-4 flex gap-4">
