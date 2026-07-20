@@ -91,3 +91,9 @@
 
 **Learning:** When expanding a global layout to match a screenshot, verify all required widgets (e.g., Profile cards, 'Escuchando ahora' music widgets) are appended correctly inside the `<aside>` element and that no HTML nesting rules are broken (like improperly closing generic structural tags).
 **Action:** Cross-reference final component code with the user's uploaded images to ensure all visual sub-components within a layout area are accounted for.
+
+## 2026-07-20 - UI Composer Compact Layout
+
+**Learning:** When dealing with horizontally scrolling element containers like a composer tab list, using flex-wrap rather than overflow-x-auto combined with whitespace-nowrap can solve horizontal scrolling issues and keep layout constrained to the parent's width, particularly important for complex UI sections like a social network's feed composer. Adding a dropdown for secondary less-used items provides a much cleaner, compact visual.
+
+**Action:** Whenever I encounter an issue with overflowing toolbars or tabs in responsive interfaces, I should consider using flex-wrap and dropdowns to group less-frequent actions, making sure not to use fixed horizontal scrolling (`overflow-x-auto`) unless specifically required by the design context.
