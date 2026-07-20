@@ -31,9 +31,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
-import { Route as AuthRoute } from "./route";
+import { Route as AuthRoute } from "../route";
 
-export const Route = createFileRoute("/_authenticated/feed")({
+export const Route = createFileRoute("/_authenticated/_sidebar/feed")({
   head: () => ({ meta: [{ title: "Inicio — Inkorium" }] }),
   component: FeedPage,
 });

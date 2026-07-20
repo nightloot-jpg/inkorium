@@ -13,10 +13,20 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedMensajesRouteImport } from './routes/_authenticated/mensajes'
-import { Route as AuthenticatedFeedRouteImport } from './routes/_authenticated/feed'
 import { Route as AuthenticatedAmigosRouteImport } from './routes/_authenticated/amigos'
+import { Route as AuthenticatedSidebarRouteImport } from './routes/_authenticated/_sidebar'
 import { Route as AuthenticatedPerfilUsernameRouteImport } from './routes/_authenticated/perfil.$username'
 import { Route as AuthenticatedMensajesUsernameRouteImport } from './routes/_authenticated/mensajes.$username'
+import { Route as AuthenticatedSidebarVideosRouteImport } from './routes/_authenticated/_sidebar/videos'
+import { Route as AuthenticatedSidebarPaginasRouteImport } from './routes/_authenticated/_sidebar/paginas'
+import { Route as AuthenticatedSidebarMusicaRouteImport } from './routes/_authenticated/_sidebar/musica'
+import { Route as AuthenticatedSidebarGuardadosRouteImport } from './routes/_authenticated/_sidebar/guardados'
+import { Route as AuthenticatedSidebarGruposRouteImport } from './routes/_authenticated/_sidebar/grupos'
+import { Route as AuthenticatedSidebarFotosRouteImport } from './routes/_authenticated/_sidebar/fotos'
+import { Route as AuthenticatedSidebarFeedRouteImport } from './routes/_authenticated/_sidebar/feed'
+import { Route as AuthenticatedSidebarEventosRouteImport } from './routes/_authenticated/_sidebar/eventos'
+import { Route as AuthenticatedSidebarEncuestasRouteImport } from './routes/_authenticated/_sidebar/encuestas'
+import { Route as AuthenticatedSidebarConfiguracionRouteImport } from './routes/_authenticated/_sidebar/configuracion'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
@@ -37,14 +47,13 @@ const AuthenticatedMensajesRoute = AuthenticatedMensajesRouteImport.update({
   path: '/mensajes',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedFeedRoute = AuthenticatedFeedRouteImport.update({
-  id: '/feed',
-  path: '/feed',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const AuthenticatedAmigosRoute = AuthenticatedAmigosRouteImport.update({
   id: '/amigos',
   path: '/amigos',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedSidebarRoute = AuthenticatedSidebarRouteImport.update({
+  id: '/_sidebar',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedPerfilUsernameRoute =
@@ -59,13 +68,82 @@ const AuthenticatedMensajesUsernameRoute =
     path: '/$username',
     getParentRoute: () => AuthenticatedMensajesRoute,
   } as any)
+const AuthenticatedSidebarVideosRoute =
+  AuthenticatedSidebarVideosRouteImport.update({
+    id: '/videos',
+    path: '/videos',
+    getParentRoute: () => AuthenticatedSidebarRoute,
+  } as any)
+const AuthenticatedSidebarPaginasRoute =
+  AuthenticatedSidebarPaginasRouteImport.update({
+    id: '/paginas',
+    path: '/paginas',
+    getParentRoute: () => AuthenticatedSidebarRoute,
+  } as any)
+const AuthenticatedSidebarMusicaRoute =
+  AuthenticatedSidebarMusicaRouteImport.update({
+    id: '/musica',
+    path: '/musica',
+    getParentRoute: () => AuthenticatedSidebarRoute,
+  } as any)
+const AuthenticatedSidebarGuardadosRoute =
+  AuthenticatedSidebarGuardadosRouteImport.update({
+    id: '/guardados',
+    path: '/guardados',
+    getParentRoute: () => AuthenticatedSidebarRoute,
+  } as any)
+const AuthenticatedSidebarGruposRoute =
+  AuthenticatedSidebarGruposRouteImport.update({
+    id: '/grupos',
+    path: '/grupos',
+    getParentRoute: () => AuthenticatedSidebarRoute,
+  } as any)
+const AuthenticatedSidebarFotosRoute =
+  AuthenticatedSidebarFotosRouteImport.update({
+    id: '/fotos',
+    path: '/fotos',
+    getParentRoute: () => AuthenticatedSidebarRoute,
+  } as any)
+const AuthenticatedSidebarFeedRoute =
+  AuthenticatedSidebarFeedRouteImport.update({
+    id: '/feed',
+    path: '/feed',
+    getParentRoute: () => AuthenticatedSidebarRoute,
+  } as any)
+const AuthenticatedSidebarEventosRoute =
+  AuthenticatedSidebarEventosRouteImport.update({
+    id: '/eventos',
+    path: '/eventos',
+    getParentRoute: () => AuthenticatedSidebarRoute,
+  } as any)
+const AuthenticatedSidebarEncuestasRoute =
+  AuthenticatedSidebarEncuestasRouteImport.update({
+    id: '/encuestas',
+    path: '/encuestas',
+    getParentRoute: () => AuthenticatedSidebarRoute,
+  } as any)
+const AuthenticatedSidebarConfiguracionRoute =
+  AuthenticatedSidebarConfiguracionRouteImport.update({
+    id: '/configuracion',
+    path: '/configuracion',
+    getParentRoute: () => AuthenticatedSidebarRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/amigos': typeof AuthenticatedAmigosRoute
-  '/feed': typeof AuthenticatedFeedRoute
   '/mensajes': typeof AuthenticatedMensajesRouteWithChildren
+  '/configuracion': typeof AuthenticatedSidebarConfiguracionRoute
+  '/encuestas': typeof AuthenticatedSidebarEncuestasRoute
+  '/eventos': typeof AuthenticatedSidebarEventosRoute
+  '/feed': typeof AuthenticatedSidebarFeedRoute
+  '/fotos': typeof AuthenticatedSidebarFotosRoute
+  '/grupos': typeof AuthenticatedSidebarGruposRoute
+  '/guardados': typeof AuthenticatedSidebarGuardadosRoute
+  '/musica': typeof AuthenticatedSidebarMusicaRoute
+  '/paginas': typeof AuthenticatedSidebarPaginasRoute
+  '/videos': typeof AuthenticatedSidebarVideosRoute
   '/mensajes/$username': typeof AuthenticatedMensajesUsernameRoute
   '/perfil/$username': typeof AuthenticatedPerfilUsernameRoute
 }
@@ -73,8 +151,17 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/amigos': typeof AuthenticatedAmigosRoute
-  '/feed': typeof AuthenticatedFeedRoute
   '/mensajes': typeof AuthenticatedMensajesRouteWithChildren
+  '/configuracion': typeof AuthenticatedSidebarConfiguracionRoute
+  '/encuestas': typeof AuthenticatedSidebarEncuestasRoute
+  '/eventos': typeof AuthenticatedSidebarEventosRoute
+  '/feed': typeof AuthenticatedSidebarFeedRoute
+  '/fotos': typeof AuthenticatedSidebarFotosRoute
+  '/grupos': typeof AuthenticatedSidebarGruposRoute
+  '/guardados': typeof AuthenticatedSidebarGuardadosRoute
+  '/musica': typeof AuthenticatedSidebarMusicaRoute
+  '/paginas': typeof AuthenticatedSidebarPaginasRoute
+  '/videos': typeof AuthenticatedSidebarVideosRoute
   '/mensajes/$username': typeof AuthenticatedMensajesUsernameRoute
   '/perfil/$username': typeof AuthenticatedPerfilUsernameRoute
 }
@@ -83,9 +170,19 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_authenticated/_sidebar': typeof AuthenticatedSidebarRouteWithChildren
   '/_authenticated/amigos': typeof AuthenticatedAmigosRoute
-  '/_authenticated/feed': typeof AuthenticatedFeedRoute
   '/_authenticated/mensajes': typeof AuthenticatedMensajesRouteWithChildren
+  '/_authenticated/_sidebar/configuracion': typeof AuthenticatedSidebarConfiguracionRoute
+  '/_authenticated/_sidebar/encuestas': typeof AuthenticatedSidebarEncuestasRoute
+  '/_authenticated/_sidebar/eventos': typeof AuthenticatedSidebarEventosRoute
+  '/_authenticated/_sidebar/feed': typeof AuthenticatedSidebarFeedRoute
+  '/_authenticated/_sidebar/fotos': typeof AuthenticatedSidebarFotosRoute
+  '/_authenticated/_sidebar/grupos': typeof AuthenticatedSidebarGruposRoute
+  '/_authenticated/_sidebar/guardados': typeof AuthenticatedSidebarGuardadosRoute
+  '/_authenticated/_sidebar/musica': typeof AuthenticatedSidebarMusicaRoute
+  '/_authenticated/_sidebar/paginas': typeof AuthenticatedSidebarPaginasRoute
+  '/_authenticated/_sidebar/videos': typeof AuthenticatedSidebarVideosRoute
   '/_authenticated/mensajes/$username': typeof AuthenticatedMensajesUsernameRoute
   '/_authenticated/perfil/$username': typeof AuthenticatedPerfilUsernameRoute
 }
@@ -95,8 +192,17 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/amigos'
-    | '/feed'
     | '/mensajes'
+    | '/configuracion'
+    | '/encuestas'
+    | '/eventos'
+    | '/feed'
+    | '/fotos'
+    | '/grupos'
+    | '/guardados'
+    | '/musica'
+    | '/paginas'
+    | '/videos'
     | '/mensajes/$username'
     | '/perfil/$username'
   fileRoutesByTo: FileRoutesByTo
@@ -104,8 +210,17 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/amigos'
-    | '/feed'
     | '/mensajes'
+    | '/configuracion'
+    | '/encuestas'
+    | '/eventos'
+    | '/feed'
+    | '/fotos'
+    | '/grupos'
+    | '/guardados'
+    | '/musica'
+    | '/paginas'
+    | '/videos'
     | '/mensajes/$username'
     | '/perfil/$username'
   id:
@@ -113,9 +228,19 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/_authenticated/_sidebar'
     | '/_authenticated/amigos'
-    | '/_authenticated/feed'
     | '/_authenticated/mensajes'
+    | '/_authenticated/_sidebar/configuracion'
+    | '/_authenticated/_sidebar/encuestas'
+    | '/_authenticated/_sidebar/eventos'
+    | '/_authenticated/_sidebar/feed'
+    | '/_authenticated/_sidebar/fotos'
+    | '/_authenticated/_sidebar/grupos'
+    | '/_authenticated/_sidebar/guardados'
+    | '/_authenticated/_sidebar/musica'
+    | '/_authenticated/_sidebar/paginas'
+    | '/_authenticated/_sidebar/videos'
     | '/_authenticated/mensajes/$username'
     | '/_authenticated/perfil/$username'
   fileRoutesById: FileRoutesById
@@ -156,18 +281,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedMensajesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/feed': {
-      id: '/_authenticated/feed'
-      path: '/feed'
-      fullPath: '/feed'
-      preLoaderRoute: typeof AuthenticatedFeedRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/amigos': {
       id: '/_authenticated/amigos'
       path: '/amigos'
       fullPath: '/amigos'
       preLoaderRoute: typeof AuthenticatedAmigosRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/_sidebar': {
+      id: '/_authenticated/_sidebar'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedSidebarRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/perfil/$username': {
@@ -184,8 +309,108 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedMensajesUsernameRouteImport
       parentRoute: typeof AuthenticatedMensajesRoute
     }
+    '/_authenticated/_sidebar/videos': {
+      id: '/_authenticated/_sidebar/videos'
+      path: '/videos'
+      fullPath: '/videos'
+      preLoaderRoute: typeof AuthenticatedSidebarVideosRouteImport
+      parentRoute: typeof AuthenticatedSidebarRoute
+    }
+    '/_authenticated/_sidebar/paginas': {
+      id: '/_authenticated/_sidebar/paginas'
+      path: '/paginas'
+      fullPath: '/paginas'
+      preLoaderRoute: typeof AuthenticatedSidebarPaginasRouteImport
+      parentRoute: typeof AuthenticatedSidebarRoute
+    }
+    '/_authenticated/_sidebar/musica': {
+      id: '/_authenticated/_sidebar/musica'
+      path: '/musica'
+      fullPath: '/musica'
+      preLoaderRoute: typeof AuthenticatedSidebarMusicaRouteImport
+      parentRoute: typeof AuthenticatedSidebarRoute
+    }
+    '/_authenticated/_sidebar/guardados': {
+      id: '/_authenticated/_sidebar/guardados'
+      path: '/guardados'
+      fullPath: '/guardados'
+      preLoaderRoute: typeof AuthenticatedSidebarGuardadosRouteImport
+      parentRoute: typeof AuthenticatedSidebarRoute
+    }
+    '/_authenticated/_sidebar/grupos': {
+      id: '/_authenticated/_sidebar/grupos'
+      path: '/grupos'
+      fullPath: '/grupos'
+      preLoaderRoute: typeof AuthenticatedSidebarGruposRouteImport
+      parentRoute: typeof AuthenticatedSidebarRoute
+    }
+    '/_authenticated/_sidebar/fotos': {
+      id: '/_authenticated/_sidebar/fotos'
+      path: '/fotos'
+      fullPath: '/fotos'
+      preLoaderRoute: typeof AuthenticatedSidebarFotosRouteImport
+      parentRoute: typeof AuthenticatedSidebarRoute
+    }
+    '/_authenticated/_sidebar/feed': {
+      id: '/_authenticated/_sidebar/feed'
+      path: '/feed'
+      fullPath: '/feed'
+      preLoaderRoute: typeof AuthenticatedSidebarFeedRouteImport
+      parentRoute: typeof AuthenticatedSidebarRoute
+    }
+    '/_authenticated/_sidebar/eventos': {
+      id: '/_authenticated/_sidebar/eventos'
+      path: '/eventos'
+      fullPath: '/eventos'
+      preLoaderRoute: typeof AuthenticatedSidebarEventosRouteImport
+      parentRoute: typeof AuthenticatedSidebarRoute
+    }
+    '/_authenticated/_sidebar/encuestas': {
+      id: '/_authenticated/_sidebar/encuestas'
+      path: '/encuestas'
+      fullPath: '/encuestas'
+      preLoaderRoute: typeof AuthenticatedSidebarEncuestasRouteImport
+      parentRoute: typeof AuthenticatedSidebarRoute
+    }
+    '/_authenticated/_sidebar/configuracion': {
+      id: '/_authenticated/_sidebar/configuracion'
+      path: '/configuracion'
+      fullPath: '/configuracion'
+      preLoaderRoute: typeof AuthenticatedSidebarConfiguracionRouteImport
+      parentRoute: typeof AuthenticatedSidebarRoute
+    }
   }
 }
+
+interface AuthenticatedSidebarRouteChildren {
+  AuthenticatedSidebarConfiguracionRoute: typeof AuthenticatedSidebarConfiguracionRoute
+  AuthenticatedSidebarEncuestasRoute: typeof AuthenticatedSidebarEncuestasRoute
+  AuthenticatedSidebarEventosRoute: typeof AuthenticatedSidebarEventosRoute
+  AuthenticatedSidebarFeedRoute: typeof AuthenticatedSidebarFeedRoute
+  AuthenticatedSidebarFotosRoute: typeof AuthenticatedSidebarFotosRoute
+  AuthenticatedSidebarGruposRoute: typeof AuthenticatedSidebarGruposRoute
+  AuthenticatedSidebarGuardadosRoute: typeof AuthenticatedSidebarGuardadosRoute
+  AuthenticatedSidebarMusicaRoute: typeof AuthenticatedSidebarMusicaRoute
+  AuthenticatedSidebarPaginasRoute: typeof AuthenticatedSidebarPaginasRoute
+  AuthenticatedSidebarVideosRoute: typeof AuthenticatedSidebarVideosRoute
+}
+
+const AuthenticatedSidebarRouteChildren: AuthenticatedSidebarRouteChildren = {
+  AuthenticatedSidebarConfiguracionRoute:
+    AuthenticatedSidebarConfiguracionRoute,
+  AuthenticatedSidebarEncuestasRoute: AuthenticatedSidebarEncuestasRoute,
+  AuthenticatedSidebarEventosRoute: AuthenticatedSidebarEventosRoute,
+  AuthenticatedSidebarFeedRoute: AuthenticatedSidebarFeedRoute,
+  AuthenticatedSidebarFotosRoute: AuthenticatedSidebarFotosRoute,
+  AuthenticatedSidebarGruposRoute: AuthenticatedSidebarGruposRoute,
+  AuthenticatedSidebarGuardadosRoute: AuthenticatedSidebarGuardadosRoute,
+  AuthenticatedSidebarMusicaRoute: AuthenticatedSidebarMusicaRoute,
+  AuthenticatedSidebarPaginasRoute: AuthenticatedSidebarPaginasRoute,
+  AuthenticatedSidebarVideosRoute: AuthenticatedSidebarVideosRoute,
+}
+
+const AuthenticatedSidebarRouteWithChildren =
+  AuthenticatedSidebarRoute._addFileChildren(AuthenticatedSidebarRouteChildren)
 
 interface AuthenticatedMensajesRouteChildren {
   AuthenticatedMensajesUsernameRoute: typeof AuthenticatedMensajesUsernameRoute
@@ -201,15 +426,15 @@ const AuthenticatedMensajesRouteWithChildren =
   )
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedSidebarRoute: typeof AuthenticatedSidebarRouteWithChildren
   AuthenticatedAmigosRoute: typeof AuthenticatedAmigosRoute
-  AuthenticatedFeedRoute: typeof AuthenticatedFeedRoute
   AuthenticatedMensajesRoute: typeof AuthenticatedMensajesRouteWithChildren
   AuthenticatedPerfilUsernameRoute: typeof AuthenticatedPerfilUsernameRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedSidebarRoute: AuthenticatedSidebarRouteWithChildren,
   AuthenticatedAmigosRoute: AuthenticatedAmigosRoute,
-  AuthenticatedFeedRoute: AuthenticatedFeedRoute,
   AuthenticatedMensajesRoute: AuthenticatedMensajesRouteWithChildren,
   AuthenticatedPerfilUsernameRoute: AuthenticatedPerfilUsernameRoute,
 }
