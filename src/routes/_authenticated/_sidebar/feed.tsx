@@ -6,23 +6,24 @@ import { PostCard, Avatar } from "@/components/post-card";
 import { CalendarCard } from "@/components/CalendarCard";
 import { useState, useRef, useEffect } from "react";
 import {
-  Image as ImageIcon,
-  X,
-  MapPin,
-  Search,
-  Video,
-  Upload,
-  Music,
-  Calendar as CalendarIcon,
-  Newspaper,
-  Users,
-  ChevronDown,
   ArrowRight,
-  Home,
-  Flag,
   BarChart2,
   Bookmark,
+  Calendar as CalendarIcon,
+  ChevronDown,
+  Flag,
+  Globe2,
+  Home,
+  Image as ImageIcon,
+  MapPin,
+  Music,
+  Newspaper,
+  Search,
   Settings,
+  Upload,
+  Users,
+  Video,
+  X,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -282,11 +283,14 @@ function Composer({
       if (!text && activeTab !== "photo" && activeTab !== "video")
         throw new Error("Añade algún contenido.");
 
+      const finalType = ["poll", "album", "playlist", "location", "celebration"].includes(activeTab)
+        ? "status"
+        : activeTab;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const payload: any = {
         author_id: userId,
         content: text,
-        type: activeTab,
+        type: finalType,
       };
 
       if (activeTab === "photo") {
@@ -328,184 +332,222 @@ function Composer({
     onError: (e) => toast.error(e instanceof Error ? e.message : "Error al publicar"),
   });
 
+  const firstName = avatar?.display_name?.split(" ")[0] || "usuario";
+
   return (
-    <div className="bg-card rounded-sm border border-[#c2c9d6]  overflow-hidden flex flex-col">
-      <div className="px-4 py-3">
-        <h3 className="text-[14px] font-bold text-[#0b439c]">¿Qué tienes en mente?</h3>
+    <div className="bg-white rounded-md border border-[#dbe0e8] flex flex-col p-4 shadow-sm">
+      {/* Row 1: Cabecera con avatar y caja de texto */}
+      <div className="flex gap-3 items-start mb-4">
+        {avatar?.avatar_url ? (
+          <img
+            src={avatar.avatar_url}
+            alt="Avatar"
+            className="w-12 h-12 rounded-lg object-cover border border-[#e6eaf0]"
+          />
+        ) : (
+          <div className="w-12 h-12 rounded-lg bg-[#e6eaf0] flex items-center justify-center shrink-0 border border-[#dbe0e8]">
+            <span className="text-[#0b439c] text-lg font-bold">
+              {avatar?.display_name?.charAt(0)?.toUpperCase()}
+            </span>
+          </div>
+        )}
+        <div className="flex-1 border border-[#dbe0e8] rounded-md p-3 focus-within:border-[#0b439c] focus-within:ring-1 focus-within:ring-[#0b439c]/20 transition-all bg-white flex flex-col">
+          <textarea
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            className="w-full bg-transparent p-0 text-[15px] resize-none h-[24px] outline-none placeholder:text-muted-foreground"
+            placeholder={`¿Qué estás pensando, ${firstName.toLowerCase()}?`}
+          />
+
+          {/* Opciones extra dinámicas */}
+          <div className="space-y-2 mt-2">
+            <input
+              type="file"
+              ref={fileInputRef}
+              className="hidden"
+              accept={activeTab === "video" ? "video/*" : "image/*"}
+              onChange={handleFileUpload}
+            />
+
+            {activeTab === "photo" && (
+              <div className="flex gap-2">
+                <input
+                  value={mediaUrl}
+                  onChange={(e) => setMediaUrl(e.target.value)}
+                  placeholder="URL de la imagen..."
+                  className="flex-1 bg-secondary rounded-lg px-3 py-2 text-sm outline-none border border-border"
+                />
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isUploading}
+                  className="bg-secondary text-foreground px-3 py-2 rounded-lg text-sm font-medium border border-border disabled:opacity-50"
+                >
+                  {isUploading ? "Subiendo..." : "Subir"}
+                </button>
+              </div>
+            )}
+
+            {activeTab === "video" && (
+              <div className="flex gap-2">
+                <input
+                  value={mediaUrl || extraData.video_url || ""}
+                  onChange={(e) => {
+                    setMediaUrl("");
+                    setExtraData({ ...extraData, video_url: e.target.value });
+                  }}
+                  placeholder="URL del vídeo o subir archivo..."
+                  className="flex-1 bg-secondary rounded-lg px-3 py-2 text-sm outline-none border border-border"
+                />
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={isUploading}
+                  className="bg-secondary text-foreground px-3 py-2 rounded-lg text-sm font-medium border border-border disabled:opacity-50"
+                >
+                  {isUploading ? "Subiendo..." : "Subir"}
+                </button>
+              </div>
+            )}
+
+            {activeTab === "music" && (
+              <div className="flex gap-2">
+                <input
+                  value={extraData.youtube_id || ""}
+                  onChange={(e) => setExtraData({ ...extraData, youtube_id: e.target.value })}
+                  placeholder="ID YouTube..."
+                  className="flex-1 bg-secondary rounded-lg px-3 py-2 text-sm outline-none border border-border"
+                />
+              </div>
+            )}
+
+            {activeTab === "event" && (
+              <div className="flex gap-2">
+                <input
+                  value={extraData.name || ""}
+                  onChange={(e) => setExtraData({ ...extraData, name: e.target.value })}
+                  placeholder="Nombre del evento"
+                  className="flex-1 bg-secondary rounded-lg px-3 py-2 text-sm outline-none border border-border"
+                />
+              </div>
+            )}
+
+            {activeTab === "poll" && (
+              <div className="text-xs text-muted-foreground mt-2">
+                Configura tu encuesta (Placeholder)
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
-      <div className="px-4 pb-4 flex gap-3 flex-col">
-        <input
-          type="file"
-          ref={fileInputRef}
-          className="hidden"
-          accept={activeTab === "video" ? "video/*" : "image/*"}
-          onChange={handleFileUpload}
-        />
-
-        <textarea
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          className="w-full bg-transparent p-0 text-[14px] resize-none min-h-[40px] outline-none placeholder:text-muted-foreground/70"
-          placeholder=""
-        />
-
-        {activeTab === "photo" && (
-          <div className="flex gap-2">
-            <input
-              value={mediaUrl}
-              onChange={(e) => setMediaUrl(e.target.value)}
-              placeholder="URL de la imagen..."
-              className="flex-1 bg-secondary rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring border border-transparent"
-            />
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              disabled={isUploading}
-              className="bg-secondary hover:bg-secondary/80 text-foreground px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 border border-border disabled:opacity-50"
-            >
-              <Upload className="size-4" />
-              {isUploading ? "Subiendo..." : "Subir"}
-            </button>
-          </div>
-        )}
-
-        {activeTab === "video" && (
-          <div className="flex gap-2">
-            <input
-              value={mediaUrl || extraData.video_url || ""}
-              onChange={(e) => {
-                setMediaUrl("");
-                setExtraData({ ...extraData, video_url: e.target.value });
-              }}
-              placeholder="URL del vídeo de YouTube o archivo..."
-              className="flex-1 bg-secondary rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring border border-transparent"
-            />
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              disabled={isUploading}
-              className="bg-secondary hover:bg-secondary/80 text-foreground px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 border border-border disabled:opacity-50"
-            >
-              <Upload className="size-4" />
-              {isUploading ? "Subiendo..." : "Subir"}
-            </button>
-          </div>
-        )}
-
-        {activeTab === "music" && (
-          <div className="space-y-2">
-            <input
-              value={extraData.youtube_id || ""}
-              onChange={(e) => setExtraData({ ...extraData, youtube_id: e.target.value })}
-              placeholder="ID del vídeo de YouTube..."
-              className="w-full bg-secondary rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring border border-transparent"
-            />
-            <input
-              value={extraData.youtube_title || ""}
-              onChange={(e) => setExtraData({ ...extraData, youtube_title: e.target.value })}
-              placeholder="Título de la canción..."
-              className="w-full bg-secondary rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring border border-transparent"
-            />
-          </div>
-        )}
-
-        {activeTab === "event" && (
-          <div className="grid grid-cols-2 gap-2">
-            <input
-              value={extraData.name || ""}
-              onChange={(e) => setExtraData({ ...extraData, name: e.target.value })}
-              placeholder="Nombre del evento"
-              className="col-span-2 w-full bg-secondary rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring border border-transparent"
-            />
-            <input
-              type="date"
-              value={extraData.date || ""}
-              onChange={(e) => setExtraData({ ...extraData, date: e.target.value })}
-              className="w-full bg-secondary rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring border border-transparent"
-            />
-            <input
-              type="time"
-              value={extraData.time || ""}
-              onChange={(e) => setExtraData({ ...extraData, time: e.target.value })}
-              className="w-full bg-secondary rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring border border-transparent"
-            />
-            <input
-              value={extraData.location || ""}
-              onChange={(e) => setExtraData({ ...extraData, location: e.target.value })}
-              placeholder="Lugar"
-              className="col-span-2 w-full bg-secondary rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring border border-transparent"
-            />
-          </div>
-        )}
-
-        {activeTab === "news" && (
-          <div className="space-y-2">
-            <input
-              value={extraData.title || ""}
-              onChange={(e) => setExtraData({ ...extraData, title: e.target.value })}
-              placeholder="Título de la noticia"
-              className="w-full bg-secondary rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring border border-transparent"
-            />
-            <input
-              value={mediaUrl}
-              onChange={(e) => setMediaUrl(e.target.value)}
-              placeholder="URL de la imagen (opcional)"
-              className="w-full bg-secondary rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring border border-transparent"
-            />
-          </div>
-        )}
-      </div>
-
-      <div className="bg-[#f1f3f6] border-t border-[#dbe0e8] px-3 py-2 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
-        <div className="flex gap-4 overflow-x-auto no-scrollbar items-center">
+      {/* Row 2: Barra de herramientas (Compacta y sin scroll) */}
+      <div className="flex items-center overflow-hidden whitespace-nowrap mb-4">
+        <div className="flex gap-1 md:gap-[18px] items-center flex-shrink min-w-0 flex-nowrap w-full overflow-hidden">
           <ComposerTab
-            icon={<Search className="size-4" />}
+            icon={<Search className="w-4 h-4" />}
             label="Estado"
             active={activeTab === "status"}
             onClick={() => setActiveTab("status")}
           />
           <ComposerTab
-            icon={<ImageIcon className="size-4" />}
+            icon={<ImageIcon className="w-4 h-4" />}
             label="Foto"
             active={activeTab === "photo"}
             onClick={() => setActiveTab("photo")}
           />
           <ComposerTab
-            icon={<Music className="size-4" />}
-            label="Música"
-            active={activeTab === "music"}
-            onClick={() => setActiveTab("music")}
-          />
-          <ComposerTab
-            icon={<Video className="size-4" />}
+            icon={<Video className="w-4 h-4" />}
             label="Vídeo"
             active={activeTab === "video"}
             onClick={() => setActiveTab("video")}
           />
           <ComposerTab
-            icon={<CalendarIcon className="size-4" />}
+            icon={<Music className="w-4 h-4" />}
+            label="Música"
+            active={activeTab === "music"}
+            onClick={() => setActiveTab("music")}
+          />
+          <ComposerTab
+            icon={<CalendarIcon className="w-4 h-4" />}
             label="Evento"
             active={activeTab === "event"}
             onClick={() => setActiveTab("event")}
           />
           <ComposerTab
-            icon={<Newspaper className="size-4" />}
-            label="Noticia"
-            active={activeTab === "news"}
-            onClick={() => setActiveTab("news")}
+            icon={<BarChart2 className="w-4 h-4" />}
+            label="Encuesta"
+            active={activeTab === "poll"}
+            onClick={() => setActiveTab("poll")}
           />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                className={`flex items-center gap-[6px] text-[14px] transition-colors px-1 py-1 rounded-sm outline-none flex-shrink-0 ${["news", "album", "playlist", "location", "celebration"].includes(activeTab) ? "font-bold text-foreground" : "text-black hover:bg-black/5"}`}
+              >
+                <BarChart2 className="w-4 h-4 rotate-90" />
+                Más
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="start"
+              className="w-40 p-1 bg-white rounded-sm border border-[#c2c9d6] shadow-md !animate-none"
+            >
+              <DropdownMenuItem
+                onClick={() => setActiveTab("news")}
+                className={`text-[12px] px-2 py-1.5 rounded-sm cursor-pointer ${activeTab === "news" ? "bg-accent text-accent-foreground font-medium" : ""}`}
+              >
+                <Newspaper className="w-3.5 h-3.5 mr-2" />
+                Noticia
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => setActiveTab("album")}
+                className={`text-[12px] px-2 py-1.5 rounded-sm cursor-pointer ${activeTab === "album" ? "bg-accent text-accent-foreground font-medium" : ""}`}
+              >
+                <ImageIcon className="w-3.5 h-3.5 mr-2" />
+                Álbum
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => setActiveTab("playlist")}
+                className={`text-[12px] px-2 py-1.5 rounded-sm cursor-pointer ${activeTab === "playlist" ? "bg-accent text-accent-foreground font-medium" : ""}`}
+              >
+                <Music className="w-3.5 h-3.5 mr-2" />
+                Playlist
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => setActiveTab("location")}
+                className={`text-[12px] px-2 py-1.5 rounded-sm cursor-pointer ${activeTab === "location" ? "bg-accent text-accent-foreground font-medium" : ""}`}
+              >
+                <MapPin className="w-3.5 h-3.5 mr-2" />
+                Ubicación
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => setActiveTab("celebration")}
+                className={`text-[12px] px-2 py-1.5 rounded-sm cursor-pointer ${activeTab === "celebration" ? "bg-accent text-accent-foreground font-medium" : ""}`}
+              >
+                <Flag className="w-3.5 h-3.5 mr-2" />
+                Celebración
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
+      </div>
 
-        <div className="flex justify-end shrink-0">
-          <button
-            onClick={() => publish.mutate()}
-            disabled={publish.isPending || (activeTab === "status" && !content.trim())}
-            className="bg-[#f8f9fa] border border-[#dbe0e8] hover:bg-[#e6eaf0] text-[#0b439c] text-[13px] font-bold py-1 px-4 transition-colors disabled:opacity-40"
-          >
-            {publish.isPending ? "Publicando..." : "Publicar"}
-          </button>
-        </div>
+      {/* Row 3: Footer */}
+      <div className="border-t border-[#e6eaf0] pt-4 flex justify-end items-center gap-4">
+        <button className="flex items-center gap-1.5 text-[14px] text-black font-medium hover:text-foreground transition-colors">
+          <Globe2 className="w-[18px] h-[18px]" />
+          Público
+          <ChevronDown className="w-4 h-4 ml-[-2px]" />
+        </button>
+
+        <button
+          onClick={() => publish.mutate()}
+          disabled={publish.isPending || (activeTab === "status" && !content.trim())}
+          className="bg-[#1b53c0] hover:bg-[#154299] text-white text-[14px] font-medium py-1.5 px-6 rounded-md transition-colors disabled:opacity-50"
+        >
+          {publish.isPending ? "Publicando..." : "Publicar"}
+        </button>
       </div>
     </div>
   );
@@ -525,7 +567,7 @@ function ComposerTab({
   return (
     <button
       onClick={onClick}
-      className={`flex items-center gap-1.5 text-[12px] font-medium transition-colors whitespace-nowrap px-2 py-1 rounded-md ${active ? "bg-white border border-[#dbe0e8] text-foreground font-bold " : "text-[#0b439c] hover:bg-black/5"}`}
+      className={`flex items-center gap-[6px] text-[14px] transition-colors px-1 py-1 rounded-sm flex-shrink-0 ${active ? "font-bold text-foreground" : "text-black hover:bg-black/5"}`}
     >
       {icon} {label}
     </button>
