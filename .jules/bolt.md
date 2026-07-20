@@ -76,3 +76,8 @@
 
 **Learning:** Hardcoding grid columns without proper mobile fallbacks (like flex-col) forces sidebars to appear on top of or alongside the main feed on small screens, breaking usability.
 **Action:** Always use a flex-col layout for mobile by default and apply grid column classes using lg: modifiers for desktop.
+
+## 2026-07-20 - Extracting layout logic to Sidebar layouts
+
+**Learning:** When moving a sidebar from a specific view (`feed.tsx`) to a global layout (`_sidebar.tsx`), the router hierarchy must be correctly configured in TanStack router by renaming the file structure. For file-based routing, moving `feed.tsx` to `_sidebar/feed.tsx` and creating `_sidebar.tsx` wraps the child view correctly.
+**Action:** When performing layout extractions, verify the generated routing tree (`src/routeTree.gen.ts`) to ensure path assignments correctly reflect the new parent-child hierarchy before assuming the refactor is complete.
