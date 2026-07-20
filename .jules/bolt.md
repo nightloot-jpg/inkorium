@@ -81,3 +81,13 @@
 
 **Learning:** When moving a sidebar from a specific view (`feed.tsx`) to a global layout (`_sidebar.tsx`), the router hierarchy must be correctly configured in TanStack router by renaming the file structure. For file-based routing, moving `feed.tsx` to `_sidebar/feed.tsx` and creating `_sidebar.tsx` wraps the child view correctly.
 **Action:** When performing layout extractions, verify the generated routing tree (`src/routeTree.gen.ts`) to ensure path assignments correctly reflect the new parent-child hierarchy before assuming the refactor is complete.
+
+## 2026-07-20 - Removing duplicate sidebars when extracting Layouts
+
+**Learning:** When moving a layout element (like a Sidebar) from an individual view into a global parent Layout view, the original markup MUST be removed from the child view. Failing to do so (or failing to confirm the patch was fully applied) results in visually duplicated elements across columns.
+**Action:** Always verify with `grep` that the class names or elements targeted for removal from a file no longer exist in that file after executing a script or patch.
+
+## 2026-07-20 - Global Navigation and Sidebar Widgets
+
+**Learning:** When expanding a global layout to match a screenshot, verify all required widgets (e.g., Profile cards, 'Escuchando ahora' music widgets) are appended correctly inside the `<aside>` element and that no HTML nesting rules are broken (like improperly closing generic structural tags).
+**Action:** Cross-reference final component code with the user's uploaded images to ensure all visual sub-components within a layout area are accounted for.
