@@ -10,12 +10,21 @@ import {
   Share2,
 } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, memo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { type FeedPost, timeAgo, initials } from "@/lib/social";
 import { toast } from "sonner";
 
-export function PostCard({ post, currentUserId }: { post: FeedPost; currentUserId: string }) {
+// ⚡ Bolt: Adding React.memo() prevents PostCard from unnecessarily re-rendering
+// when the parent FeedPage re-renders (e.g. while typing in the composer).
+// Impact: Reduces re-renders of list items by ~100% when parent state changes but item props remain same.
+export const PostCard = memo(function PostCard({
+  post,
+  currentUserId,
+}: {
+  post: FeedPost;
+  currentUserId: string;
+}) {
   const qc = useQueryClient();
   const [showComments, setShowComments] = useState(false);
 
@@ -197,7 +206,7 @@ export function PostCard({ post, currentUserId }: { post: FeedPost; currentUserI
       {showComments && <Comments postId={post.id} currentUserId={currentUserId} />}
     </article>
   );
-}
+});
 
 function getYouTubeID(url: string) {
   const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
