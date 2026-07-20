@@ -97,3 +97,9 @@
 **Learning:** When dealing with horizontally scrolling element containers like a composer tab list, using flex-wrap rather than overflow-x-auto combined with whitespace-nowrap can solve horizontal scrolling issues and keep layout constrained to the parent's width, particularly important for complex UI sections like a social network's feed composer. Adding a dropdown for secondary less-used items provides a much cleaner, compact visual.
 
 **Action:** Whenever I encounter an issue with overflowing toolbars or tabs in responsive interfaces, I should consider using flex-wrap and dropdowns to group less-frequent actions, making sure not to use fixed horizontal scrolling (`overflow-x-auto`) unless specifically required by the design context.
+
+## 2026-07-20 - UI Composer Compact Layout (Update)
+
+**Learning:** When trying to eliminate horizontal scrolling from a dense row of buttons (like a composer toolbar), using `overflow-hidden` along with `whitespace-nowrap` on a flex container, combined with appropriate flexible padding, ensures that the layout will remain constrained to a single line even if content is squeezed, effectively solving scrollbar issues in responsive designs.
+
+**Action:** Whenever I encounter an issue with overflowing toolbars or tabs in responsive interfaces and the prompt specifies exact order without a scrollbar, I should apply properties like `flex-shrink`, `white-space: nowrap`, and `overflow: hidden` strictly without resorting to wrapping.
