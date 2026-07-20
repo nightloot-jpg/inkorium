@@ -148,7 +148,7 @@ function FeedPage() {
 
   const queryClient = useQueryClient();
   return (
-    <div className="flex flex-col lg:grid lg:grid-cols-[minmax(0,1fr)_33.333%] gap-6 w-full">
+    <div className="flex flex-col lg:grid lg:grid-cols-[minmax(650px,1fr)_minmax(260px,320px)] lg:justify-center gap-6 w-full">
       {/* Feed */}
       <div className="space-y-4">
         <Composer userId={userId} avatar={me} />
@@ -335,7 +335,7 @@ function Composer({
   const firstName = avatar?.display_name?.split(" ")[0] || "usuario";
 
   return (
-    <div className="bg-white rounded-md border border-[#dbe0e8] flex flex-col p-4 shadow-sm">
+    <div className="bg-white rounded-md border border-[#dbe0e8] flex flex-col p-6 shadow-sm">
       {/* Row 1: Cabecera con avatar y caja de texto */}
       <div className="flex gap-3 items-start mb-4">
         {avatar?.avatar_url ? (
