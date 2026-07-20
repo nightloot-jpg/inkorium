@@ -109,3 +109,9 @@
 **Learning:** When dealing with nested CSS grids (e.g. `Layout -> Outlet -> Feed`), achieving an outer `25% 1fr 25%` structure requires mathematical adjustment. If the outer grid is `25% 1fr`, the remaining space is 75%. To make the right column inside the `1fr` space take up 25% of the total screen, it must be set to `33.333%` (because 33.333% of 75% = 25%).
 
 **Action:** Before changing grid templates spanning multiple nested components, trace the layout tree and apply percentage-based math to nested elements to correctly achieve absolute visual proportions.
+
+## 2024-05-18 - Nested CSS Grid Layouts
+
+**Learning:** When requested to balance columns using percentages (e.g. 55% for feed, 25% for sidebar) within nested grid definitions, using `minmax(minPx, 1fr)` for the main content area correctly delegates the job of absorbing remaining layout space to CSS Grid without having to perform manual fraction math against the parent container's width.
+
+**Action:** Use `1fr` instead of max-width bounds when the goal is to make a central column absorb the remaining layout space perfectly.

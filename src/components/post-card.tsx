@@ -43,7 +43,7 @@ export function PostCard({ post, currentUserId }: { post: FeedPost; currentUserI
 
   return (
     <article className="bg-card rounded-sm border border-[#c2c9d6] shadow-none overflow-hidden">
-      <div className="p-4 flex gap-3 pb-2">
+      <div className="p-5 flex gap-3 pb-3">
         <Avatar profile={post.author} size={40} />
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-2">
@@ -76,7 +76,7 @@ export function PostCard({ post, currentUserId }: { post: FeedPost; currentUserI
       </div>
 
       {post.type === "photo" && post.image_url && (
-        <div className="px-4 pb-4">
+        <div className="px-5 pb-5">
           <div className="rounded-sm overflow-hidden border border-[#c2c9d6]">
             <img src={post.image_url} alt="Foto" className="w-full max-h-[520px] object-cover" />
           </div>
@@ -84,7 +84,7 @@ export function PostCard({ post, currentUserId }: { post: FeedPost; currentUserI
       )}
 
       {post.type === "video" && post.video_url && (
-        <div className="px-4 pb-4">
+        <div className="px-5 pb-5">
           <div className="rounded-sm overflow-hidden border border-[#c2c9d6] aspect-video bg-black relative">
             {getYouTubeID(post.video_url) ? (
               <iframe
@@ -128,7 +128,7 @@ export function PostCard({ post, currentUserId }: { post: FeedPost; currentUserI
       )}
 
       {post.type === "event" && post.event && (
-        <div className="px-4 pb-4">
+        <div className="px-5 pb-5">
           <div className="rounded-sm border border-[#c2c9d6] bg-accent/20 overflow-hidden">
             <div className="bg-[#0b439c] text-white p-3">
               <h4 className="font-bold text-sm truncate">{String(post.event.name || "")}</h4>
@@ -151,7 +151,7 @@ export function PostCard({ post, currentUserId }: { post: FeedPost; currentUserI
       )}
 
       {post.type === "news" && (
-        <div className="px-4 pb-4">
+        <div className="px-5 pb-5">
           <div className="rounded-sm border border-[#c2c9d6] overflow-hidden cursor-pointer hover:bg-secondary transition-colors">
             {post.image_url && (
               <img src={post.image_url} alt="Noticia" className="w-full h-40 object-cover" />
@@ -164,7 +164,7 @@ export function PostCard({ post, currentUserId }: { post: FeedPost; currentUserI
         </div>
       )}
 
-      <div className="flex justify-between px-4 py-2 mt-2">
+      <div className="flex justify-between px-5 py-3 mt-2">
         <div className="flex gap-4">
           <button
             onClick={() => like.mutate()}
@@ -261,7 +261,7 @@ function Comments({ postId, currentUserId }: { postId: string; currentUserId: st
   });
 
   return (
-    <div className="px-4 pb-4 space-y-3 pt-3 bg-secondary/30">
+    <div className="px-5 pb-5 space-y-3 pt-3 bg-secondary/30">
       {comments.length === 0 && (
         <p className="text-xs text-muted-foreground italic">Sé el primero en comentar.</p>
       )}
