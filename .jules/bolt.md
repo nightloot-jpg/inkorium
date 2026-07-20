@@ -70,3 +70,6 @@
 ## 2026-07-19 - [Classic Tuenti Redesign]
 **Learning:** Reverting a modern UI (large rounded corners, drop shadows, custom fonts) to a classic flat design involves systematic replacements of Tailwind classes (`rounded-2xl` -> `rounded-sm`, `shadow-card` -> `shadow-none` or subtle border). It is more effective to trace the CSS variables first (`--radius`, `--shadow-card`) to make global changes, and then do specific component class updates.
 **Action:** When asked to clone an old or classic design blueprint, always check `styles.css` root variables first. Many "modern" aesthetics can be disabled globally (e.g., setting `--radius` to a small value and disabling heavy shadows) before touching individual components.
+## 2026-07-20 - Responsive Grid Layout for Desktop vs Mobile
+**Learning:** Hardcoding grid columns without proper mobile fallbacks (like flex-col) forces sidebars to appear on top of or alongside the main feed on small screens, breaking usability.
+**Action:** Always use a flex-col layout for mobile by default and apply grid column classes using lg: modifiers for desktop.
