@@ -103,3 +103,9 @@
 **Learning:** When trying to eliminate horizontal scrolling from a dense row of buttons (like a composer toolbar), using `overflow-hidden` along with `whitespace-nowrap` on a flex container, combined with appropriate flexible padding, ensures that the layout will remain constrained to a single line even if content is squeezed, effectively solving scrollbar issues in responsive designs.
 
 **Action:** Whenever I encounter an issue with overflowing toolbars or tabs in responsive interfaces and the prompt specifies exact order without a scrollbar, I should apply properties like `flex-shrink`, `white-space: nowrap`, and `overflow: hidden` strictly without resorting to wrapping.
+
+## 2024-05-18 - Full Width CSS Grid Layout
+
+**Learning:** When dealing with nested CSS grids (e.g. `Layout -> Outlet -> Feed`), achieving an outer `25% 1fr 25%` structure requires mathematical adjustment. If the outer grid is `25% 1fr`, the remaining space is 75%. To make the right column inside the `1fr` space take up 25% of the total screen, it must be set to `33.333%` (because 33.333% of 75% = 25%).
+
+**Action:** Before changing grid templates spanning multiple nested components, trace the layout tree and apply percentage-based math to nested elements to correctly achieve absolute visual proportions.
