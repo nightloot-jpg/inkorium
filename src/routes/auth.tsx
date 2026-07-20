@@ -66,7 +66,7 @@ function AuthPage() {
 
       <h1 className="text-4xl font-bold text-[#4295e4] mb-8 tracking-wide">INKORIUM</h1>
 
-      <div className="bg-card border border-border rounded-xl p-8 w-full max-w-md shadow-2xl">
+      <div className="bg-card border border-border rounded-sm p-8 w-full max-w-md shadow-2xl">
         <form onSubmit={handleSubmit} className="space-y-5">
           <div className="space-y-1.5">
             <label htmlFor="email" className="block text-sm font-medium text-card-foreground">

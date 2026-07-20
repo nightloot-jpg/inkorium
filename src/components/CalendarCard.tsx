@@ -56,13 +56,13 @@ export function CalendarCard({ userId }: { userId: string }) {
   });
 
   return (
-    <section className="bg-card p-4 rounded-3xl ring-1 ring-border shadow-card mt-4 relative overflow-hidden">
+    <section className="bg-card p-4 rounded-3xl border border-[#c2c9d6] shadow-none mt-4 relative overflow-hidden">
       <div className="flex items-center justify-between mb-2">
         <h4 className="text-[14px] font-bold text-foreground">Calendario</h4>
         <CalendarIcon className="size-4 text-muted-foreground" />
       </div>
 
-      <div className="bg-white rounded-2xl border border-transparent p-1 relative">
+      <div className="bg-white rounded-sm border border-transparent p-1 relative">
         <div className="flex justify-center">
           <Calendar
             mode="single"
@@ -109,7 +109,7 @@ export function CalendarCard({ userId }: { userId: string }) {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Título del evento"
-                  className="w-full bg-[#f6f7f9] rounded-xl pl-10 pr-3 py-2 text-[13px] outline-none border border-transparent focus:border-border focus:ring-0 placeholder:text-muted-foreground"
+                  className="w-full bg-[#f6f7f9] rounded-sm pl-10 pr-3 py-2 text-[13px] outline-none border border-transparent focus:border-border focus:ring-0 placeholder:text-muted-foreground"
                 />
               </div>
 
@@ -117,7 +117,7 @@ export function CalendarCard({ userId }: { userId: string }) {
               <div className="flex gap-2">
                 <div className="relative flex-1">
                   <CalendarDays className="absolute left-3 top-2.5 size-4 text-muted-foreground" />
-                  <div className="w-full bg-[#f6f7f9] rounded-xl pl-10 pr-3 py-2 text-[13px] text-foreground outline-none border border-transparent">
+                  <div className="w-full bg-[#f6f7f9] rounded-sm pl-10 pr-3 py-2 text-[13px] text-foreground outline-none border border-transparent">
                     {date.toLocaleDateString("es-ES", {
                       day: "2-digit",
                       month: "2-digit",
@@ -131,7 +131,7 @@ export function CalendarCard({ userId }: { userId: string }) {
                     type="time"
                     value={time}
                     onChange={(e) => setTime(e.target.value)}
-                    className="w-full bg-[#f6f7f9] rounded-xl pl-10 pr-3 py-2 text-[13px] outline-none border border-transparent focus:border-border focus:ring-0 text-foreground"
+                    className="w-full bg-[#f6f7f9] rounded-sm pl-10 pr-3 py-2 text-[13px] outline-none border border-transparent focus:border-border focus:ring-0 text-foreground"
                   />
                 </div>
               </div>
@@ -143,7 +143,7 @@ export function CalendarCard({ userId }: { userId: string }) {
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
                   placeholder="Lugar"
-                  className="w-full bg-[#f6f7f9] rounded-xl pl-10 pr-3 py-2 text-[13px] outline-none border border-transparent focus:border-border focus:ring-0 placeholder:text-muted-foreground"
+                  className="w-full bg-[#f6f7f9] rounded-sm pl-10 pr-3 py-2 text-[13px] outline-none border border-transparent focus:border-border focus:ring-0 placeholder:text-muted-foreground"
                 />
               </div>
 
@@ -155,7 +155,7 @@ export function CalendarCard({ userId }: { userId: string }) {
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Descripción del evento"
                   rows={3}
-                  className="w-full bg-[#f6f7f9] rounded-xl pl-10 pr-3 py-2.5 text-[13px] outline-none border border-transparent focus:border-border focus:ring-0 placeholder:text-muted-foreground resize-none"
+                  className="w-full bg-[#f6f7f9] rounded-sm pl-10 pr-3 py-2.5 text-[13px] outline-none border border-transparent focus:border-border focus:ring-0 placeholder:text-muted-foreground resize-none"
                 />
               </div>
             </div>
@@ -164,7 +164,7 @@ export function CalendarCard({ userId }: { userId: string }) {
               <button
                 onClick={() => createEvent.mutate()}
                 disabled={createEvent.isPending || !name}
-                className="w-full bg-foreground text-background hover:bg-foreground/90 font-semibold py-2.5 rounded-xl transition-colors disabled:opacity-50 text-[14px]"
+                className="w-full bg-foreground text-background hover:bg-foreground/90 font-semibold py-2.5 rounded-sm transition-colors disabled:opacity-50 text-[14px]"
               >
                 {createEvent.isPending ? "Procesando..." : "Crear evento"}
               </button>

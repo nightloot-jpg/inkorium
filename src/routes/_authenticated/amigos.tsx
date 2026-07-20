@@ -96,7 +96,7 @@ function FriendsPage() {
     <main className="max-w-3xl mx-auto px-4 py-6 space-y-4">
       <h1 className="text-2xl font-semibold tracking-tight">Amigos</h1>
 
-      <div className="flex gap-1 bg-card p-1 rounded-xl ring-1 ring-border w-fit">
+      <div className="flex gap-1 bg-card p-1 rounded-sm border border-[#c2c9d6] w-fit">
         {(
           [
             ["friends", `Amigos (${friends.length})`],
@@ -118,7 +118,7 @@ function FriendsPage() {
         ))}
       </div>
 
-      <div className="bg-card rounded-2xl ring-1 ring-border p-4 space-y-2">
+      <div className="bg-card rounded-sm border border-[#c2c9d6] p-4 space-y-2">
         {tab === "friends" && (
           <>
             {friends.length === 0 && <Empty label="Aún no tienes amigos. Ve a Descubrir." />}

@@ -42,7 +42,7 @@ export function PostCard({ post, currentUserId }: { post: FeedPost; currentUserI
   });
 
   return (
-    <article className="bg-card rounded-2xl ring-1 ring-border shadow-card overflow-hidden">
+    <article className="bg-card rounded-sm border border-[#c2c9d6] shadow-none overflow-hidden">
       <div className="p-4 flex gap-3 pb-2">
         <Avatar profile={post.author} size={40} />
         <div className="flex-1 min-w-0">
@@ -51,7 +51,7 @@ export function PostCard({ post, currentUserId }: { post: FeedPost; currentUserI
               <Link
                 to="/perfil/$username"
                 params={{ username: post.author.username }}
-                className="font-bold text-[14px] text-[#2F5FA7] hover:underline block truncate"
+                className="font-bold text-[14px] text-[#0b439c] hover:underline block truncate"
               >
                 {post.author.display_name}
               </Link>
@@ -67,7 +67,7 @@ export function PostCard({ post, currentUserId }: { post: FeedPost; currentUserI
             )}
           </div>
           <div className="text-[11px] text-muted-foreground flex items-center gap-1 mt-0.5">
-            <span>{timeAgo(post.created_at)} -</span> <span className="text-[#2F5FA7]">@</span>
+            <span>{timeAgo(post.created_at)} -</span> <span className="text-[#0b439c]">@</span>
           </div>
           <p className="mt-2 text-[14px] leading-relaxed text-foreground text-pretty whitespace-pre-wrap">
             {post.content}
@@ -77,7 +77,7 @@ export function PostCard({ post, currentUserId }: { post: FeedPost; currentUserI
 
       {post.type === "photo" && post.image_url && (
         <div className="px-4 pb-4">
-          <div className="rounded-xl overflow-hidden ring-1 ring-border">
+          <div className="rounded-sm overflow-hidden border border-[#c2c9d6]">
             <img src={post.image_url} alt="Foto" className="w-full max-h-[520px] object-cover" />
           </div>
         </div>
@@ -85,7 +85,7 @@ export function PostCard({ post, currentUserId }: { post: FeedPost; currentUserI
 
       {post.type === "video" && post.video_url && (
         <div className="px-4 pb-4">
-          <div className="rounded-xl overflow-hidden ring-1 ring-border aspect-video bg-black relative">
+          <div className="rounded-sm overflow-hidden border border-[#c2c9d6] aspect-video bg-black relative">
             {getYouTubeID(post.video_url) ? (
               <iframe
                 src={`https://www.youtube.com/embed/${getYouTubeID(post.video_url)}`}
@@ -129,20 +129,20 @@ export function PostCard({ post, currentUserId }: { post: FeedPost; currentUserI
 
       {post.type === "event" && post.event && (
         <div className="px-4 pb-4">
-          <div className="rounded-xl ring-1 ring-border bg-accent/20 overflow-hidden">
-            <div className="bg-[#2F5FA7] text-white p-3">
+          <div className="rounded-sm border border-[#c2c9d6] bg-accent/20 overflow-hidden">
+            <div className="bg-[#0b439c] text-white p-3">
               <h4 className="font-bold text-sm truncate">{String(post.event.name || "")}</h4>
             </div>
             <div className="p-3 text-sm space-y-2">
               <div className="flex gap-2 text-muted-foreground">
-                <CalendarIcon className="size-4 text-[#2F5FA7]" />{" "}
+                <CalendarIcon className="size-4 text-[#0b439c]" />{" "}
                 {String(post.event.event_date || "")}
               </div>
               <div className="flex gap-2 text-muted-foreground">
-                <Clock className="size-4 text-[#2F5FA7]" /> {String(post.event.event_time || "")}
+                <Clock className="size-4 text-[#0b439c]" /> {String(post.event.event_time || "")}
               </div>
               <div className="flex gap-2 text-muted-foreground">
-                <MapPin className="size-4 text-[#2F5FA7]" />{" "}
+                <MapPin className="size-4 text-[#0b439c]" />{" "}
                 {String(post.event.location || "Sin ubicación")}
               </div>
             </div>
@@ -152,7 +152,7 @@ export function PostCard({ post, currentUserId }: { post: FeedPost; currentUserI
 
       {post.type === "news" && (
         <div className="px-4 pb-4">
-          <div className="rounded-xl ring-1 ring-border overflow-hidden cursor-pointer hover:bg-secondary transition-colors">
+          <div className="rounded-sm border border-[#c2c9d6] overflow-hidden cursor-pointer hover:bg-secondary transition-colors">
             {post.image_url && (
               <img src={post.image_url} alt="Noticia" className="w-full h-40 object-cover" />
             )}
@@ -170,7 +170,7 @@ export function PostCard({ post, currentUserId }: { post: FeedPost; currentUserI
             onClick={() => like.mutate()}
             disabled={like.isPending}
             className={`flex items-center gap-1.5 text-[13px] font-bold transition-colors ${
-              post.liked_by_me ? "text-[#2F5FA7]" : "text-[#a9a9a9] hover:text-[#2F5FA7]"
+              post.liked_by_me ? "text-[#0b439c]" : "text-[#a9a9a9] hover:text-[#0b439c]"
             }`}
           >
             <Heart className={`size-4 ${post.liked_by_me ? "fill-[#2F5FA7]" : "text-[#a9a9a9]"}`} />
@@ -178,12 +178,12 @@ export function PostCard({ post, currentUserId }: { post: FeedPost; currentUserI
           </button>
           <button
             onClick={() => setShowComments((v) => !v)}
-            className="flex items-center gap-1.5 text-[13px] font-bold text-[#a9a9a9] hover:text-[#2F5FA7] transition-colors"
+            className="flex items-center gap-1.5 text-[13px] font-bold text-[#a9a9a9] hover:text-[#0b439c] transition-colors"
           >
             <MessageCircle className="size-4" />
             Comentar
           </button>
-          <button className="flex items-center gap-1.5 text-[13px] font-bold text-[#a9a9a9] hover:text-[#2F5FA7] transition-colors">
+          <button className="flex items-center gap-1.5 text-[13px] font-bold text-[#a9a9a9] hover:text-[#0b439c] transition-colors">
             <Share2 className="size-4" />
             Compartir
           </button>
@@ -214,7 +214,7 @@ export function Avatar({
 }) {
   return (
     <div
-      className="rounded-full overflow-hidden shrink-0 ring-1 ring-border bg-muted grid place-items-center text-xs font-bold text-[#2F5FA7]"
+      className="rounded-full overflow-hidden shrink-0 border border-[#c2c9d6] bg-muted grid place-items-center text-xs font-bold text-[#0b439c]"
       style={{ width: size, height: size }}
     >
       {profile?.avatar_url ? (
@@ -274,11 +274,11 @@ function Comments({ postId, currentUserId }: { postId: string; currentUserId: st
         return (
           <div key={c.id} className="flex gap-2">
             <Avatar profile={author} size={28} />
-            <div className="flex-1 bg-surface rounded-lg px-3 py-2 text-[13px] ring-1 ring-border">
+            <div className="flex-1 bg-surface rounded-lg px-3 py-2 text-[13px] border border-[#c2c9d6]">
               <Link
                 to="/perfil/$username"
                 params={{ username: author.username }}
-                className="font-bold text-[#2F5FA7] hover:underline mr-1.5"
+                className="font-bold text-[#0b439c] hover:underline mr-1.5"
               >
                 {author.display_name}
               </Link>
@@ -298,12 +298,12 @@ function Comments({ postId, currentUserId }: { postId: string; currentUserId: st
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder="Escribe un comentario..."
-          className="flex-1 bg-surface ring-1 ring-border rounded-lg text-sm px-3 py-2 outline-none focus:ring-2 focus:ring-ring"
+          className="flex-1 bg-surface border border-[#c2c9d6] rounded-lg text-sm px-3 py-2 outline-none focus:ring-2 focus:ring-ring"
         />
         <button
           type="submit"
           disabled={!text.trim() || add.isPending}
-          className="text-xs font-bold bg-[#2F5FA7] hover:bg-[#264d87] text-white px-4 rounded-lg disabled:opacity-40 transition-colors"
+          className="text-xs font-bold bg-[#0b439c] hover:bg-[#0b439c] text-white px-4 rounded-lg disabled:opacity-40 transition-colors"
         >
           Comentar
         </button>

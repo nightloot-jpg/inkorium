@@ -142,13 +142,13 @@ function FeedPage() {
 
   const queryClient = useQueryClient();
   return (
-    <main className="grid grid-cols-1 md:grid-cols-[280px_minmax(0,1fr)] lg:grid-cols-[250px_minmax(0,1fr)_250px] gap-6 py-6 w-full">
+    <main className="grid grid-cols-1 md:grid-cols-[280px_minmax(0,1fr)] lg:grid-cols-[200px_minmax(0,1fr)_220px] gap-4 py-4 w-full max-w-[980px] mx-auto">
       {/* Sidebar izquierdo */}
       <aside className="space-y-4">
         {/* Profile Card */}
-        <div className="bg-card rounded-xl ring-1 ring-border shadow-sm overflow-hidden">
+        <div className="bg-card rounded-sm border border-[#c2c9d6]  overflow-hidden">
           <div className="p-4 flex gap-4">
-            <div className="w-[64px] h-[64px] shrink-0 rounded ring-1 ring-border bg-muted overflow-hidden">
+            <div className="w-[64px] h-[64px] shrink-0 rounded border border-[#c2c9d6] bg-muted overflow-hidden">
               <Avatar profile={me} size={64} />
             </div>
             <div className="flex flex-col flex-1 min-w-0">
@@ -158,7 +158,7 @@ function FeedPage() {
               <Link
                 to="/perfil/$username"
                 params={{ username: me?.username ?? "" }}
-                className="text-[13px] text-[#2F5FA7] hover:underline mt-0.5"
+                className="text-[13px] text-[#0b439c] hover:underline mt-0.5"
               >
                 Ver mi perfil
               </Link>
@@ -194,29 +194,29 @@ function FeedPage() {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
                   align="start"
-                  className="w-[180px] bg-white border border-[#dbe0e8] shadow-sm rounded-none p-0 text-[13px]"
+                  className="w-[180px] bg-white border border-[#dbe0e8]  rounded-none p-0 text-[13px]"
                 >
                   <DropdownMenuItem
                     onClick={() => updateOnlineStatus.mutate("online")}
-                    className="rounded-none cursor-pointer hover:bg-[#2F5FA7] hover:text-white focus:bg-[#2F5FA7] focus:text-white px-3 py-1.5 flex items-center gap-2"
+                    className="rounded-none cursor-pointer hover:bg-[#0b439c] hover:text-white focus:bg-[#0b439c] focus:text-white px-3 py-1.5 flex items-center gap-2"
                   >
                     <div className="size-2 rounded-full shrink-0 bg-online" /> En línea
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => updateOnlineStatus.mutate("ocupado")}
-                    className="rounded-none cursor-pointer hover:bg-[#2F5FA7] hover:text-white focus:bg-[#2F5FA7] focus:text-white px-3 py-1.5 flex items-center gap-2"
+                    className="rounded-none cursor-pointer hover:bg-[#0b439c] hover:text-white focus:bg-[#0b439c] focus:text-white px-3 py-1.5 flex items-center gap-2"
                   >
                     <div className="size-2 rounded-full shrink-0 bg-red-500" /> Ocupado
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => updateOnlineStatus.mutate("ausente")}
-                    className="rounded-none cursor-pointer hover:bg-[#2F5FA7] hover:text-white focus:bg-[#2F5FA7] focus:text-white px-3 py-1.5 flex items-center gap-2"
+                    className="rounded-none cursor-pointer hover:bg-[#0b439c] hover:text-white focus:bg-[#0b439c] focus:text-white px-3 py-1.5 flex items-center gap-2"
                   >
                     <div className="size-2 rounded-full shrink-0 bg-yellow-500" /> Ausente
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => updateOnlineStatus.mutate("desconectado")}
-                    className="rounded-none cursor-pointer hover:bg-[#2F5FA7] hover:text-white focus:bg-[#2F5FA7] focus:text-white px-3 py-1.5 flex items-center gap-2"
+                    className="rounded-none cursor-pointer hover:bg-[#0b439c] hover:text-white focus:bg-[#0b439c] focus:text-white px-3 py-1.5 flex items-center gap-2"
                   >
                     <div className="size-2 rounded-full shrink-0 bg-gray-400" /> Desconectado
                   </DropdownMenuItem>
@@ -237,7 +237,7 @@ function FeedPage() {
               className="w-full bg-transparent text-[13px] outline-none placeholder:text-muted-foreground placeholder:italic italic text-muted-foreground"
             />
 
-            <div className="flex items-start gap-1.5 text-[#2F5FA7] font-medium text-[13px] mt-1">
+            <div className="flex items-start gap-1.5 text-[#0b439c] font-medium text-[13px] mt-1">
               <MapPin className="size-4 shrink-0 mt-0.5" />
               <input
                 type="text"
@@ -264,7 +264,7 @@ function FeedPage() {
                     e.currentTarget.blur();
                   }
                 }}
-                className="w-full bg-transparent outline-none placeholder:text-[#2F5FA7] hover:underline cursor-text truncate"
+                className="w-full bg-transparent outline-none placeholder:text-[#0b439c] hover:underline cursor-text truncate"
               />
             </div>
           </div>
@@ -297,7 +297,7 @@ function FeedPage() {
             <div className="mt-2 text-right">
               <Link
                 to="/amigos"
-                className="text-[13px] font-medium text-[#2F5FA7] hover:underline flex items-center justify-end gap-1"
+                className="text-[13px] font-medium text-[#0b439c] hover:underline flex items-center justify-end gap-1"
               >
                 Ver todos <ArrowRight className="size-3.5" />
               </Link>
@@ -320,12 +320,12 @@ function FeedPage() {
                   key={s.id}
                   to="/perfil/$username"
                   params={{ username: s.username }}
-                  className="block rounded ring-1 ring-border overflow-hidden"
+                  className="block rounded border border-[#c2c9d6] overflow-hidden"
                 >
                   {s.avatar_url ? (
                     <img src={s.avatar_url} className="w-full aspect-square object-cover" />
                   ) : (
-                    <div className="w-full aspect-square bg-muted grid place-items-center text-[15px] font-bold text-[#2F5FA7]">
+                    <div className="w-full aspect-square bg-muted grid place-items-center text-[15px] font-bold text-[#0b439c]">
                       {s.display_name.charAt(0).toUpperCase()}
                     </div>
                   )}
@@ -336,7 +336,7 @@ function FeedPage() {
           <div className="mt-1">
             <Link
               to="/amigos"
-              className="flex items-center justify-center gap-1.5 w-full bg-card hover:bg-secondary text-[#2F5FA7] text-[13px] font-medium py-1.5 rounded border border-[#e5e7eb] transition-colors"
+              className="flex items-center justify-center gap-1.5 w-full bg-card hover:bg-secondary text-[#0b439c] text-[13px] font-medium py-1.5 rounded border border-[#e5e7eb] transition-colors"
             >
               Buscar amigos <ArrowRight className="size-3.5" />
             </Link>
@@ -351,7 +351,7 @@ function FeedPage() {
           <p className="text-sm text-muted-foreground text-center py-8">Cargando muro...</p>
         )}
         {!isLoading && posts.length === 0 && (
-          <div className="bg-card p-8 rounded-xl ring-1 ring-border shadow-sm text-center">
+          <div className="bg-card p-8 rounded-sm border border-[#c2c9d6]  text-center">
             <p className="text-sm text-muted-foreground">
               Aún no hay nada por aquí. ¡Publica lo primero!
             </p>
@@ -369,7 +369,7 @@ function FeedPage() {
         <SidebarCard
           title="SOLICITUDES"
           action={
-            <span className="text-[#2F5FA7] font-normal cursor-pointer hover:underline text-xs">
+            <span className="text-[#0b439c] font-normal cursor-pointer hover:underline text-xs">
               Ver todos
             </span>
           }
@@ -394,7 +394,7 @@ function FeedPage() {
         <SidebarCard
           title="EVENTOS PATROCINADOS"
           action={
-            <span className="text-[#2F5FA7] font-normal cursor-pointer hover:underline text-xs">
+            <span className="text-[#0b439c] font-normal cursor-pointer hover:underline text-xs">
               Ver todos
             </span>
           }
@@ -406,14 +406,14 @@ function FeedPage() {
               className="w-16 h-16 rounded object-cover shrink-0"
             />
             <div className="flex-1 min-w-0">
-              <h5 className="font-bold text-[13px] text-[#2F5FA7] leading-tight">
+              <h5 className="font-bold text-[13px] text-[#0b439c] leading-tight">
                 Concierto Indie en Madrid
               </h5>
               <p className="text-xs text-muted-foreground mt-1">Viernes, 24 de Mayo a las 21:00</p>
               <p className="text-xs text-muted-foreground">Sala La Riviera</p>
             </div>
           </div>
-          <button className="w-fit border border-[#2F5FA7] text-[#2F5FA7] font-medium text-xs px-3 py-1.5 rounded-[18px] mt-3 hover:bg-accent transition-colors block ml-auto mr-auto">
+          <button className="w-fit border border-[#2F5FA7] text-[#0b439c] font-medium text-xs px-3 py-1.5 rounded-[18px] mt-3 hover:bg-accent transition-colors block ml-auto mr-auto">
             Añadir a mi calendario
           </button>
         </SidebarCard>
@@ -525,9 +525,9 @@ function Composer({
   });
 
   return (
-    <div className="bg-card rounded-xl ring-1 ring-border shadow-sm overflow-hidden flex flex-col">
+    <div className="bg-card rounded-sm border border-[#c2c9d6]  overflow-hidden flex flex-col">
       <div className="px-4 py-3">
-        <h3 className="text-[14px] font-bold text-[#2F5FA7]">¿Qué tienes en mente?</h3>
+        <h3 className="text-[14px] font-bold text-[#0b439c]">¿Qué tienes en mente?</h3>
       </div>
 
       <div className="px-4 pb-4 flex gap-3 flex-col">
@@ -697,7 +697,7 @@ function Composer({
           <button
             onClick={() => publish.mutate()}
             disabled={publish.isPending || (activeTab === "status" && !content.trim())}
-            className="bg-[#f8f9fa] border border-[#dbe0e8] hover:bg-[#e6eaf0] text-[#2F5FA7] text-[13px] font-bold py-1 px-4 transition-colors disabled:opacity-40"
+            className="bg-[#f8f9fa] border border-[#dbe0e8] hover:bg-[#e6eaf0] text-[#0b439c] text-[13px] font-bold py-1 px-4 transition-colors disabled:opacity-40"
           >
             {publish.isPending ? "Publicando..." : "Publicar"}
           </button>
@@ -721,7 +721,7 @@ function ComposerTab({
   return (
     <button
       onClick={onClick}
-      className={`flex items-center gap-1.5 text-[12px] font-medium transition-colors whitespace-nowrap px-2 py-1 rounded-md ${active ? "bg-white border border-[#dbe0e8] text-foreground font-bold shadow-sm" : "text-[#2F5FA7] hover:bg-black/5"}`}
+      className={`flex items-center gap-1.5 text-[12px] font-medium transition-colors whitespace-nowrap px-2 py-1 rounded-md ${active ? "bg-white border border-[#dbe0e8] text-foreground font-bold " : "text-[#0b439c] hover:bg-black/5"}`}
     >
       {icon} {label}
     </button>
@@ -738,7 +738,7 @@ function SidebarCard({
   children: React.ReactNode;
 }) {
   return (
-    <section className="bg-card p-4 rounded-xl ring-1 ring-border shadow-sm">
+    <section className="bg-card p-4 rounded-sm border border-[#c2c9d6] ">
       <div className="flex items-center justify-between mb-3">
         <h4 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wide">
           {title}
@@ -779,7 +779,7 @@ function SuggestionRow({
           <Link
             to="/perfil/$username"
             params={{ username: profile.username }}
-            className="text-[13px] font-medium text-[#2F5FA7] hover:underline truncate"
+            className="text-[13px] font-medium text-[#0b439c] hover:underline truncate"
           >
             {profile.display_name}
           </Link>
@@ -839,7 +839,7 @@ function FriendRequestRow({
           <Link
             to="/perfil/$username"
             params={{ username: profile.username }}
-            className="text-[13px] font-medium text-[#2F5FA7] hover:underline truncate"
+            className="text-[13px] font-medium text-[#0b439c] hover:underline truncate"
           >
             {profile.display_name}
           </Link>
@@ -849,7 +849,7 @@ function FriendRequestRow({
         <button
           onClick={() => accept.mutate()}
           disabled={accept.isPending || reject.isPending}
-          className="bg-[#2F5FA7] hover:bg-[#264d87] text-white px-2 py-1 rounded text-[11px] font-medium transition-colors disabled:opacity-50"
+          className="bg-[#0b439c] hover:bg-[#0b439c] text-white px-2 py-1 rounded text-[11px] font-medium transition-colors disabled:opacity-50"
         >
           Aceptar
         </button>

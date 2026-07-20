@@ -174,7 +174,7 @@ function ProfilePage() {
         {/* LEFT COLUMN */}
         <div className="space-y-4 hidden lg:block">
           {/* Profile Card */}
-          <div className="bg-card rounded-md ring-1 ring-border shadow-sm overflow-hidden">
+          <div className="bg-card rounded-md border border-[#c2c9d6]  overflow-hidden">
             <CoverImage
               currentUserId={userId}
               isMe={isMe}
@@ -285,7 +285,7 @@ function ProfilePage() {
           </div>
 
           {/* Escuchando ahora */}
-          <div className="bg-card rounded-md ring-1 ring-border shadow-sm p-4">
+          <div className="bg-card rounded-md border border-[#c2c9d6]  p-4">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
                 Escuchando ahora
@@ -317,13 +317,13 @@ function ProfilePage() {
               </div>
               <span>4:13</span>
             </div>
-            <button className="w-full mt-3 flex items-center justify-center gap-1.5 py-1.5 px-2 ring-1 ring-border rounded text-[11px] font-medium hover:bg-secondary transition-colors">
+            <button className="w-full mt-3 flex items-center justify-center gap-1.5 py-1.5 px-2 border border-[#c2c9d6] rounded text-[11px] font-medium hover:bg-secondary transition-colors">
               <Play className="size-3" /> Abrir en Spotify
             </button>
           </div>
 
           {/* Información */}
-          <div className="bg-card rounded-md ring-1 ring-border shadow-sm p-4">
+          <div className="bg-card rounded-md border border-[#c2c9d6]  p-4">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
                 Información
@@ -381,7 +381,7 @@ function ProfilePage() {
           </div>
 
           {/* Amigos List */}
-          <div className="bg-card rounded-md ring-1 ring-border shadow-sm p-4">
+          <div className="bg-card rounded-md border border-[#c2c9d6]  p-4">
             <h3 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-3">
               Amigos (348)
             </h3>
@@ -410,7 +410,7 @@ function ProfilePage() {
         {/* CENTER COLUMN */}
         <div className="space-y-4">
           {/* Main Header Card */}
-          <div className="bg-card rounded-md ring-1 ring-border shadow-sm">
+          <div className="bg-card rounded-md border border-[#c2c9d6] ">
             <div className="p-5 pb-0">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <h1 className="text-2xl font-bold tracking-tight">{profile.display_name}</h1>
@@ -421,7 +421,7 @@ function ProfilePage() {
                     <Link
                       to="/mensajes/$username"
                       params={{ username: profile.username }}
-                      className="inline-flex items-center gap-2 bg-secondary text-secondary-foreground text-sm font-bold py-1.5 px-3 rounded hover:bg-muted transition-colors ring-1 ring-border"
+                      className="inline-flex items-center gap-2 bg-secondary text-secondary-foreground text-sm font-bold py-1.5 px-3 rounded hover:bg-muted transition-colors border border-[#c2c9d6]"
                     >
                       <MessageCircle className="size-4" /> Mensaje privado
                     </Link>
@@ -435,7 +435,7 @@ function ProfilePage() {
                       </button>
                       <button
                         onClick={() => removeReq.mutate()}
-                        className="inline-flex items-center gap-1 bg-secondary text-secondary-foreground text-sm py-1.5 px-3 rounded hover:bg-muted ring-1 ring-border"
+                        className="inline-flex items-center gap-1 bg-secondary text-secondary-foreground text-sm py-1.5 px-3 rounded hover:bg-muted border border-[#c2c9d6]"
                       >
                         <X className="size-4" />
                       </button>
@@ -443,7 +443,7 @@ function ProfilePage() {
                   ) : friendship?.status === "pending" ? (
                     <button
                       onClick={() => removeReq.mutate()}
-                      className="inline-flex items-center gap-2 bg-secondary text-secondary-foreground text-sm py-1.5 px-3 rounded hover:bg-muted ring-1 ring-border"
+                      className="inline-flex items-center gap-2 bg-secondary text-secondary-foreground text-sm py-1.5 px-3 rounded hover:bg-muted border border-[#c2c9d6]"
                     >
                       Solicitud enviada
                     </button>
@@ -456,7 +456,7 @@ function ProfilePage() {
                       <UserPlus className="size-4" /> Añadir amigo
                     </button>
                   )}
-                  <button className="px-2 py-1.5 ring-1 ring-border rounded hover:bg-secondary transition-colors text-muted-foreground">
+                  <button className="px-2 py-1.5 border border-[#c2c9d6] rounded hover:bg-secondary transition-colors text-muted-foreground">
                     <MoreHorizontal className="size-4" />
                   </button>
                 </div>
@@ -494,7 +494,7 @@ function ProfilePage() {
           {activeTab === "Tablón" && (
             <>
               {/* Post Composer */}
-              <div className="bg-card rounded-md ring-1 ring-border shadow-sm p-4 flex gap-3">
+              <div className="bg-card rounded-md border border-[#c2c9d6]  p-4 flex gap-3">
                 <div className="size-10 rounded bg-[#6F779E] shrink-0 grid place-items-center text-white font-bold">
                   {initials(profile.display_name)}
                 </div>
@@ -502,7 +502,7 @@ function ProfilePage() {
                   <input
                     type="text"
                     placeholder="Escribe en su tablón..."
-                    className="flex-1 bg-surface ring-1 ring-border rounded px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[#2F5FA7]"
+                    className="flex-1 bg-surface border border-[#c2c9d6] rounded px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[#2F5FA7]"
                   />
                   <button className="bg-[#2F5FA7] hover:bg-[#264d87] text-white px-4 py-2 rounded text-sm font-bold transition-colors">
                     Publicar
@@ -513,7 +513,7 @@ function ProfilePage() {
               {/* Feed */}
               <div className="space-y-4">
                 {feed.length === 0 && (
-                  <div className="bg-card rounded-md ring-1 ring-border p-6 text-center text-sm text-muted-foreground">
+                  <div className="bg-card rounded-md border border-[#c2c9d6] p-6 text-center text-sm text-muted-foreground">
                     Aún no hay publicaciones en este tablón.
                   </div>
                 )}
@@ -525,7 +525,7 @@ function ProfilePage() {
           )}
 
           {activeTab !== "Tablón" && (
-            <div className="bg-card rounded-md ring-1 ring-border shadow-sm p-6 text-center text-sm text-muted-foreground">
+            <div className="bg-card rounded-md border border-[#c2c9d6]  p-6 text-center text-sm text-muted-foreground">
               Contenido de la pestaña {activeTab}
             </div>
           )}
@@ -534,7 +534,7 @@ function ProfilePage() {
         {/* RIGHT COLUMN */}
         <div className="space-y-4 hidden lg:block">
           {/* Fotos */}
-          <div className="bg-card rounded-md ring-1 ring-border shadow-sm p-4">
+          <div className="bg-card rounded-md border border-[#c2c9d6]  p-4">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
                 Fotos
@@ -587,7 +587,7 @@ function ProfilePage() {
           </div>
 
           {/* Amigos en común */}
-          <div className="bg-card rounded-md ring-1 ring-border shadow-sm p-4">
+          <div className="bg-card rounded-md border border-[#c2c9d6]  p-4">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
                 Amigos en común (23)
@@ -646,7 +646,7 @@ function ProfilePage() {
           </div>
 
           {/* Visitas a tu perfil */}
-          <div className="bg-card rounded-md ring-1 ring-border shadow-sm p-4">
+          <div className="bg-card rounded-md border border-[#c2c9d6]  p-4">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
                 Visitas a tu perfil
@@ -712,7 +712,7 @@ function ProfilePage() {
           </div>
 
           {/* Eventos */}
-          <div className="bg-card rounded-md ring-1 ring-border shadow-sm p-4">
+          <div className="bg-card rounded-md border border-[#c2c9d6]  p-4">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
                 Eventos
@@ -749,7 +749,7 @@ function ProfilePage() {
                     <p className="text-[10px] text-muted-foreground">Sala La Riviera</p>
                   </div>
                 </div>
-                <button className="mt-2 px-3 py-1 ring-1 ring-border rounded text-[11px] font-medium hover:bg-secondary transition-colors">
+                <button className="mt-2 px-3 py-1 border border-[#c2c9d6] rounded text-[11px] font-medium hover:bg-secondary transition-colors">
                   Asistir
                 </button>
               </div>
@@ -804,7 +804,7 @@ function EditProfileButton({
       onClick={() => setOpen(false)}
     >
       <div
-        className="bg-card rounded-2xl p-6 w-full max-w-md ring-1 ring-border shadow-card space-y-4"
+        className="bg-card rounded-sm p-6 w-full max-w-md border border-[#c2c9d6] shadow-none space-y-4"
         onClick={(e) => e.stopPropagation()}
       >
         <h3 className="text-lg font-semibold">Editar perfil</h3>
