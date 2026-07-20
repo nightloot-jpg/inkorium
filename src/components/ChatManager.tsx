@@ -86,7 +86,7 @@ export function ChatManager({
       {/* Floating Chat Box (Tuenti classic style in bottom right) */}
       <div className="fixed bottom-0 right-10 z-50 flex flex-col items-end">
         {chatBoxOpen && (
-          <div className="bg-card w-64 rounded-t-xl ring-1 ring-border shadow-[0_-4px_6px_rgba(0,0,0,0.1)] flex flex-col overflow-hidden animate-in slide-in-from-bottom-5">
+          <div className="bg-card w-64 rounded-t-xl border border-[#c2c9d6] shadow-[0_-4px_6px_rgba(0,0,0,0.1)] flex flex-col overflow-hidden animate-in slide-in-from-bottom-5">
             <div
               className="bg-[#2F5FA7] text-white p-2 font-bold text-sm cursor-pointer flex justify-between items-center"
               onClick={() => setChatBoxOpen(false)}
@@ -225,7 +225,7 @@ function ChatWindow({
 
   return (
     <div
-      className={`fixed z-[60] bg-card ring-1 ring-border shadow-xl flex flex-col overflow-hidden ${windowData.minimized ? "rounded-t-lg h-8" : "rounded-lg h-80"}`}
+      className={`fixed z-[60] bg-card border border-[#c2c9d6] shadow-xl flex flex-col overflow-hidden ${windowData.minimized ? "rounded-t-lg h-8" : "rounded-lg h-80"}`}
       style={{ width: 280, left: windowData.x, top: windowData.y }}
     >
       {/* Header (Draggable) */}
@@ -261,7 +261,7 @@ function ChatWindow({
               return (
                 <div key={m.id} className={`flex ${isMe ? "justify-end" : "justify-start"}`}>
                   <div
-                    className={`max-w-[85%] rounded-lg px-2.5 py-1.5 text-[13px] ${isMe ? "bg-[#e5edf7] text-foreground" : "bg-white ring-1 ring-border text-foreground"}`}
+                    className={`max-w-[85%] rounded-lg px-2.5 py-1.5 text-[13px] ${isMe ? "bg-[#e5edf7] text-foreground" : "bg-white border border-[#c2c9d6] text-foreground"}`}
                   >
                     {m.content}
                   </div>

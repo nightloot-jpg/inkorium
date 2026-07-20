@@ -34,16 +34,16 @@
   --color-ring: var(--ring);
   --color-online: var(--online);
 
-  --font-sans: "Geist", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: Arial, Helvetica, sans-serif;
 
-  --shadow-card: 0 2px 4px 0 oklch(0 0 0 / 0.08), 0 4px 6px 0 oklch(0 0 0 / 0.06);
+  --shadow-card: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 }
 
 :root {
-  --radius: 12px;
+  --radius: 4px;
 
   /* Neutral canvas - Very light gray */
-  --background: #f1f3f6;
+  --background: #fffffe;
   --foreground: #1c2331;
   --surface: #ffffff;
 
@@ -54,7 +54,7 @@
   --popover-foreground: #1c2331;
 
   /* Brand blue #2F5FA7 */
-  --primary: #2f5fa7;
+  --primary: #084093;
   --primary-foreground: #ffffff;
   --primary-hover: #264d87;
 
@@ -100,7 +100,7 @@
   --popover: #1e293b;
   --popover-foreground: #f1f5f9;
 
-  --primary: #3b82f6;
+  --primary: #084093;
   --primary-foreground: #ffffff;
   --primary-hover: #60a5fa;
 

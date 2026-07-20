@@ -144,10 +144,10 @@ function ConversationPage() {
           return (
             <div key={m.id} className={`flex ${mine ? "justify-end" : "justify-start"}`}>
               <div
-                className={`max-w-[75%] rounded-2xl px-3.5 py-2 text-sm ${
+                className={`max-w-[75%] rounded-sm px-3.5 py-2 text-sm ${
                   mine
                     ? "bg-primary text-primary-foreground rounded-br-sm"
-                    : "bg-surface ring-1 ring-border rounded-bl-sm"
+                    : "bg-surface border border-[#c2c9d6] rounded-bl-sm"
                 }`}
               >
                 <p className="whitespace-pre-wrap break-words">{m.content}</p>

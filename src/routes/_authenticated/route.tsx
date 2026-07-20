@@ -93,8 +93,8 @@ function AuthenticatedLayout() {
   return (
     <div className="min-h-screen bg-background text-foreground selection:bg-primary/10 flex flex-col">
       {/* Top Header - Like the screenshot (blue background) */}
-      <header className="sticky top-0 z-50 bg-[#2F5FA7] text-white shadow-sm border-b border-transparent">
-        <div className="max-w-[1200px] mx-auto px-4 h-14 flex items-center justify-between gap-4">
+      <header className="sticky top-0 z-50 bg-[#084093] text-white  border-b border-transparent">
+        <div className="max-w-[980px] mx-auto px-4 h-14 flex items-center justify-between gap-4">
           <div className="flex items-center gap-6 h-full">
             <Link
               to="/feed"
@@ -156,7 +156,7 @@ function AuthenticatedLayout() {
         </div>
       </header>
 
-      <div className="flex-1 w-full max-w-[1200px] mx-auto flex flex-col">
+      <div className="flex-1 w-full max-w-[980px] mx-auto flex flex-col">
         <Outlet />
       </div>
 
@@ -182,8 +182,8 @@ function TopNavIcon({
     <Link
       to={to as never}
       params={params as never}
-      className={`relative h-full flex items-center px-4 font-medium text-sm transition-colors border-b-4 ${
-        active ? "border-white bg-white/10" : "border-transparent hover:bg-white/5"
+      className={`relative h-full flex items-center px-4 font-medium text-sm transition-colors border-none ${
+        active ? "bg-white/10 font-bold" : "hover:bg-white/5"
       }`}
     >
       {label}

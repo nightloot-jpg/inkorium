@@ -9,32 +9,32 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as AuthRouteImport } from './routes/auth'
-import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AuthenticatedMensajesRouteImport } from './routes/_authenticated/mensajes'
-import { Route as AuthenticatedFeedRouteImport } from './routes/_authenticated/feed'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedAmigosRouteImport } from './routes/_authenticated/amigos'
-import { Route as AuthenticatedPerfilUsernameRouteImport } from './routes/_authenticated/perfil.$username'
+import { Route as AuthenticatedFeedRouteImport } from './routes/_authenticated/feed'
+import { Route as AuthenticatedMensajesRouteImport } from './routes/_authenticated/mensajes'
 import { Route as AuthenticatedMensajesUsernameRouteImport } from './routes/_authenticated/mensajes.$username'
+import { Route as AuthenticatedPerfilUsernameRouteImport } from './routes/_authenticated/perfil.$username'
 
-const AuthRoute = AuthRouteImport.update({
-  id: '/auth',
-  path: '/auth',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedMensajesRoute = AuthenticatedMensajesRouteImport.update({
-  id: '/mensajes',
-  path: '/mensajes',
+const AuthenticatedAmigosRoute = AuthenticatedAmigosRouteImport.update({
+  id: '/amigos',
+  path: '/amigos',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedFeedRoute = AuthenticatedFeedRouteImport.update({
@@ -42,22 +42,22 @@ const AuthenticatedFeedRoute = AuthenticatedFeedRouteImport.update({
   path: '/feed',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedAmigosRoute = AuthenticatedAmigosRouteImport.update({
-  id: '/amigos',
-  path: '/amigos',
+const AuthenticatedMensajesRoute = AuthenticatedMensajesRouteImport.update({
+  id: '/mensajes',
+  path: '/mensajes',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedPerfilUsernameRoute =
-  AuthenticatedPerfilUsernameRouteImport.update({
-    id: '/perfil/$username',
-    path: '/perfil/$username',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
 const AuthenticatedMensajesUsernameRoute =
   AuthenticatedMensajesUsernameRouteImport.update({
     id: '/$username',
     path: '/$username',
     getParentRoute: () => AuthenticatedMensajesRoute,
+  } as any)
+const AuthenticatedPerfilUsernameRoute =
+  AuthenticatedPerfilUsernameRouteImport.update({
+    id: '/perfil/$username',
+    path: '/perfil/$username',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -128,11 +128,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -142,18 +142,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/mensajes': {
-      id: '/_authenticated/mensajes'
-      path: '/mensajes'
-      fullPath: '/mensajes'
-      preLoaderRoute: typeof AuthenticatedMensajesRouteImport
+    '/_authenticated/amigos': {
+      id: '/_authenticated/amigos'
+      path: '/amigos'
+      fullPath: '/amigos'
+      preLoaderRoute: typeof AuthenticatedAmigosRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/feed': {
@@ -163,18 +163,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedFeedRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/amigos': {
-      id: '/_authenticated/amigos'
-      path: '/amigos'
-      fullPath: '/amigos'
-      preLoaderRoute: typeof AuthenticatedAmigosRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/perfil/$username': {
-      id: '/_authenticated/perfil/$username'
-      path: '/perfil/$username'
-      fullPath: '/perfil/$username'
-      preLoaderRoute: typeof AuthenticatedPerfilUsernameRouteImport
+    '/_authenticated/mensajes': {
+      id: '/_authenticated/mensajes'
+      path: '/mensajes'
+      fullPath: '/mensajes'
+      preLoaderRoute: typeof AuthenticatedMensajesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/mensajes/$username': {
@@ -183,6 +176,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/mensajes/$username'
       preLoaderRoute: typeof AuthenticatedMensajesUsernameRouteImport
       parentRoute: typeof AuthenticatedMensajesRoute
+    }
+    '/_authenticated/perfil/$username': {
+      id: '/_authenticated/perfil/$username'
+      path: '/perfil/$username'
+      fullPath: '/perfil/$username'
+      preLoaderRoute: typeof AuthenticatedPerfilUsernameRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
   }
 }
