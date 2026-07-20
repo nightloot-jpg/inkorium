@@ -38,7 +38,7 @@ function SidebarLayout() {
   });
 
   return (
-    <main className="flex flex-col lg:grid lg:grid-cols-[200px_minmax(0,1fr)] gap-4 py-4 w-full max-w-[980px] mx-auto px-2 lg:px-0">
+    <main className="flex flex-col lg:grid lg:grid-cols-[25%_minmax(0,1fr)] gap-6 py-4 w-full">
       <aside className="space-y-4 hidden lg:block">
         <div className="bg-card rounded-sm border border-[#c2c9d6] overflow-hidden p-4">
           <div className="flex gap-4">
