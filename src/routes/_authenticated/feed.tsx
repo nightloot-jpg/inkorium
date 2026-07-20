@@ -18,6 +18,11 @@ import {
   Users,
   ChevronDown,
   ArrowRight,
+  Home,
+  Flag,
+  BarChart2,
+  Bookmark,
+  Settings,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -146,128 +151,109 @@ function FeedPage() {
       {/* Sidebar izquierdo */}
       <aside className="space-y-4 hidden lg:block">
         {/* Profile Card */}
-        <div className="bg-card rounded-sm border border-[#c2c9d6]  overflow-hidden">
-          <div className="p-4 flex gap-4">
-            <div className="w-[64px] h-[64px] shrink-0 rounded border border-[#c2c9d6] bg-muted overflow-hidden">
-              <Avatar profile={me} size={64} />
+        <div className="bg-card rounded-sm border border-[#c2c9d6] overflow-hidden p-4">
+          <div className="flex gap-4">
+            <div className="w-[84px] h-[84px] shrink-0 rounded border border-[#c2c9d6] bg-muted overflow-hidden">
+              <Avatar profile={me} size={84} />
             </div>
-            <div className="flex flex-col flex-1 min-w-0">
+            <div className="flex flex-col flex-1 min-w-0 justify-center">
               <span className="font-bold text-foreground truncate text-[15px]">
                 {me?.display_name || "Usuario"}
               </span>
+              <span className="text-[13px] text-muted-foreground mt-0.5 mb-2 truncate">
+                {me?.bio || "Vive y deja vivir."}
+              </span>
+              <div className="flex items-center gap-1.5 mb-2">
+                <div
+                  className={`size-2 rounded-full shrink-0 ${me?.online_status === "ocupado" ? "bg-red-500" : me?.online_status === "ausente" ? "bg-yellow-500" : me?.online_status === "desconectado" ? "bg-gray-400" : "bg-online"}`}
+                />
+                <span className="text-[13px] text-[#2F9C4A] font-medium">
+                  {me?.online_status === "ocupado"
+                    ? "Ocupado"
+                    : me?.online_status === "ausente"
+                      ? "Ausente"
+                      : me?.online_status === "desconectado"
+                        ? "Desconectado"
+                        : "En línea"}
+                </span>
+              </div>
               <Link
                 to="/perfil/$username"
                 params={{ username: me?.username ?? "" }}
-                className="text-[13px] text-[#0b439c] hover:underline mt-0.5"
+                className="text-[13px] font-bold text-[#0b439c] hover:underline"
               >
-                Ver mi perfil
+                Ver mi perfil »
               </Link>
-              <div className="text-[11px] text-muted-foreground mt-2 font-medium">
-                <span className="font-bold text-foreground">{me?.visits_count || 0}</span> visitas a
-                tu perfil
-              </div>
-              <div className="text-[11px] text-muted-foreground mt-0.5 flex items-center gap-1.5 font-medium">
-                <Users className="size-3.5" />
-                <span>
-                  <span className="font-bold text-foreground">{friends.length}</span> amigos
-                </span>
-              </div>
             </div>
           </div>
-          <div className="border-t border-[#f1f3f6] p-4 flex flex-col gap-3">
-            <div className="flex items-center gap-2 cursor-pointer w-fit group relative">
-              <DropdownMenu>
-                <DropdownMenuTrigger className="flex items-center gap-1.5 outline-none group">
-                  <div
-                    className={`size-2 rounded-full shrink-0 ${me?.online_status === "ocupado" ? "bg-red-500" : me?.online_status === "ausente" ? "bg-yellow-500" : me?.online_status === "desconectado" ? "bg-gray-400" : "bg-online"}`}
-                  />
-                  <span className="text-[13px] text-muted-foreground font-medium group-hover:text-foreground transition-colors">
-                    {me?.online_status === "ocupado"
-                      ? "Ocupado"
-                      : me?.online_status === "ausente"
-                        ? "Ausente"
-                        : me?.online_status === "desconectado"
-                          ? "Desconectado"
-                          : "En línea"}
-                  </span>
-                  <ChevronDown className="size-3 text-muted-foreground group-hover:text-foreground transition-colors" />
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  align="start"
-                  className="w-[180px] bg-white border border-[#dbe0e8]  rounded-none p-0 text-[13px]"
-                >
-                  <DropdownMenuItem
-                    onClick={() => updateOnlineStatus.mutate("online")}
-                    className="rounded-none cursor-pointer hover:bg-[#0b439c] hover:text-white focus:bg-[#0b439c] focus:text-white px-3 py-1.5 flex items-center gap-2"
-                  >
-                    <div className="size-2 rounded-full shrink-0 bg-online" /> En línea
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => updateOnlineStatus.mutate("ocupado")}
-                    className="rounded-none cursor-pointer hover:bg-[#0b439c] hover:text-white focus:bg-[#0b439c] focus:text-white px-3 py-1.5 flex items-center gap-2"
-                  >
-                    <div className="size-2 rounded-full shrink-0 bg-red-500" /> Ocupado
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => updateOnlineStatus.mutate("ausente")}
-                    className="rounded-none cursor-pointer hover:bg-[#0b439c] hover:text-white focus:bg-[#0b439c] focus:text-white px-3 py-1.5 flex items-center gap-2"
-                  >
-                    <div className="size-2 rounded-full shrink-0 bg-yellow-500" /> Ausente
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => updateOnlineStatus.mutate("desconectado")}
-                    className="rounded-none cursor-pointer hover:bg-[#0b439c] hover:text-white focus:bg-[#0b439c] focus:text-white px-3 py-1.5 flex items-center gap-2"
-                  >
-                    <div className="size-2 rounded-full shrink-0 bg-gray-400" /> Desconectado
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-            <input
-              type="text"
-              value={statusMessage}
-              onChange={(e) => setStatusMessage(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  updateStatus.mutate(statusMessage);
-                  e.currentTarget.blur();
-                }
-              }}
-              placeholder="¿Qué estás haciendo?"
-              className="w-full bg-transparent text-[13px] outline-none placeholder:text-muted-foreground placeholder:italic italic text-muted-foreground"
-            />
+        </div>
 
-            <div className="flex items-start gap-1.5 text-[#0b439c] font-medium text-[13px] mt-1">
-              <MapPin className="size-4 shrink-0 mt-0.5" />
-              <input
-                type="text"
-                placeholder="Añadir ubicación"
-                defaultValue={me?.location || ""}
-                onBlur={(e) => {
-                  const loc = e.target.value.trim();
-                  if (loc !== (me?.location || "")) {
-                    supabase
-                      .from("profiles")
-                      .update({ location: loc })
-                      .eq("id", userId)
-                      .then(({ error }) => {
-                        if (error) toast.error("Error al actualizar ubicación");
-                        else {
-                          toast.success("Ubicación actualizada");
-                          queryClient.invalidateQueries({ queryKey: ["me", userId] });
-                        }
-                      });
-                  }
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.currentTarget.blur();
-                  }
-                }}
-                className="w-full bg-transparent outline-none placeholder:text-[#0b439c] hover:underline cursor-text truncate"
-              />
+        <div className="bg-card rounded-sm border border-[#c2c9d6] p-2 flex flex-col gap-0.5">
+          <Link
+            to="/feed"
+            className="flex items-center gap-2.5 px-3 py-2 rounded bg-secondary/80 text-[#0b439c] font-bold text-[13px]"
+          >
+            <Home className="size-[18px] text-[#0b439c]" /> Novedades
+          </Link>
+          <Link
+            to="/feed"
+            className="flex items-center gap-2.5 px-3 py-2 rounded hover:bg-secondary/50 text-foreground font-medium text-[13px] transition-colors justify-between"
+          >
+            <div className="flex items-center gap-2.5">
+              <CalendarIcon className="size-[18px] text-muted-foreground" /> Eventos
             </div>
-          </div>
+            <span className="bg-secondary text-muted-foreground text-[11px] font-bold px-1.5 py-0.5 rounded-sm">
+              2
+            </span>
+          </Link>
+          <Link
+            to="/feed"
+            className="flex items-center gap-2.5 px-3 py-2 rounded hover:bg-secondary/50 text-foreground font-medium text-[13px] transition-colors"
+          >
+            <ImageIcon className="size-[18px] text-muted-foreground" /> Fotos
+          </Link>
+          <Link
+            to="/feed"
+            className="flex items-center gap-2.5 px-3 py-2 rounded hover:bg-secondary/50 text-foreground font-medium text-[13px] transition-colors"
+          >
+            <Video className="size-[18px] text-muted-foreground" /> Vídeos
+          </Link>
+          <Link
+            to="/feed"
+            className="flex items-center gap-2.5 px-3 py-2 rounded hover:bg-secondary/50 text-foreground font-medium text-[13px] transition-colors"
+          >
+            <Music className="size-[18px] text-muted-foreground" /> Música
+          </Link>
+          <Link
+            to="/feed"
+            className="flex items-center gap-2.5 px-3 py-2 rounded hover:bg-secondary/50 text-foreground font-medium text-[13px] transition-colors"
+          >
+            <Users className="size-[18px] text-muted-foreground" /> Grupos
+          </Link>
+          <Link
+            to="/feed"
+            className="flex items-center gap-2.5 px-3 py-2 rounded hover:bg-secondary/50 text-foreground font-medium text-[13px] transition-colors"
+          >
+            <Flag className="size-[18px] text-muted-foreground" /> Páginas
+          </Link>
+          <Link
+            to="/feed"
+            className="flex items-center gap-2.5 px-3 py-2 rounded hover:bg-secondary/50 text-foreground font-medium text-[13px] transition-colors"
+          >
+            <BarChart2 className="size-[18px] text-muted-foreground" /> Encuestas
+          </Link>
+          <Link
+            to="/feed"
+            className="flex items-center gap-2.5 px-3 py-2 rounded hover:bg-secondary/50 text-foreground font-medium text-[13px] transition-colors"
+          >
+            <Bookmark className="size-[18px] text-muted-foreground" /> Guardados
+          </Link>
+          <Link
+            to="/feed"
+            className="flex items-center gap-2.5 px-3 py-2 rounded hover:bg-secondary/50 text-foreground font-medium text-[13px] transition-colors"
+          >
+            <Settings className="size-[18px] text-muted-foreground" /> Configuración
+          </Link>
         </div>
 
         {/* Amigos conectados */}
@@ -285,7 +271,7 @@ function FeedPage() {
               >
                 <div className="flex items-center gap-2.5 min-w-0">
                   <Avatar profile={f} size={28} />
-                  <span className="text-[13px] font-medium text-foreground truncate">
+                  <span className="text-[13px] font-bold text-foreground truncate">
                     {f.display_name}
                   </span>
                 </div>
@@ -295,11 +281,8 @@ function FeedPage() {
           </div>
           {friends.length > 0 && (
             <div className="mt-2 text-right">
-              <Link
-                to="/amigos"
-                className="text-[13px] font-medium text-[#0b439c] hover:underline flex items-center justify-end gap-1"
-              >
-                Ver todos <ArrowRight className="size-3.5" />
+              <Link to="/amigos" className="text-[13px] font-bold text-[#0b439c] hover:underline">
+                Ver todos »
               </Link>
             </div>
           )}
@@ -340,6 +323,45 @@ function FeedPage() {
             >
               Buscar amigos <ArrowRight className="size-3.5" />
             </Link>
+          </div>
+        </SidebarCard>
+
+        {/* Escuchando ahora */}
+        <SidebarCard title="ESCUCHANDO AHORA">
+          <div className="flex gap-3 mt-2">
+            <div className="w-16 h-16 bg-black rounded shrink-0 overflow-hidden relative group cursor-pointer">
+              <img
+                src="https://i.scdn.co/image/ab67616d0000b27329584b42b656cfcc8db0b7d3"
+                alt="Favourite Worst Nightmare"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="flex-1 min-w-0">
+              <h5 className="font-bold text-[13px] text-foreground leading-tight truncate">505</h5>
+              <p className="text-[12px] text-muted-foreground mt-0.5 truncate">Arctic Monkeys</p>
+              <p className="text-[12px] text-muted-foreground truncate">
+                Favourite Worst Nightmare
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 mt-4">
+            <span className="text-[11px] text-muted-foreground font-medium">1:42</span>
+            <div className="h-1 flex-1 bg-secondary rounded-full overflow-hidden">
+              <div className="h-full bg-[#0b439c] rounded-full w-[40%] relative">
+                <div className="absolute right-0 top-1/2 -translate-y-1/2 size-2 bg-[#0b439c] rounded-full shadow" />
+              </div>
+            </div>
+            <span className="text-[11px] text-muted-foreground font-medium">4:13</span>
+          </div>
+          <div className="mt-4 flex justify-center">
+            <button className="flex items-center gap-1.5 text-[12px] font-bold text-[#0b439c] hover:underline">
+              <div className="size-4 bg-[#1ED760] rounded-full flex items-center justify-center">
+                <svg viewBox="0 0 24 24" className="w-2.5 h-2.5 text-white fill-current">
+                  <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.54.659.301 1.02zm1.44-3.3c-.301.42-.84.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.6.18-1.2.72-1.38 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.54-1.02.72-1.56.3z" />
+                </svg>
+              </div>
+              Escuchar en Spotify
+            </button>
           </div>
         </SidebarCard>
       </aside>
