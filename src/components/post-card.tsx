@@ -4,13 +4,15 @@ import {
   MessageCircle,
   Trash2,
   PlayCircle,
+  Pause,
   MapPin,
   Calendar as CalendarIcon,
   Clock,
   Share2,
 } from "lucide-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+import YouTube, { YouTubePlayer } from "react-youtube";
 import { supabase } from "@/integrations/supabase/client";
 import { type FeedPost, timeAgo, initials } from "@/lib/social";
 import { cleanYoutubeTitle } from "@/lib/youtube";
@@ -18,8 +20,39 @@ import { toast } from "sonner";
 
 export function PostCard({ post, currentUserId }: { post: FeedPost; currentUserId: string }) {
   const qc = useQueryClient();
+
   const [showComments, setShowComments] = useState(false);
   const [isPlayingMusic, setIsPlayingMusic] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+  const [player, setPlayer] = useState<YouTubePlayer | null>(null);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [isPlayerReady, setIsPlayerReady] = useState(false);
+
+  // Sync custom player with YouTube player
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+
+    if (isPlayingMusic && player) {
+      interval = setInterval(async () => {
+        try {
+          const time = await player.getCurrentTime();
+          setCurrentTime(time || 0);
+
+          if (duration === 0) {
+            const dur = await player.getDuration();
+            if (dur > 0) setDuration(dur);
+          }
+        } catch (e) {
+          // ignore
+        }
+      }, 500);
+    }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [isPlayingMusic, player, duration]);
 
   const like = useMutation({
     mutationFn: async () => {
@@ -105,13 +138,119 @@ export function PostCard({ post, currentUserId }: { post: FeedPost; currentUserI
         <div className="pb-4">
           {isPlayingMusic ? (
             <div className="bg-neutral-900 w-full relative h-[100px] flex overflow-hidden">
-              <iframe
-                src={`https://www.youtube.com/embed/${post.youtube_id}?autoplay=1`}
-                title="YouTube video player"
-                allow="autoplay; encrypted-media"
-                allowFullScreen
-                className="w-full h-full border-0"
-              ></iframe>
+              {/* Visually hidden YouTube player */}
+              <div className="w-0 h-0 opacity-0 absolute pointer-events-none">
+                <YouTube
+                  videoId={post.youtube_id}
+                  opts={{
+                    height: "1",
+                    width: "1",
+                    playerVars: {
+                      autoplay: 1,
+                      controls: 0,
+                      disablekb: 1,
+                      fs: 0,
+                      modestbranding: 1,
+                      rel: 0,
+                      showinfo: 0,
+                      iv_load_policy: 3,
+                    },
+                  }}
+                  onReady={(event) => {
+                    setPlayer(event.target);
+                    setIsPlayerReady(true);
+                  }}
+                  onStateChange={(event) => {
+                    // YT.PlayerState.PLAYING is 1, PAUSED is 2, ENDED is 0
+                    if (event.data === 1) {
+                      setIsPaused(false);
+                    } else if (event.data === 2) {
+                      setIsPaused(true);
+                    }
+                  }}
+                />
+              </div>
+
+              {/* Custom Audio Player UI */}
+              <div className="flex w-full h-full">
+                <div className="w-[100px] h-[100px] shrink-0 relative">
+                  <img
+                    src={`https://i.ytimg.com/vi/${post.youtube_id}/hqdefault.jpg`}
+                    alt="Cover"
+                    className="w-full h-full object-cover"
+                  />
+                  <div
+                    className="absolute inset-0 bg-black/40 flex items-center justify-center cursor-pointer hover:bg-black/50 transition-colors"
+                    onClick={() => {
+                      if (player) {
+                        if (isPaused) {
+                          player.playVideo();
+                          setIsPaused(false);
+                        } else {
+                          player.pauseVideo();
+                          setIsPaused(true);
+                        }
+                      }
+                    }}
+                  >
+                    {isPaused ? (
+                      <PlayCircle className="w-8 h-8 text-white" />
+                    ) : (
+                      <Pause className="w-8 h-8 text-white" />
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex-1 flex flex-col justify-center px-4 py-2 min-w-0">
+                  <h4 className="font-bold text-[15px] text-white truncate leading-tight mb-1">
+                    {cleanYoutubeTitle(post.youtube_title || "") || "Canción"}
+                  </h4>
+                  <p className="text-[12px] text-[#A3A3A3] truncate mb-3">
+                    {post.youtube_channel || "Artista"}
+                  </p>
+
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] text-white/70 w-8 text-right tabular-nums">
+                      {Math.floor(currentTime / 60)}:
+                      {Math.floor(currentTime % 60)
+                        .toString()
+                        .padStart(2, "0")}
+                    </span>
+
+                    <div
+                      className="flex-1 h-1.5 bg-white/20 rounded-full cursor-pointer relative group"
+                      onClick={(e) => {
+                        if (player && duration > 0) {
+                          const rect = e.currentTarget.getBoundingClientRect();
+                          const pos = (e.clientX - rect.left) / rect.width;
+                          const newTime = pos * duration;
+                          player.seekTo(newTime, true);
+                          setCurrentTime(newTime);
+                        }
+                      }}
+                    >
+                      <div
+                        className="absolute left-0 top-0 h-full bg-white rounded-full"
+                        style={{ width: `${duration > 0 ? (currentTime / duration) * 100 : 0}%` }}
+                      ></div>
+                      <div
+                        className="absolute top-1/2 -translate-y-1/2 w-2.5 h-2.5 bg-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                        style={{
+                          left: `${duration > 0 ? (currentTime / duration) * 100 : 0}%`,
+                          transform: "translate(-50%, -50%)",
+                        }}
+                      ></div>
+                    </div>
+
+                    <span className="text-[10px] text-white/70 w-8 tabular-nums">
+                      {Math.floor(duration / 60)}:
+                      {Math.floor(duration % 60)
+                        .toString()
+                        .padStart(2, "0")}
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
           ) : (
             <button
