@@ -158,5 +158,17 @@
 **Action:** Be mindful of subtle regressions when doing find-and-replace, such as the `payload.news.title` typo introduced by a script execution. Always run a diff before committing to catch unrelated changes.
 
 ## 2024-05-18 - Fix TanStack Start API Route Import
+
 **Learning:** In newer versions of TanStack Start (v1.168+), `createAPIFileRoute` from `@tanstack/react-start/api` is no longer available. API routes must be defined using `createFileRoute` from `@tanstack/react-router` with a `server: { handlers: { GET: ... } }` block, and returning responses via `Response.json()` instead of the exported `json` helper.
 **Action:** When working with TanStack router or start in the future, carefully check the package version and adhere to the newer server functions or `createFileRoute({ server })` syntax rather than legacy API routes imports.
+## 2024-05-18 - Implemented Music Search with YouTube API
+
+**Learning:** Successfully implemented a music search feature using the YouTube Data API v3. Used debouncing to avoid excessive API requests. Filtered results correctly and retrieved duration, which is useful for displaying a compact view on a post. Encountered an issue where ESLint and Prettier had format conflicting issues.
+
+**Action:** Before running tests or lint commands after using `sed` or bash scripts, run `bun run format` to make sure formatting is correct, then run `bun run lint` and `npx tsc --noEmit` to ensure type checks.
+
+## 2026-07-21 - Implemented Music Search
+
+**Learning:** When developing the user interface with React for the music feature, I discovered the YouTube Data API is needed to resolve links properly. I encountered issues testing with playwright.
+
+**Action:** Used `setTimeout` functionality to fix rendering issues with react elements updating properties out of sync. Attempted verifying the tests but failed.

@@ -117,8 +117,9 @@ export function PostCard({ post, currentUserId }: { post: FeedPost; currentUserI
               <h4 className="font-bold text-[16px] truncate leading-tight">
                 {post.youtube_title || "Mr. Brightside"}
               </h4>
-              <p className="text-[13px] text-white/80 truncate">The Killers</p>
-              <p className="text-[11px] text-white/50 truncate mt-1">Álbum: Hot Fuss (2004)</p>
+              <p className="text-[13px] text-white/80 truncate">
+                {post.youtube_channel || "The Killers"}
+              </p>
             </div>
             <div className="absolute bottom-3 right-3 z-10 text-white/50 flex items-center gap-1 text-[11px] font-medium">
               © YouTube
