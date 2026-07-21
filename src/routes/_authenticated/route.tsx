@@ -10,7 +10,9 @@ import {
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Search, ChevronDown } from "lucide-react";
+import { Search, ChevronDown, Bell, Music } from "lucide-react";
+import { ColorPickerToggle } from "@/components/ColorPickerToggle";
+import { Avatar } from "@/components/post-card";
 import { ChatManager } from "@/components/ChatManager";
 
 export const Route = createFileRoute("/_authenticated")({
@@ -35,6 +37,13 @@ function AuthenticatedLayout() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && searchQuery.trim()) {
+      alert(`Buscando: ${searchQuery}`);
+    }
+  };
 
   const { data: me } = useQuery({
     queryKey: ["me", userId],
@@ -100,7 +109,7 @@ function AuthenticatedLayout() {
   return (
     <div className="min-h-[100vh] w-full bg-background text-foreground selection:bg-primary/10 flex flex-col">
       {/* Top Header - Like the screenshot (blue background) */}
-      <header className="sticky top-0 z-50 bg-[#084093] text-white  border-b border-transparent">
+      <header className="sticky top-0 z-50 bg-primary text-white  border-b border-transparent">
         <div className="w-full max-w-[1800px] mx-auto px-4 lg:px-8 h-14 flex items-center justify-between gap-4">
           <div className="flex items-center gap-6 h-full">
             <Link
@@ -133,6 +142,7 @@ function AuthenticatedLayout() {
                 badge={pendingRequests}
               />
               <TopNavIcon to="/feed" label="Vídeos" />
+              <TopNavIcon to="/feed" label="Música" />
             </nav>
           </div>
 
@@ -141,17 +151,37 @@ function AuthenticatedLayout() {
               <input
                 type="text"
                 placeholder="Buscar personas, música, vídeos..."
-                className="w-full bg-[#1b4e85] text-white placeholder-white/70 rounded px-4 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-white/50 transition-shadow"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={handleSearch}
+                className="w-full bg-black/20 text-white placeholder-white/70 rounded px-4 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-white/50 transition-shadow"
               />
               <Search className="absolute inset-y-0 right-3 my-auto size-4 text-white/70 pointer-events-none" />
             </div>
           </div>
 
           <div className="flex items-center gap-3">
-            <ThemeToggle />
-            <button className="flex items-center gap-1 text-sm font-medium hover:bg-white/10 px-2 py-1.5 rounded transition-colors">
-              Mi cuenta <ChevronDown className="size-4" />
+            <button
+              className="flex items-center justify-center p-1.5 rounded-full bg-black/20 hover:bg-black/30 text-white transition-colors border border-white/10"
+              title="Notificaciones"
+            >
+              <Bell className="size-4" />
             </button>
+            <button
+              className="flex items-center justify-center p-1.5 rounded-full bg-black/20 hover:bg-black/30 text-white transition-colors border border-white/10"
+              title="Música"
+            >
+              <Music className="size-4" />
+            </button>
+            <ThemeToggle />
+            <ColorPickerToggle />
+
+            <button className="flex items-center gap-2 text-sm font-medium hover:bg-white/10 px-2 py-1 rounded transition-colors">
+              <Avatar profile={me} size={28} />
+              <span>{me?.username ?? "Usuario"}</span>
+              <ChevronDown className="size-4 text-white/70" />
+            </button>
+
             <button
               onClick={handleSignOut}
               title="Salir"
@@ -189,13 +219,13 @@ function TopNavIcon({
     <Link
       to={to as never}
       params={params as never}
-      className={`relative h-full flex items-center px-4 font-medium text-sm transition-colors border-none ${
+      className={`relative h-full flex items-center gap-1.5 px-4 font-medium text-sm transition-colors border-none ${
         active ? "bg-white/10 font-bold" : "hover:bg-white/5"
       }`}
     >
       {label}
       {badge && badge > 0 ? (
-        <span className="absolute top-2 right-1 min-w-[16px] h-4 px-1 bg-red-500 text-white text-[10px] font-bold rounded-full grid place-items-center">
+        <span className="min-w-[18px] h-[18px] px-1 bg-[#f03d25] text-white text-[11px] font-bold rounded flex items-center justify-center leading-none">
           {badge > 9 ? "9+" : badge}
         </span>
       ) : null}
