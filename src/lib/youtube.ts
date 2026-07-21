@@ -1,5 +1,12 @@
 import { createServerFn } from "@tanstack/react-start";
 
+export function cleanYoutubeTitle(rawTitle: string): string {
+  if (!rawTitle) return "";
+  const re =
+    /\s*[[({][^\])}]*?(official|oficial|lyric|video|hd|remastered|audio|visualizer|live)[^\])}]*?[\])}]/gi;
+  return rawTitle.replace(re, "").trim();
+}
+
 export const searchYoutubeFn = createServerFn({ method: "POST" })
   .validator((query: string) => query)
   .handler(async ({ data: query }) => {
@@ -78,10 +85,12 @@ export const searchYoutubeFn = createServerFn({ method: "POST" })
           };
         }) => ({
           id: item.id.videoId,
-          title: item.snippet.title
-            .replace(/&quot;/g, '"')
-            .replace(/&#39;/g, "'")
-            .replace(/&amp;/g, "&"),
+          title: cleanYoutubeTitle(
+            item.snippet.title
+              .replace(/&quot;/g, '"')
+              .replace(/&#39;/g, "'")
+              .replace(/&amp;/g, "&"),
+          ),
           artist: item.snippet.channelTitle,
           cover: item.snippet.thumbnails?.high?.url || item.snippet.thumbnails?.default?.url,
           duration: durationMap[item.id.videoId] || "0:00",

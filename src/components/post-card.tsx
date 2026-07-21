@@ -13,11 +13,13 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { type FeedPost, timeAgo, initials } from "@/lib/social";
+import { cleanYoutubeTitle } from "@/lib/youtube";
 import { toast } from "sonner";
 
 export function PostCard({ post, currentUserId }: { post: FeedPost; currentUserId: string }) {
   const qc = useQueryClient();
   const [showComments, setShowComments] = useState(false);
+  const [isPlayingMusic, setIsPlayingMusic] = useState(false);
 
   const like = useMutation({
     mutationFn: async () => {
@@ -101,31 +103,51 @@ export function PostCard({ post, currentUserId }: { post: FeedPost; currentUserI
 
       {post.type === "music" && post.youtube_id && (
         <div className="pb-4">
-          <div className="bg-neutral-900 w-full relative h-[100px] flex overflow-hidden group">
-            <div className="w-[100px] h-[100px] shrink-0 relative">
-              <img
-                src={`https://i.ytimg.com/vi/${post.youtube_id}/hqdefault.jpg`}
-                alt="Cover"
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
-                <div className="w-10 h-10 rounded-full border border-white flex items-center justify-center bg-black/20">
-                  <PlayCircle className="w-6 h-6 text-white" />
+          {isPlayingMusic ? (
+            <div className="bg-neutral-900 w-full relative h-[100px] flex overflow-hidden">
+              <iframe
+                src={`https://www.youtube.com/embed/${post.youtube_id}?autoplay=1`}
+                title="YouTube video player"
+                allow="autoplay; encrypted-media"
+                allowFullScreen
+                className="w-full h-full border-0"
+              ></iframe>
+            </div>
+          ) : (
+            <button
+              className="bg-neutral-900 w-full relative h-[100px] flex overflow-hidden group text-left"
+              onClick={() => setIsPlayingMusic(true)}
+            >
+              {post.youtube_duration && post.youtube_duration !== "0:00" && (
+                <div className="absolute top-2 right-3 z-10 text-[#404040] text-[11px] font-medium bg-black/40 px-1.5 py-0.5 rounded backdrop-blur-sm text-white/70">
+                  {post.youtube_duration}
+                </div>
+              )}
+              <div className="w-[100px] h-[100px] shrink-0 relative">
+                <img
+                  src={`https://i.ytimg.com/vi/${post.youtube_id}/hqdefault.jpg`}
+                  alt="Cover"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-black/30 flex items-center justify-center group-hover:bg-black/40 transition-colors">
+                  <div className="w-10 h-10 rounded-full border border-white flex items-center justify-center bg-black/20 group-hover:scale-110 transition-transform">
+                    <PlayCircle className="w-6 h-6 text-white" />
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="flex-1 min-w-0 flex flex-col justify-center px-4 z-10 space-y-1">
-              <h4 className="font-bold text-[16px] text-white truncate leading-tight">
-                {post.youtube_title || "Mr. Brightside"}
-              </h4>
-              <p className="text-[13px] text-[#A3A3A3] truncate">
-                {post.youtube_channel || "The Killers"}
-              </p>
-            </div>
-            <div className="absolute bottom-2 right-3 z-10 text-[#404040] text-[11px] font-medium">
-              © YouTube
-            </div>
-          </div>
+              <div className="flex-1 min-w-0 flex flex-col justify-center px-4 z-10 space-y-1">
+                <h4 className="font-bold text-[16px] text-white truncate leading-tight">
+                  {cleanYoutubeTitle(post.youtube_title || "") || "Mr. Brightside"}
+                </h4>
+                <p className="text-[13px] text-[#A3A3A3] truncate">
+                  {post.youtube_channel || "The Killers"}
+                </p>
+              </div>
+              <div className="absolute bottom-2 right-3 z-10 text-[#404040] text-[11px] font-medium">
+                © YouTube
+              </div>
+            </button>
+          )}
         </div>
       )}
 
