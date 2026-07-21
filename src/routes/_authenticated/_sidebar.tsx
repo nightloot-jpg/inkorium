@@ -60,7 +60,7 @@ function SidebarLayout() {
   });
 
   return (
-    <main className="flex flex-col lg:grid lg:grid-cols-[240px_1fr] lg:justify-center gap-4 lg:gap-8 py-4 w-full">
+    <main className="flex flex-col lg:grid lg:grid-cols-[300px_1fr] lg:justify-center gap-6 py-4 w-full">
       <aside className="space-y-4 hidden lg:block">
         <div className="bg-card rounded-sm border border-[#c2c9d6] overflow-hidden p-4">
           <div className="flex gap-4">
@@ -68,7 +68,7 @@ function SidebarLayout() {
               <Avatar profile={me} size={84} />
             </div>
             <div className="flex flex-col flex-1 min-w-0 justify-center">
-              <span className="font-bold text-foreground truncate text-[15px]">
+              <span className="font-bold text-foreground text-[15px] break-words">
                 {me?.display_name || "Usuario"}
               </span>
               <span className="text-[13px] text-muted-foreground mt-0.5 mb-2 truncate">
