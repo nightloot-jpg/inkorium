@@ -101,7 +101,7 @@ export function PostCard({ post, currentUserId }: { post: FeedPost; currentUserI
 
       {post.type === "music" && post.youtube_id && (
         <div className="pb-4">
-          <div className="bg-[#181818] p-4 flex gap-4 items-end relative overflow-hidden h-[120px]">
+          <div className="bg-[#181818] p-6 flex gap-6 items-end relative overflow-hidden h-[120px]">
             {/* Background blur if we wanted, or just solid */}
             <div className="w-[100px] h-[100px] bg-black shrink-0 relative flex items-center justify-center shadow-lg z-10 border border-white/10">
               <img
@@ -165,7 +165,7 @@ export function PostCard({ post, currentUserId }: { post: FeedPost; currentUserI
       )}
 
       <div className="flex justify-between px-5 py-3 mt-2">
-        <div className="flex gap-4">
+        <div className="flex gap-6">
           <button
             onClick={() => like.mutate()}
             disabled={like.isPending}

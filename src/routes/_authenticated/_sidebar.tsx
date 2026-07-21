@@ -60,10 +60,10 @@ function SidebarLayout() {
   });
 
   return (
-    <main className="flex flex-col lg:grid lg:grid-cols-[300px_1fr] lg:justify-center gap-6 py-4 w-full">
-      <aside className="space-y-4 hidden lg:block">
-        <div className="bg-card rounded-sm border border-[#c2c9d6] overflow-hidden p-4">
-          <div className="flex gap-4">
+    <main className="flex flex-col lg:grid lg:grid-cols-[340px_1fr] lg:justify-center gap-[30px] py-4 w-full">
+      <aside className="space-y-5 hidden lg:block">
+        <div className="bg-card rounded-[10px] border border-[#e6eaf0] shadow-[0_1px_2px_0_rgba(0,0,0,0.03)] overflow-hidden p-5">
+          <div className="flex gap-5">
             <div className="w-[84px] h-[84px] shrink-0 rounded border border-[#c2c9d6] bg-muted overflow-hidden">
               <Avatar profile={me} size={84} />
             </div>
@@ -99,7 +99,7 @@ function SidebarLayout() {
           </div>
         </div>
 
-        <div className="bg-card rounded-sm border border-[#c2c9d6] p-2 flex flex-col gap-0.5">
+        <div className="bg-card rounded-[10px] border border-[#e6eaf0] shadow-[0_1px_2px_0_rgba(0,0,0,0.03)] p-3 flex flex-col gap-0.5">
           <SidebarLink to="/feed" icon={Home} label="Novedades" />
           <SidebarLink to="/eventos" icon={CalendarIcon} label="Eventos" badge={2} />
           <SidebarLink to="/fotos" icon={ImageIcon} label="Fotos" />
@@ -112,14 +112,14 @@ function SidebarLayout() {
           <SidebarLink to="/configuracion" icon={Settings} label="Configuración" />
         </div>
 
-        <div className="bg-card rounded-sm border border-[#c2c9d6] p-4 flex flex-col gap-3">
+        <div className="bg-card rounded-[10px] border border-[#e6eaf0] shadow-[0_1px_2px_0_rgba(0,0,0,0.03)] p-5 flex flex-col gap-3">
           <h4 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wide">
             Amigos conectados ({friends.length})
           </h4>
-          <div className="flex flex-col gap-2.5">
+          <div className="flex flex-col gap-3.5">
             {friends.slice(0, 5).map((friend) => (
-              <div key={friend.id} className="flex items-center justify-between gap-2">
-                <div className="flex items-center gap-2 min-w-0">
+              <div key={friend.id} className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3 min-w-0">
                   <Avatar profile={friend} size={28} />
                   <Link
                     to="/perfil/$username"
@@ -142,7 +142,7 @@ function SidebarLayout() {
           </div>
         </div>
 
-        <div className="bg-card rounded-sm border border-[#c2c9d6] p-4 flex flex-col gap-3">
+        <div className="bg-card rounded-[10px] border border-[#e6eaf0] shadow-[0_1px_2px_0_rgba(0,0,0,0.03)] p-5 flex flex-col gap-3">
           <h4 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wide">
             Escuchando ahora
           </h4>
@@ -158,7 +158,7 @@ function SidebarLayout() {
               <span className="text-[13px] text-muted-foreground truncate">Favourite Wor...</span>
             </div>
           </div>
-          <div className="flex items-center gap-2 mt-1">
+          <div className="flex items-center gap-3 mt-1">
             <span className="text-[11px] text-muted-foreground">1:42</span>
             <div className="flex-1 h-1.5 bg-secondary rounded-full overflow-hidden">
               <div className="w-2/5 h-full bg-[#0b439c]" />
@@ -190,13 +190,13 @@ function SidebarLink({
   return (
     <Link
       to={to as never}
-      className={`flex items-center gap-2.5 px-3 py-2 rounded transition-colors justify-between ${
+      className={`flex items-center gap-3.5 px-3 py-2 rounded transition-colors justify-between ${
         isActive
           ? "bg-secondary/80 text-[#0b439c] font-bold text-[13px]"
           : "hover:bg-secondary/50 text-foreground font-medium text-[13px]"
       }`}
     >
-      <div className="flex items-center gap-2.5">
+      <div className="flex items-center gap-3.5">
         <Icon className={`size-[18px] ${isActive ? "text-[#0b439c]" : "text-muted-foreground"}`} />
         {label}
       </div>
