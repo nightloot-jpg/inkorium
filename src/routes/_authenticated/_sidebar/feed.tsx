@@ -148,7 +148,7 @@ function FeedPage() {
 
   const queryClient = useQueryClient();
   return (
-    <div className="flex flex-col lg:grid lg:grid-cols-[minmax(500px,1fr)_300px] lg:justify-center gap-6 w-full">
+    <div className="flex flex-col lg:grid lg:grid-cols-[minmax(500px,1fr)_330px] lg:justify-center gap-[30px] w-full">
       {/* Feed */}
       <div className="space-y-4">
         <Composer userId={userId} avatar={me} />
@@ -162,7 +162,7 @@ function FeedPage() {
             </p>
           </div>
         )}
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-5">
           {posts.map((p) => (
             <PostCard key={p.id} post={p} currentUserId={userId} />
           ))}
@@ -442,7 +442,7 @@ function Composer({
       </div>
 
       {/* Row 2: Barra de herramientas (Compacta y sin scroll) */}
-      <div className="flex items-center overflow-hidden whitespace-nowrap mb-4">
+      <div className="flex items-center overflow-hidden whitespace-nowrap mb-3">
         <div className="flex gap-1 md:gap-[18px] items-center flex-shrink min-w-0 flex-nowrap w-full overflow-hidden">
           <ComposerTab
             icon={<Search className="w-4 h-4" />}
@@ -534,7 +534,7 @@ function Composer({
       </div>
 
       {/* Row 3: Footer */}
-      <div className="border-t border-[#e6eaf0] pt-4 flex justify-end items-center gap-4">
+      <div className="border-t border-[#e6eaf0] pt-3 flex justify-end items-center gap-4">
         <button className="flex items-center gap-1.5 text-[14px] text-black font-medium hover:text-foreground transition-colors">
           <Globe2 className="w-[18px] h-[18px]" />
           Público
@@ -584,7 +584,7 @@ function SidebarCard({
   children: React.ReactNode;
 }) {
   return (
-    <section className="bg-card p-4 rounded-sm border border-[#c2c9d6] ">
+    <section className="bg-card p-5 rounded-sm border border-[#c2c9d6] ">
       <div className="flex items-center justify-between mb-3">
         <h4 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wide">
           {title}

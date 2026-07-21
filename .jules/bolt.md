@@ -131,7 +131,12 @@
 
 **Learning:** When building responsive edge-to-edge layouts that have distinct sidebars, using purely proportional columns (e.g. `25% 1fr 25%`) can result in sidebars becoming awkwardly wide on large monitors. A hybrid grid approach with fixed outer constraints and a fluid center (e.g. `grid-cols-[240px_minmax(500px,1fr)_320px]`) ensures side content remains compact and usable while the main content area gracefully absorbs all remaining viewport space.
 **Action:** Default to hybrid grid definitions (`fixed-px fluid-fr fixed-px`) over percentage-based columns for sidebar layouts on full-width applications, unless specifically required to stretch sidebar elements.
+
 ## 2023-10-26 - Symmetrical Hybrid Grid & Text Wrapping
 
 **Learning:** When using fixed widths on sidebars, you might inadvertently compress textual content inside if it exceeds the fixed bounds. Specifically, text-overflow classes like `truncate` can prematurely hide content in narrow, fixed-width sidebars. Replacing `truncate` with `break-words` on important identifying elements (like display names) inside narrow fixed containers ensures legibility without breaking layout bounds.
 **Action:** Always check text-wrapping properties (`truncate` vs `break-words`) when narrowing or fixing column widths in grid layouts.
+## 2023-10-26 - Visual Polishing and Consistency
+
+**Learning:** Subtle CSS modifications like border-radius consistency (e.g., matching outer cards with `10px` and inner images with `12px` or similar proportions), consistent soft shadows, and light backgrounds (e.g. `#f3f5f8`) create a highly modern, breathable layout without redesigning any functional components.
+**Action:** When performing visual "polish" tasks, prioritize standardizing paddings, gaps, and corner radiuses across the entire layout before attempting complex structural overhauls.
