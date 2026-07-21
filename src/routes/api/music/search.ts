@@ -13,25 +13,8 @@ export const Route = createFileRoute("/api/music/search")({
 
         const apiKey = process.env.YOUTUBE_API_KEY;
         if (!apiKey) {
-          console.warn("YOUTUBE_API_KEY is not set in environment variables. Returning mock data.");
-          return Response.json({
-            results: [
-              {
-                id: "gGdGFtwcGzc",
-                title: "Mr. Brightside",
-                artist: "The Killers",
-                cover: "https://i.ytimg.com/vi/gGdGFtwcGzc/hqdefault.jpg",
-                duration: "3:48",
-              },
-              {
-                id: "1w7OgIMMRc4",
-                title: "Sweet Child O' Mine",
-                artist: "Guns N' Roses",
-                cover: "https://i.ytimg.com/vi/1w7OgIMMRc4/hqdefault.jpg",
-                duration: "5:03",
-              },
-            ],
-          });
+          console.error("YOUTUBE_API_KEY is not set in environment variables.");
+          return Response.json({ error: "Internal Server Error" }, { status: 500 });
         }
 
         try {

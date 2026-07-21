@@ -173,3 +173,8 @@
 **Learning:** When developing the user interface with React for the music feature, I discovered the YouTube Data API is needed to resolve links properly. I encountered issues testing with playwright.
 
 **Action:** Used `setTimeout` functionality to fix rendering issues with react elements updating properties out of sync. Attempted verifying the tests but failed.
+
+## 2026-07-21 - API Authentication Testing
+
+**Learning:** When developing an API backend dependent on external services, you can temporarily hardcode a mock JSON payload inside a route if the environment lacks the API key to keep the frontend workflow verifiable, then remove it later once an environment key is supplied.
+**Action:** Be mindful of doing manual text replacements via Python scripts. Reverting script changes with regular expressions can be brittle. It's often safer to use version control `git checkout` to restore specific files instead of writing a reverse regex patch.
