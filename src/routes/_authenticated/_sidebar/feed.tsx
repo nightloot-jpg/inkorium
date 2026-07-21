@@ -229,45 +229,6 @@ function FeedPage() {
   );
 }
 
-const MOCK_SONGS = [
-  {
-    id: "gGdGFtwcJnw",
-    title: "Mr. Brightside",
-    artist: "The Killers",
-    album: "Hot Fuss",
-    duration: "3:42",
-    cover: "https://i.ytimg.com/vi/gGdGFtwcJnw/hqdefault.jpg",
-    channel: "TheKillersVEVO",
-  },
-  {
-    id: "fJ9rUzIMcZQ",
-    title: "Bohemian Rhapsody",
-    artist: "Queen",
-    album: "A Night at the Opera",
-    duration: "5:55",
-    cover: "https://i.ytimg.com/vi/fJ9rUzIMcZQ/hqdefault.jpg",
-    channel: "Queen Official",
-  },
-  {
-    id: "4NRXx6U8ABQ",
-    title: "Blinding Lights",
-    artist: "The Weeknd",
-    album: "After Hours",
-    duration: "3:22",
-    cover: "https://i.ytimg.com/vi/4NRXx6U8ABQ/hqdefault.jpg",
-    channel: "TheWeekndVEVO",
-  },
-  {
-    id: "dQw4w9WgXcQ",
-    title: "Never Gonna Give You Up",
-    artist: "Rick Astley",
-    album: "Whenever You Need Somebody",
-    duration: "3:32",
-    cover: "https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg",
-    channel: "Rick Astley",
-  },
-];
-
 function Composer({
   userId,
   avatar,
@@ -280,6 +241,35 @@ function Composer({
   const [activeTab, setActiveTab] = useState("status");
   const [musicSubTab, setMusicSubTab] = useState("search");
   const [musicSearchQuery, setMusicSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<any[]>([]); // eslint-disable-line @typescript-eslint/no-explicit-any
+  const [isSearching, setIsSearching] = useState(false);
+
+  useEffect(() => {
+    if (musicSubTab !== "search" || !musicSearchQuery.trim()) {
+      setSearchResults([]);
+      return;
+    }
+
+    const delayDebounceFn = setTimeout(async () => {
+      setIsSearching(true);
+      try {
+        const res = await fetch(`/api/music/search?q=${encodeURIComponent(musicSearchQuery)}`);
+        const data = await res.json();
+        if (data.results) {
+          setSearchResults(data.results);
+        } else {
+          setSearchResults([]);
+        }
+      } catch (err) {
+        console.error("Failed to search music:", err);
+        setSearchResults([]);
+      } finally {
+        setIsSearching(false);
+      }
+    }, 300);
+
+    return () => clearTimeout(delayDebounceFn);
+  }, [musicSearchQuery, musicSubTab]);
 
   const [content, setContent] = useState("");
   const [mediaUrl, setMediaUrl] = useState("");
@@ -441,43 +431,57 @@ function Composer({
                     </div>
 
                     {musicSearchQuery.length > 0 && (
-                      <div className="bg-white border border-[#e6eaf0] rounded-md shadow-sm overflow-hidden flex flex-col mt-2">
-                        {MOCK_SONGS.filter(
-                          (s) =>
-                            s.title.toLowerCase().includes(musicSearchQuery.toLowerCase()) ||
-                            s.artist.toLowerCase().includes(musicSearchQuery.toLowerCase()),
-                        ).map((song) => (
-                          <button
-                            key={song.id}
-                            onClick={() => {
-                              setExtraData({
-                                ...extraData,
-                                youtube_id: song.id,
-                                youtube_title: song.title,
-                                youtube_channel: song.artist,
-                                youtube_duration: song.duration,
-                              });
-                            }}
-                            className="flex items-center gap-3 p-3 hover:bg-[#f1f3f6] transition-colors text-left border-b border-[#f1f3f6] last:border-0"
-                          >
-                            <img
-                              src={song.cover}
-                              alt="cover"
-                              className="w-10 h-10 rounded-sm object-cover"
-                            />
-                            <div className="flex flex-col flex-1 min-w-0">
-                              <span className="text-[14px] font-bold text-black truncate">
-                                {song.title}
-                              </span>
-                              <span className="text-[12px] text-muted-foreground truncate">
-                                {song.artist} • {song.album}
-                              </span>
-                            </div>
-                            <span className="text-[12px] text-muted-foreground font-medium">
-                              {song.duration}
-                            </span>
-                          </button>
-                        ))}
+                      <div className="bg-white border border-[#e6eaf0] rounded-md shadow-sm overflow-hidden flex flex-col mt-2 max-h-64 overflow-y-auto">
+                        {isSearching ? (
+                          <div className="p-4 text-center text-sm text-muted-foreground">
+                            Buscando...
+                          </div>
+                        ) : searchResults.length > 0 ? (
+                          searchResults.map(
+                            (song: {
+                              id: string;
+                              title: string;
+                              artist: string;
+                              cover: string;
+                              duration: string;
+                            }) => (
+                              <button
+                                key={song.id}
+                                onClick={() => {
+                                  setExtraData({
+                                    ...extraData,
+                                    youtube_id: song.id,
+                                    youtube_title: song.title,
+                                    youtube_channel: song.artist,
+                                    youtube_duration: song.duration,
+                                  });
+                                }}
+                                className="flex items-center gap-3 p-3 hover:bg-[#f1f3f6] transition-colors text-left border-b border-[#f1f3f6] last:border-0"
+                              >
+                                <img
+                                  src={song.cover}
+                                  alt="cover"
+                                  className="w-10 h-10 rounded-sm object-cover"
+                                />
+                                <div className="flex flex-col flex-1 min-w-0">
+                                  <span className="text-[14px] font-bold text-black truncate">
+                                    {song.title}
+                                  </span>
+                                  <span className="text-[12px] text-muted-foreground truncate">
+                                    {song.artist}
+                                  </span>
+                                </div>
+                                <span className="text-[12px] text-muted-foreground font-medium">
+                                  {song.duration}
+                                </span>
+                              </button>
+                            ),
+                          )
+                        ) : (
+                          <div className="p-4 text-center text-sm text-muted-foreground">
+                            No se encontraron resultados
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
