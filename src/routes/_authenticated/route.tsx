@@ -14,7 +14,6 @@ import { Search, ChevronDown } from "lucide-react";
 import { ChatManager } from "@/components/ChatManager";
 
 export const Route = createFileRoute("/_authenticated")({
-
   beforeLoad: async () => {
     const { data, error } = await supabase.auth.getUser();
     if (error || !data.user) throw redirect({ to: "/auth" });

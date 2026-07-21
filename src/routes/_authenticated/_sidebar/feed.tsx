@@ -35,6 +35,7 @@ import {
 import { toast } from "sonner";
 import { Route as AuthRoute } from "../route";
 import { searchYoutubeFn } from "@/lib/youtube";
+import { useDebounce } from "@/hooks/use-debounce";
 
 export const Route = createFileRoute("/_authenticated/_sidebar/feed")({
   head: () => ({ meta: [{ title: "Inicio — Inkorium" }] }),
@@ -243,11 +244,12 @@ function Composer({
   const [activeTab, setActiveTab] = useState("status");
   const [musicSubTab, setMusicSubTab] = useState("search");
   const [musicSearchQuery, setMusicSearchQuery] = useState("");
+  const debouncedMusicSearchQuery = useDebounce(musicSearchQuery, 500);
   const [searchResults, setSearchResults] = useState<any[]>([]); // eslint-disable-line @typescript-eslint/no-explicit-any
   const [isSearching, setIsSearching] = useState(false);
 
   useEffect(() => {
-    if (musicSubTab !== "search" || !musicSearchQuery.trim()) {
+    if (musicSubTab !== "search" || !debouncedMusicSearchQuery.trim()) {
       setSearchResults([]);
       setIsSearching(false);
       return;
@@ -256,7 +258,7 @@ function Composer({
     setIsSearching(true);
     const search = async () => {
       try {
-        const data = await searchYoutubeFn({ data: musicSearchQuery });
+        const data = await searchYoutubeFn({ data: debouncedMusicSearchQuery });
         if (data.results) {
           setSearchResults(data.results);
         } else {
@@ -271,7 +273,7 @@ function Composer({
     };
 
     search();
-  }, [musicSearchQuery, musicSubTab]);
+  }, [debouncedMusicSearchQuery, musicSubTab]);
 
   const [content, setContent] = useState("");
   const [mediaUrl, setMediaUrl] = useState("");

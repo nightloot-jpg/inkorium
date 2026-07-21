@@ -198,3 +198,6 @@ Also, `Math.random()` and `new Date()` within initial render inside server-rende
 
 **Learning:** Using `ssr: false` in `@tanstack/react-router` wrap components inside `<Suspense>` on the server. When the client loads the javascript, it mounts the component. However, React compares the initial tree (which had `Suspense`) to the generated one (which is the actual `AuthPage` container) and fails with Error #418 (Hydration Mismatch). The solution was removing `ssr: false` from routes unless specifically using defer mechanisms.
 **Action:** When migrating TanStack Start apps, avoid placing `ssr: false` directly in standard routes unless specifically loading client-only SDKs explicitly mapped to a specific skeleton UI or utilizing generic component fallbacks.
+## 2026-07-21 - Debounced Search and YouTube Player UI
+**Learning:** Extracted logic to a reusable custom hook 'useDebounce' to ensure components remain clean while performing API searches effectively without spamming endpoints.
+**Action:** Always extract complex state-related timing logic (like debounce/throttle) to custom hooks.
