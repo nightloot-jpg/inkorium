@@ -149,3 +149,6 @@
 ## 2024-05-18 - Redesign Music Composer with complex UI
 **Learning:** Replaced a simple input with a much more complex UI inside an existing `feed.tsx` component while keeping the global form state working. Handled a tricky edge case with inline regex replacements in React components where curly braces and escape characters conflict with eslint and prettier rules.
 **Action:** Always be careful with regex escape sequences in inline jsx. When writing a regex in a tsx file via python scripts, ensure escaping doesn't trigger `no-useless-escape` eslint errors. Use a dedicated `patch_regex.py` to fix it locally if needed, or define the regex outside jsx.
+## 2024-05-18 - Backend integration for Music Search
+**Learning:** Added an API route with `@tanstack/react-start/api` and updated the frontend to debounce user input and call the API, handling loading and empty states cleanly.
+**Action:** Be mindful of subtle regressions when doing find-and-replace, such as the `payload.news.title` typo introduced by a script execution. Always run a diff before committing to catch unrelated changes.
