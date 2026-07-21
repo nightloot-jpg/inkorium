@@ -248,11 +248,12 @@ function Composer({
   useEffect(() => {
     if (musicSubTab !== "search" || !musicSearchQuery.trim()) {
       setSearchResults([]);
+      setIsSearching(false);
       return;
     }
 
+    setIsSearching(true);
     const delayDebounceFn = setTimeout(async () => {
-      setIsSearching(true);
       try {
         const data = await searchYoutubeFn({ data: musicSearchQuery });
         if (data.results) {
@@ -266,7 +267,7 @@ function Composer({
       } finally {
         setIsSearching(false);
       }
-    }, 300);
+    }, 500);
 
     return () => clearTimeout(delayDebounceFn);
   }, [musicSearchQuery, musicSubTab]);
