@@ -177,7 +177,7 @@ function FeedPage() {
         <SidebarCard
           title="SOLICITUDES"
           action={
-            <span className="text-[#0b439c] font-normal cursor-pointer hover:underline text-xs">
+            <span className="text-primary font-normal cursor-pointer hover:underline text-xs">
               Ver todos
             </span>
           }
@@ -202,7 +202,7 @@ function FeedPage() {
         <SidebarCard
           title="EVENTOS PATROCINADOS"
           action={
-            <span className="text-[#0b439c] font-normal cursor-pointer hover:underline text-xs">
+            <span className="text-primary font-normal cursor-pointer hover:underline text-xs">
               Ver todos
             </span>
           }
@@ -214,14 +214,14 @@ function FeedPage() {
               className="w-16 h-16 rounded object-cover shrink-0"
             />
             <div className="flex-1 min-w-0">
-              <h5 className="font-bold text-[13px] text-[#0b439c] leading-tight">
+              <h5 className="font-bold text-[13px] text-primary leading-tight">
                 Concierto Indie en Madrid
               </h5>
               <p className="text-xs text-muted-foreground mt-1">Viernes, 24 de Mayo a las 21:00</p>
               <p className="text-xs text-muted-foreground">Sala La Riviera</p>
             </div>
           </div>
-          <button className="w-fit border border-[#2F5FA7] text-[#0b439c] font-medium text-xs px-3 py-1.5 rounded-[18px] mt-3 hover:bg-accent transition-colors block ml-auto mr-auto">
+          <button className="w-fit border border-primary text-primary font-medium text-xs px-3 py-1.5 rounded-[18px] mt-3 hover:bg-accent transition-colors block ml-auto mr-auto">
             Añadir a mi calendario
           </button>
         </SidebarCard>
@@ -404,7 +404,7 @@ function Composer({
             />
           ) : (
             <div className="w-12 h-12 rounded-lg bg-[#e6eaf0] flex items-center justify-center shrink-0 border border-[#dbe0e8]">
-              <span className="text-[#0b439c] text-lg font-bold">
+              <span className="text-primary text-lg font-bold">
                 {avatar?.display_name?.charAt(0)?.toUpperCase()}
               </span>
             </div>
@@ -417,25 +417,25 @@ function Composer({
                 <div className="flex gap-4 border-b border-[#e6eaf0] pb-2">
                   <button
                     onClick={() => setMusicSubTab("search")}
-                    className={`text-[13px] font-medium pb-2 border-b-2 transition-colors ${musicSubTab === "search" ? "border-[#0b439c] text-[#0b439c]" : "border-transparent text-muted-foreground hover:text-black"}`}
+                    className={`text-[13px] font-medium pb-2 border-b-2 transition-colors ${musicSubTab === "search" ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-black"}`}
                   >
                     Buscar
                   </button>
                   <button
                     onClick={() => setMusicSubTab("link")}
-                    className={`text-[13px] font-medium pb-2 border-b-2 transition-colors ${musicSubTab === "link" ? "border-[#0b439c] text-[#0b439c]" : "border-transparent text-muted-foreground hover:text-black"}`}
+                    className={`text-[13px] font-medium pb-2 border-b-2 transition-colors ${musicSubTab === "link" ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-black"}`}
                   >
                     Pegar enlace
                   </button>
                   <button
                     onClick={() => setMusicSubTab("playlist")}
-                    className={`text-[13px] font-medium pb-2 border-b-2 transition-colors ${musicSubTab === "playlist" ? "border-[#0b439c] text-[#0b439c]" : "border-transparent text-muted-foreground hover:text-black"}`}
+                    className={`text-[13px] font-medium pb-2 border-b-2 transition-colors ${musicSubTab === "playlist" ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-black"}`}
                   >
                     Playlist
                   </button>
                   <button
                     onClick={() => setMusicSubTab("album")}
-                    className={`text-[13px] font-medium pb-2 border-b-2 transition-colors ${musicSubTab === "album" ? "border-[#0b439c] text-[#0b439c]" : "border-transparent text-muted-foreground hover:text-black"}`}
+                    className={`text-[13px] font-medium pb-2 border-b-2 transition-colors ${musicSubTab === "album" ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-black"}`}
                   >
                     Álbum
                   </button>
@@ -450,7 +450,7 @@ function Composer({
                         value={musicSearchQuery}
                         onChange={(e) => setMusicSearchQuery(e.target.value)}
                         placeholder="Buscar canción, artista, álbum o pegar enlace"
-                        className="w-full bg-white border border-[#c2c9d6] rounded-md py-3 pl-10 pr-4 text-[14px] outline-none focus:border-[#0b439c] focus:ring-1 focus:ring-[#0b439c]/20 transition-all shadow-sm"
+                        className="w-full bg-white border border-[#c2c9d6] rounded-md py-3 pl-10 pr-4 text-[14px] outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all shadow-sm"
                       />
                     </div>
 
@@ -518,7 +518,7 @@ function Composer({
                       value={musicSearchQuery}
                       onChange={(e) => setMusicSearchQuery(e.target.value)}
                       placeholder="Pega un enlace de YouTube aquí..."
-                      className="w-full bg-white border border-[#c2c9d6] rounded-md py-3 px-4 text-[14px] outline-none focus:border-[#0b439c] focus:ring-1 focus:ring-[#0b439c]/20 transition-all shadow-sm"
+                      className="w-full bg-white border border-[#c2c9d6] rounded-md py-3 px-4 text-[14px] outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all shadow-sm"
                     />
                     <button
                       onClick={() => {
@@ -560,7 +560,7 @@ function Composer({
                       value={musicSearchQuery}
                       onChange={(e) => setMusicSearchQuery(e.target.value)}
                       placeholder={`Pega un enlace de ${musicSubTab === "playlist" ? "Playlist" : "Álbum"} aquí...`}
-                      className="w-full bg-white border border-[#c2c9d6] rounded-md py-3 px-4 text-[14px] outline-none focus:border-[#0b439c] focus:ring-1 focus:ring-[#0b439c]/20 transition-all shadow-sm"
+                      className="w-full bg-white border border-[#c2c9d6] rounded-md py-3 px-4 text-[14px] outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-all shadow-sm"
                     />
                     <button
                       onClick={() => {
@@ -628,12 +628,12 @@ function Composer({
                     />
                   ) : (
                     <div className="w-10 h-10 rounded-lg bg-[#e6eaf0] flex items-center justify-center shrink-0 border border-[#dbe0e8]">
-                      <span className="text-[#0b439c] text-base font-bold">
+                      <span className="text-primary text-base font-bold">
                         {avatar?.display_name?.charAt(0)?.toUpperCase()}
                       </span>
                     </div>
                   )}
-                  <div className="flex-1 border border-[#dbe0e8] rounded-md p-3 focus-within:border-[#0b439c] focus-within:ring-1 focus-within:ring-[#0b439c]/20 transition-all bg-white flex flex-col">
+                  <div className="flex-1 border border-[#dbe0e8] rounded-md p-3 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary/20 transition-all bg-white flex flex-col">
                     <textarea
                       value={content}
                       onChange={(e) => setContent(e.target.value)}
@@ -646,7 +646,7 @@ function Composer({
             )}
           </div>
         ) : (
-          <div className="flex-1 border border-[#dbe0e8] rounded-md p-3 focus-within:border-[#0b439c] focus-within:ring-1 focus-within:ring-[#0b439c]/20 transition-all bg-white flex flex-col">
+          <div className="flex-1 border border-[#dbe0e8] rounded-md p-3 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary/20 transition-all bg-white flex flex-col">
             <textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
@@ -1020,7 +1020,7 @@ function SuggestionRow({
           <Link
             to="/perfil/$username"
             params={{ username: profile.username }}
-            className="text-[13px] font-medium text-[#0b439c] hover:underline truncate"
+            className="text-[13px] font-medium text-primary hover:underline truncate"
           >
             {profile.display_name}
           </Link>
@@ -1080,7 +1080,7 @@ function FriendRequestRow({
           <Link
             to="/perfil/$username"
             params={{ username: profile.username }}
-            className="text-[13px] font-medium text-[#0b439c] hover:underline truncate"
+            className="text-[13px] font-medium text-primary hover:underline truncate"
           >
             {profile.display_name}
           </Link>
@@ -1090,7 +1090,7 @@ function FriendRequestRow({
         <button
           onClick={() => accept.mutate()}
           disabled={accept.isPending || reject.isPending}
-          className="bg-[#0b439c] hover:bg-[#0b439c] text-white px-2 py-1 rounded text-[11px] font-medium transition-colors disabled:opacity-50"
+          className="bg-primary hover:bg-primary text-white px-2 py-1 rounded text-[11px] font-medium transition-colors disabled:opacity-50"
         >
           Aceptar
         </button>

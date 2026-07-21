@@ -88,7 +88,7 @@ export function ChatManager({
         {chatBoxOpen && (
           <div className="bg-card w-64 rounded-t-xl border border-[#c2c9d6] shadow-[0_-4px_6px_rgba(0,0,0,0.1)] flex flex-col overflow-hidden animate-in slide-in-from-bottom-5">
             <div
-              className="bg-[#2F5FA7] text-white p-2 font-bold text-sm cursor-pointer flex justify-between items-center"
+              className="bg-primary text-white p-2 font-bold text-sm cursor-pointer flex justify-between items-center"
               onClick={() => setChatBoxOpen(false)}
             >
               <span>Chat ({onlineFriends.length})</span>
@@ -98,7 +98,7 @@ export function ChatManager({
               <input
                 type="text"
                 placeholder="Buscar..."
-                className="w-full bg-secondary rounded px-2 py-1 text-xs outline-none focus:ring-1 focus:ring-[#2F5FA7]"
+                className="w-full bg-secondary rounded px-2 py-1 text-xs outline-none focus:ring-1 focus:ring-primary"
               />
             </div>
             <div className="flex-1 max-h-64 overflow-y-auto no-scrollbar p-1">
@@ -121,7 +121,7 @@ export function ChatManager({
         {!chatBoxOpen && (
           <div
             onClick={() => setChatBoxOpen(true)}
-            className="bg-[#2F5FA7] text-white px-4 py-2 rounded-t-xl font-bold text-sm cursor-pointer flex items-center gap-2 shadow-[0_-2px_4px_rgba(0,0,0,0.1)] hover:bg-[#264d87] transition-colors"
+            className="bg-primary text-white px-4 py-2 rounded-t-xl font-bold text-sm cursor-pointer flex items-center gap-2 shadow-[0_-2px_4px_rgba(0,0,0,0.1)] hover:bg-primary-hover transition-colors"
           >
             <MessageSquare className="size-4" /> Chat ({onlineFriends.length})
           </div>
@@ -230,7 +230,7 @@ function ChatWindow({
     >
       {/* Header (Draggable) */}
       <div
-        className="bg-[#2F5FA7] text-white p-2 flex justify-between items-center cursor-move"
+        className="bg-primary text-white p-2 flex justify-between items-center cursor-move"
         onMouseDown={handleMouseDown}
       >
         <div className="flex items-center gap-2 font-bold text-[13px]">
@@ -282,12 +282,12 @@ function ChatWindow({
                 value={text}
                 onChange={(e) => setText(e.target.value)}
                 placeholder="Escribe algo..."
-                className="flex-1 bg-secondary rounded-full px-3 py-1.5 text-xs outline-none focus:ring-1 focus:ring-[#2F5FA7]"
+                className="flex-1 bg-secondary rounded-full px-3 py-1.5 text-xs outline-none focus:ring-1 focus:ring-primary"
               />
               <button
                 type="submit"
                 disabled={!text.trim()}
-                className="text-[#2F5FA7] disabled:opacity-50"
+                className="text-primary disabled:opacity-50"
               >
                 <Send className="size-4" />
               </button>

@@ -91,7 +91,7 @@ function SidebarLayout() {
               <Link
                 to="/perfil/$username"
                 params={{ username: me?.username ?? "" }}
-                className="text-xs font-normal text-[#0b439c] hover:underline"
+                className="text-xs font-normal text-primary hover:underline"
               >
                 Ver mi perfil »
               </Link>
@@ -124,7 +124,7 @@ function SidebarLayout() {
                   <Link
                     to="/perfil/$username"
                     params={{ username: friend.username }}
-                    className="text-[13px] font-medium text-[#0b439c] hover:underline truncate"
+                    className="text-[13px] font-medium text-primary hover:underline truncate"
                   >
                     {friend.display_name}
                   </Link>
@@ -136,7 +136,7 @@ function SidebarLayout() {
             ))}
           </div>
           <div className="flex justify-end mt-1">
-            <Link to="/amigos" className="text-xs font-normal text-[#0b439c] hover:underline">
+            <Link to="/amigos" className="text-xs font-normal text-primary hover:underline">
               Ver todos »
             </Link>
           </div>
@@ -161,7 +161,7 @@ function SidebarLayout() {
           <div className="flex items-center gap-3 mt-1">
             <span className="text-[11px] text-muted-foreground">1:42</span>
             <div className="flex-1 h-1.5 bg-secondary rounded-full overflow-hidden">
-              <div className="w-2/5 h-full bg-[#0b439c]" />
+              <div className="w-2/5 h-full bg-primary" />
             </div>
             <span className="text-[11px] text-muted-foreground">4:13</span>
           </div>
@@ -192,12 +192,12 @@ function SidebarLink({
       to={to as never}
       className={`flex items-center gap-3.5 px-3 py-2 rounded transition-colors justify-between ${
         isActive
-          ? "bg-secondary/80 text-[#0b439c] font-bold text-[13px]"
+          ? "bg-secondary/80 text-primary font-bold text-[13px]"
           : "hover:bg-secondary/50 text-foreground font-medium text-[13px]"
       }`}
     >
       <div className="flex items-center gap-3.5">
-        <Icon className={`size-[18px] ${isActive ? "text-[#0b439c]" : "text-muted-foreground"}`} />
+        <Icon className={`size-[18px] ${isActive ? "text-primary" : "text-muted-foreground"}`} />
         {label}
       </div>
       {badge !== undefined && (
