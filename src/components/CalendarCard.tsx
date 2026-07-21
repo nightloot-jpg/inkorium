@@ -19,6 +19,7 @@ export function CalendarCard({ userId }: { userId: string }) {
   // Form states
   const [name, setName] = useState("");
   const [date, setDate] = useState<Date | undefined>(undefined);
+  React.useEffect(() => setDate(new Date()), []);
   const [time, setTime] = useState("");
   const [location, setLocation] = useState("");
   const [description, setDescription] = useState("");
@@ -70,10 +71,12 @@ export function CalendarCard({ userId }: { userId: string }) {
             onSelect={setDate}
             className="rounded-md"
             modifiers={{
-              hasEvent: [
-                new Date(new Date().getFullYear(), new Date().getMonth(), 15),
-                new Date(new Date().getFullYear(), new Date().getMonth(), 22),
-              ],
+              hasEvent: date
+                ? [
+                    new Date(date.getFullYear(), date.getMonth(), 15),
+                    new Date(date.getFullYear(), date.getMonth(), 22),
+                  ]
+                : [],
             }}
             modifiersClassNames={{
               hasEvent: "has-event",
