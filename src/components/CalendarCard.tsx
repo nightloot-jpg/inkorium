@@ -56,7 +56,7 @@ export function CalendarCard({ userId }: { userId: string }) {
   });
 
   return (
-    <section className="bg-card p-4 rounded-3xl border border-[#c2c9d6] shadow-none mt-4 relative overflow-hidden">
+    <section className="bg-card p-4 rounded-sm border border-[#c2c9d6] shadow-none mt-4 relative overflow-hidden">
       <div className="flex items-center justify-between mb-2">
         <h4 className="text-[14px] font-bold text-foreground">Calendario</h4>
         <CalendarIcon className="size-4 text-muted-foreground" />

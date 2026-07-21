@@ -91,10 +91,10 @@ function AuthenticatedLayout() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground selection:bg-primary/10 flex flex-col">
+    <div className="min-h-[100vh] w-full bg-[#f1f5f9] dark:bg-background text-foreground selection:bg-primary/10 flex flex-col">
       {/* Top Header - Like the screenshot (blue background) */}
       <header className="sticky top-0 z-50 bg-[#084093] text-white  border-b border-transparent">
-        <div className="w-full max-w-[1500px] mx-auto px-4 h-14 flex items-center justify-between gap-4">
+        <div className="w-full max-w-[1800px] mx-auto px-4 lg:px-8 h-14 flex items-center justify-between gap-4">
           <div className="flex items-center gap-6 h-full">
             <Link
               to="/feed"
@@ -156,7 +156,7 @@ function AuthenticatedLayout() {
         </div>
       </header>
 
-      <div className="flex-1 w-full max-w-[1500px] mx-auto px-4 flex flex-col">
+      <div className="flex-1 w-full max-w-[1800px] mx-auto px-4 lg:px-8 flex flex-col">
         <Outlet />
       </div>
 
