@@ -15,9 +15,17 @@ import { ChatManager } from "@/components/ChatManager";
 
 export const Route = createFileRoute("/_authenticated")({
   beforeLoad: async () => {
-    const { data, error } = await supabase.auth.getUser();
-    if (error || !data.user) throw redirect({ to: "/auth" });
-    return { userId: data.user.id };
+    const { data, error } = await supabase.auth.getSession();
+
+    // Server-side (and client-side initial check): fallback to an empty string if there's no session
+    // This allows the route to load, and then the client can re-evaluate.
+    if (error || !data.session) {
+      if (typeof window !== "undefined") {
+        throw redirect({ to: "/auth" });
+      }
+      return { userId: "" };
+    }
+    return { userId: data.session.user.id };
   },
   component: AuthenticatedLayout,
 });
@@ -199,8 +207,8 @@ function TopNavIcon({
 export function useMe() {
   const [state, setState] = useState<{ id: string } | null>(null);
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      if (data.user) setState({ id: data.user.id });
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session) setState({ id: data.session.user.id });
     });
   }, []);
   return state;

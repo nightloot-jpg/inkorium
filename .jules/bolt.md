@@ -190,6 +190,7 @@
 **Action:** When working in TanStack Start 1.x+, always prefer `createServerFn` for backend logic (fetching external APIs, interacting with a database) instead of creating standard REST-like API routes, as RPC functions are natively handled, fully typed, and more resilient across deployment environments.
 
 ## 2026-07-21 - Fix TanStack Start searchYoutubeFn GET bug and React Error #418
+
 **Learning:** `createServerFn` defaults to `GET`, which can cause issues with how `fetch` requests handle early unmounts when connected to a query listener inside `useEffect` (e.g. `Error: A listener indicated an asynchronous response by returning true, but the message channel closed`). Setting it to `POST` fixes this error since it bypasses the strict `fetch` GET cancellation when routing.
 Also, `Math.random()` and `new Date()` within initial render inside server-rendered React applications cause Hydration Error #418.
 **Action:** Use `method: "POST"` for `createServerFn` to avoid connection drops during debounce unmounting. Hydrate dates using `useEffect` after mount, and avoid using dynamic variables inside `React.useMemo` when rendering on both server and client.
@@ -198,6 +199,12 @@ Also, `Math.random()` and `new Date()` within initial render inside server-rende
 
 **Learning:** Using `ssr: false` in `@tanstack/react-router` wrap components inside `<Suspense>` on the server. When the client loads the javascript, it mounts the component. However, React compares the initial tree (which had `Suspense`) to the generated one (which is the actual `AuthPage` container) and fails with Error #418 (Hydration Mismatch). The solution was removing `ssr: false` from routes unless specifically using defer mechanisms.
 **Action:** When migrating TanStack Start apps, avoid placing `ssr: false` directly in standard routes unless specifically loading client-only SDKs explicitly mapped to a specific skeleton UI or utilizing generic component fallbacks.
+
 ## 2026-07-21 - Debounced Search and YouTube Player UI
+
 **Learning:** Extracted logic to a reusable custom hook 'useDebounce' to ensure components remain clean while performing API searches effectively without spamming endpoints.
 **Action:** Always extract complex state-related timing logic (like debounce/throttle) to custom hooks.
+
+## 2026-07-21 - [Fix SSR Redirect Loops with TanStack Router + Supabase]
+**Learning:** `supabase.auth.getUser()` does an API call to verify the token, which can fail or hang during SSR (or hit rate limits), especially since `localStorage` doesn't exist on the server. Furthermore, throwing redirects blindly on the server without valid cookies can result in SSR returning a 307 redirect instead of HTML.
+**Action:** Use `supabase.auth.getSession()` inside `beforeLoad` and ensure that the redirect `throw redirect({ to: "/auth" })` only executes on the client (`if (typeof window !== "undefined")`) when the app is running in a configuration where SSR token passing isn't robustly handled.
