@@ -320,9 +320,7 @@ function Composer({
       if (!text && activeTab !== "photo" && activeTab !== "video")
         throw new Error("Añade algún contenido.");
 
-      const finalType = ["poll", "album", "playlist", "location", "celebration"].includes(activeTab)
-        ? "status"
-        : activeTab;
+      const finalType = activeTab;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const payload: any = {
         author_id: userId,
@@ -355,6 +353,26 @@ function Composer({
       if (activeTab === "news") {
         payload.news_title = extraData.title;
         payload.image_url = mediaUrl;
+      }
+      if (activeTab === "poll") {
+        payload.metadata = {
+          options: [extraData.pollOption1, extraData.pollOption2, extraData.pollOption3].filter(
+            Boolean,
+          ),
+        };
+      }
+      if (activeTab === "album") {
+        payload.metadata = { name: extraData.name };
+        payload.image_url = mediaUrl;
+      }
+      if (activeTab === "playlist") {
+        payload.metadata = { name: extraData.name, link: extraData.link };
+      }
+      if (activeTab === "location") {
+        payload.metadata = { name: extraData.location };
+      }
+      if (activeTab === "celebration") {
+        payload.metadata = { title: extraData.title };
       }
 
       const { error } = await supabase.from("posts").insert(payload);
@@ -536,8 +554,30 @@ function Composer({
                 )}
 
                 {(musicSubTab === "playlist" || musicSubTab === "album") && (
-                  <div className="text-[13px] text-muted-foreground py-4 text-center border border-dashed border-[#dbe0e8] rounded-md bg-white">
-                    Esta función estará disponible próximamente.
+                  <div className="flex flex-col gap-3">
+                    <input
+                      type="text"
+                      value={musicSearchQuery}
+                      onChange={(e) => setMusicSearchQuery(e.target.value)}
+                      placeholder={`Pega un enlace de ${musicSubTab === "playlist" ? "Playlist" : "Álbum"} aquí...`}
+                      className="w-full bg-white border border-[#c2c9d6] rounded-md py-3 px-4 text-[14px] outline-none focus:border-[#0b439c] focus:ring-1 focus:ring-[#0b439c]/20 transition-all shadow-sm"
+                    />
+                    <button
+                      onClick={() => {
+                        if (musicSearchQuery.trim()) {
+                          setExtraData({
+                            ...extraData,
+                            youtube_id: musicSearchQuery, // Or use a different field, but we need youtube_id for the UI preview logic
+                            youtube_title: `Enlace de ${musicSubTab === "playlist" ? "Playlist" : "Álbum"}`,
+                            youtube_channel: "Desconocido",
+                            youtube_duration: "0:00",
+                          });
+                        }
+                      }}
+                      className="bg-secondary text-foreground px-4 py-2 rounded-md text-sm font-medium border border-border w-fit"
+                    >
+                      Añadir {musicSubTab === "playlist" ? "Playlist" : "Álbum"}
+                    </button>
                   </div>
                 )}
               </div>
@@ -677,8 +717,118 @@ function Composer({
               )}
 
               {activeTab === "poll" && (
-                <div className="text-xs text-muted-foreground mt-2">
-                  Configura tu encuesta (Placeholder)
+                <div className="flex flex-col gap-2 mt-2">
+                  <input
+                    value={extraData.pollOption1 || ""}
+                    onChange={(e) => setExtraData({ ...extraData, pollOption1: e.target.value })}
+                    placeholder="Opción 1"
+                    className="w-full bg-secondary rounded-lg px-3 py-2 text-sm outline-none border border-border"
+                  />
+                  <input
+                    value={extraData.pollOption2 || ""}
+                    onChange={(e) => setExtraData({ ...extraData, pollOption2: e.target.value })}
+                    placeholder="Opción 2"
+                    className="w-full bg-secondary rounded-lg px-3 py-2 text-sm outline-none border border-border"
+                  />
+                  <input
+                    value={extraData.pollOption3 || ""}
+                    onChange={(e) => setExtraData({ ...extraData, pollOption3: e.target.value })}
+                    placeholder="Opción 3 (opcional)"
+                    className="w-full bg-secondary rounded-lg px-3 py-2 text-sm outline-none border border-border"
+                  />
+                </div>
+              )}
+
+              {activeTab === "news" && (
+                <div className="flex flex-col gap-2 mt-2">
+                  <input
+                    value={extraData.title || ""}
+                    onChange={(e) => setExtraData({ ...extraData, title: e.target.value })}
+                    placeholder="Titular de la noticia"
+                    className="w-full bg-secondary rounded-lg px-3 py-2 text-sm outline-none border border-border"
+                  />
+                  <div className="flex gap-2">
+                    <input
+                      value={mediaUrl || ""}
+                      onChange={(e) => setMediaUrl(e.target.value)}
+                      placeholder="URL de la imagen de portada (opcional)"
+                      className="flex-1 bg-secondary rounded-lg px-3 py-2 text-sm outline-none border border-border"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={isUploading}
+                      className="bg-secondary text-foreground px-3 py-2 rounded-lg text-sm font-medium border border-border disabled:opacity-50"
+                    >
+                      {isUploading ? "Subiendo..." : "Subir foto"}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {activeTab === "album" && (
+                <div className="flex flex-col gap-2 mt-2">
+                  <input
+                    value={extraData.name || ""}
+                    onChange={(e) => setExtraData({ ...extraData, name: e.target.value })}
+                    placeholder="Nombre del álbum"
+                    className="w-full bg-secondary rounded-lg px-3 py-2 text-sm outline-none border border-border"
+                  />
+                  <div className="flex gap-2">
+                    <input
+                      value={mediaUrl || ""}
+                      onChange={(e) => setMediaUrl(e.target.value)}
+                      placeholder="URL de la imagen del álbum (opcional)"
+                      className="flex-1 bg-secondary rounded-lg px-3 py-2 text-sm outline-none border border-border"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      disabled={isUploading}
+                      className="bg-secondary text-foreground px-3 py-2 rounded-lg text-sm font-medium border border-border disabled:opacity-50"
+                    >
+                      {isUploading ? "Subiendo..." : "Subir portada"}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {activeTab === "playlist" && (
+                <div className="flex flex-col gap-2 mt-2">
+                  <input
+                    value={extraData.name || ""}
+                    onChange={(e) => setExtraData({ ...extraData, name: e.target.value })}
+                    placeholder="Nombre de la playlist"
+                    className="w-full bg-secondary rounded-lg px-3 py-2 text-sm outline-none border border-border"
+                  />
+                  <input
+                    value={extraData.link || ""}
+                    onChange={(e) => setExtraData({ ...extraData, link: e.target.value })}
+                    placeholder="Enlace de la playlist"
+                    className="w-full bg-secondary rounded-lg px-3 py-2 text-sm outline-none border border-border"
+                  />
+                </div>
+              )}
+
+              {activeTab === "location" && (
+                <div className="flex gap-2 mt-2">
+                  <input
+                    value={extraData.location || ""}
+                    onChange={(e) => setExtraData({ ...extraData, location: e.target.value })}
+                    placeholder="Ubicación o lugar"
+                    className="w-full bg-secondary rounded-lg px-3 py-2 text-sm outline-none border border-border"
+                  />
+                </div>
+              )}
+
+              {activeTab === "celebration" && (
+                <div className="flex gap-2 mt-2">
+                  <input
+                    value={extraData.title || ""}
+                    onChange={(e) => setExtraData({ ...extraData, title: e.target.value })}
+                    placeholder="¿Qué estás celebrando?"
+                    className="w-full bg-secondary rounded-lg px-3 py-2 text-sm outline-none border border-border"
+                  />
                 </div>
               )}
             </div>
