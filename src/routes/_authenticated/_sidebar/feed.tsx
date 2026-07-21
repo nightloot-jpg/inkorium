@@ -33,7 +33,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
 import { Route as AuthRoute } from "../route";
-import { searchYoutubeFn } from "@/server/youtube";
+import { searchYoutubeFn } from "@/lib/youtube";
 
 export const Route = createFileRoute("/_authenticated/_sidebar/feed")({
   head: () => ({ meta: [{ title: "Inicio — Inkorium" }] }),
