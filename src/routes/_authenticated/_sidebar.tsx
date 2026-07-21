@@ -61,8 +61,8 @@ function SidebarLayout() {
 
   return (
     <main className="flex flex-col lg:grid lg:grid-cols-[340px_1fr] lg:justify-center gap-[30px] py-4 w-full">
-      <aside className="space-y-5 hidden lg:block">
-        <div className="bg-card rounded-[10px] border border-[#e6eaf0] shadow-[0_1px_2px_0_rgba(0,0,0,0.03)] overflow-hidden p-5">
+      <aside className="space-y-4 hidden lg:block">
+        <div className="bg-card rounded-sm border border-[#c2c9d6] overflow-hidden p-5">
           <div className="flex gap-5">
             <div className="w-[84px] h-[84px] shrink-0 rounded border border-[#c2c9d6] bg-muted overflow-hidden">
               <Avatar profile={me} size={84} />
@@ -91,7 +91,7 @@ function SidebarLayout() {
               <Link
                 to="/perfil/$username"
                 params={{ username: me?.username ?? "" }}
-                className="text-[13px] font-bold text-[#0b439c] hover:underline"
+                className="text-xs font-normal text-[#0b439c] hover:underline"
               >
                 Ver mi perfil »
               </Link>
@@ -99,7 +99,7 @@ function SidebarLayout() {
           </div>
         </div>
 
-        <div className="bg-card rounded-[10px] border border-[#e6eaf0] shadow-[0_1px_2px_0_rgba(0,0,0,0.03)] p-3 flex flex-col gap-0.5">
+        <div className="bg-card rounded-sm border border-[#c2c9d6] p-5 flex flex-col gap-0.5">
           <SidebarLink to="/feed" icon={Home} label="Novedades" />
           <SidebarLink to="/eventos" icon={CalendarIcon} label="Eventos" badge={2} />
           <SidebarLink to="/fotos" icon={ImageIcon} label="Fotos" />
@@ -112,9 +112,9 @@ function SidebarLayout() {
           <SidebarLink to="/configuracion" icon={Settings} label="Configuración" />
         </div>
 
-        <div className="bg-card rounded-[10px] border border-[#e6eaf0] shadow-[0_1px_2px_0_rgba(0,0,0,0.03)] p-5 flex flex-col gap-3">
+        <div className="bg-card rounded-sm border border-[#c2c9d6] p-5 flex flex-col gap-3">
           <h4 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wide">
-            Amigos conectados ({friends.length})
+            AMIGOS CONECTADOS ({friends.length})
           </h4>
           <div className="flex flex-col gap-3.5">
             {friends.slice(0, 5).map((friend) => (
@@ -124,7 +124,7 @@ function SidebarLayout() {
                   <Link
                     to="/perfil/$username"
                     params={{ username: friend.username }}
-                    className="text-[13px] font-bold text-foreground hover:underline truncate"
+                    className="text-[13px] font-medium text-[#0b439c] hover:underline truncate"
                   >
                     {friend.display_name}
                   </Link>
@@ -136,15 +136,15 @@ function SidebarLayout() {
             ))}
           </div>
           <div className="flex justify-end mt-1">
-            <Link to="/amigos" className="text-[12px] font-bold text-[#0b439c] hover:underline">
+            <Link to="/amigos" className="text-xs font-normal text-[#0b439c] hover:underline">
               Ver todos »
             </Link>
           </div>
         </div>
 
-        <div className="bg-card rounded-[10px] border border-[#e6eaf0] shadow-[0_1px_2px_0_rgba(0,0,0,0.03)] p-5 flex flex-col gap-3">
+        <div className="bg-card rounded-sm border border-[#c2c9d6] p-5 flex flex-col gap-3">
           <h4 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wide">
-            Escuchando ahora
+            ESCUCHANDO AHORA
           </h4>
           <div className="flex items-center gap-3">
             <div className="size-12 rounded bg-black flex-shrink-0 flex items-center justify-center overflow-hidden">
