@@ -178,3 +178,8 @@
 
 **Learning:** When developing an API backend dependent on external services, you can temporarily hardcode a mock JSON payload inside a route if the environment lacks the API key to keep the frontend workflow verifiable, then remove it later once an environment key is supplied.
 **Action:** Be mindful of doing manual text replacements via Python scripts. Reverting script changes with regular expressions can be brittle. It's often safer to use version control `git checkout` to restore specific files instead of writing a reverse regex patch.
+
+## 2026-07-21 - API Authentication Testing 2
+
+**Learning:** Restarting dev servers is critical when updating environment variables in frameworks like Vite. Testing from the backend route using cURL is an effective way to isolate whether an issue is API-related vs frontend-related when you encounter 500 status codes.
+**Action:** In future interactions when an environment key is updated, I should explicitly remind the user to restart their development server (like `npm run dev`) since the server instance won't hot-reload environment file changes.
