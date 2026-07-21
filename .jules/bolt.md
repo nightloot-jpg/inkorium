@@ -146,9 +146,17 @@
 
 **Learning:** Organizing forms modularly through individual components controlled by a master composer component scales far better than inline states, especially when dealing with over 10 distinct types of posts with varying payloads. Utilizing Supabase's JSONB for the metadata ensures flexibility without schema bloat for sparse attributes.
 **Action:** When implementing complex multi-type forms, immediately reach for a strategy pattern or modular layout orchestrator and rely on JSONB columns to prevent an explosion of sparse relational columns.
+
 ## 2024-05-18 - Redesign Music Composer with complex UI
+
 **Learning:** Replaced a simple input with a much more complex UI inside an existing `feed.tsx` component while keeping the global form state working. Handled a tricky edge case with inline regex replacements in React components where curly braces and escape characters conflict with eslint and prettier rules.
 **Action:** Always be careful with regex escape sequences in inline jsx. When writing a regex in a tsx file via python scripts, ensure escaping doesn't trigger `no-useless-escape` eslint errors. Use a dedicated `patch_regex.py` to fix it locally if needed, or define the regex outside jsx.
+
 ## 2024-05-18 - Backend integration for Music Search
+
 **Learning:** Added an API route with `@tanstack/react-start/api` and updated the frontend to debounce user input and call the API, handling loading and empty states cleanly.
 **Action:** Be mindful of subtle regressions when doing find-and-replace, such as the `payload.news.title` typo introduced by a script execution. Always run a diff before committing to catch unrelated changes.
+
+## 2024-05-18 - Fix TanStack Start API Route Import
+**Learning:** In newer versions of TanStack Start (v1.168+), `createAPIFileRoute` from `@tanstack/react-start/api` is no longer available. API routes must be defined using `createFileRoute` from `@tanstack/react-router` with a `server: { handlers: { GET: ... } }` block, and returning responses via `Response.json()` instead of the exported `json` helper.
+**Action:** When working with TanStack router or start in the future, carefully check the package version and adhere to the newer server functions or `createFileRoute({ server })` syntax rather than legacy API routes imports.
