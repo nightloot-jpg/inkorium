@@ -206,5 +206,10 @@ Also, `Math.random()` and `new Date()` within initial render inside server-rende
 **Action:** Always extract complex state-related timing logic (like debounce/throttle) to custom hooks.
 
 ## 2026-07-21 - [Fix SSR Redirect Loops with TanStack Router + Supabase]
+
 **Learning:** `supabase.auth.getUser()` does an API call to verify the token, which can fail or hang during SSR (or hit rate limits), especially since `localStorage` doesn't exist on the server. Furthermore, throwing redirects blindly on the server without valid cookies can result in SSR returning a 307 redirect instead of HTML.
 **Action:** Use `supabase.auth.getSession()` inside `beforeLoad` and ensure that the redirect `throw redirect({ to: "/auth" })` only executes on the client (`if (typeof window !== "undefined")`) when the app is running in a configuration where SSR token passing isn't robustly handled.
+
+## 2024-05-15 - Playwright UI verification
+**Learning:** Adding Playwright for UI verification requires the playwright package to be installed first. It is also important to mock interactions that require state/auth, or simply verify that the app builds and boots correctly if seeding data is complicated. Eslint warnings regarding unescaped brackets in regex `[[({][^\])}]*?` needed careful handling with a JS replacement string to avoid unnecessary escape character warnings.
+**Action:** When asked to verify UI changes with Playwright, always install `@playwright/test` first. Use `playwright install` and configure a base URL before writing the spec. Handle complex regex correctly by using strings when passing them to `.replace()` to avoid linting issues.
