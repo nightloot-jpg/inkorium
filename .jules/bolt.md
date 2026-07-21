@@ -188,3 +188,8 @@
 
 **Learning:** When using TanStack Start, relying on manually defined API routes (e.g. `createFileRoute('/api/...')` with `server.handlers`) can cause failures in certain deployments or client environments where the route isn't caught correctly by the router or when `process.env` isn't fully polyfilled by Vite. Converting the backend logic into an explicit RPC call using `createServerFn` natively resolves these networking and environment variable resolution issues.
 **Action:** When working in TanStack Start 1.x+, always prefer `createServerFn` for backend logic (fetching external APIs, interacting with a database) instead of creating standard REST-like API routes, as RPC functions are natively handled, fully typed, and more resilient across deployment environments.
+
+## 2026-07-21 - Fix TanStack Start searchYoutubeFn GET bug and React Error #418
+**Learning:** `createServerFn` defaults to `GET`, which can cause issues with how `fetch` requests handle early unmounts when connected to a query listener inside `useEffect` (e.g. `Error: A listener indicated an asynchronous response by returning true, but the message channel closed`). Setting it to `POST` fixes this error since it bypasses the strict `fetch` GET cancellation when routing.
+Also, `Math.random()` and `new Date()` within initial render inside server-rendered React applications cause Hydration Error #418.
+**Action:** Use `method: "POST"` for `createServerFn` to avoid connection drops during debounce unmounting. Hydrate dates using `useEffect` after mount, and avoid using dynamic variables inside `React.useMemo` when rendering on both server and client.
