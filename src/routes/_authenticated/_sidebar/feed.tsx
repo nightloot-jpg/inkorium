@@ -339,6 +339,8 @@ function Composer({
         if (!extraData.youtube_id) throw new Error("Añade el ID de YouTube.");
         payload.youtube_id = extraData.youtube_id;
         payload.youtube_title = extraData.youtube_title;
+        payload.youtube_channel = extraData.youtube_channel;
+        payload.youtube_duration = extraData.youtube_duration;
       }
       if (activeTab === "event") {
         payload.event_name = extraData.name;
