@@ -193,3 +193,8 @@
 **Learning:** `createServerFn` defaults to `GET`, which can cause issues with how `fetch` requests handle early unmounts when connected to a query listener inside `useEffect` (e.g. `Error: A listener indicated an asynchronous response by returning true, but the message channel closed`). Setting it to `POST` fixes this error since it bypasses the strict `fetch` GET cancellation when routing.
 Also, `Math.random()` and `new Date()` within initial render inside server-rendered React applications cause Hydration Error #418.
 **Action:** Use `method: "POST"` for `createServerFn` to avoid connection drops during debounce unmounting. Hydrate dates using `useEffect` after mount, and avoid using dynamic variables inside `React.useMemo` when rendering on both server and client.
+
+## 2026-07-21 - TanStack Router SSR & Hydration
+
+**Learning:** Using `ssr: false` in `@tanstack/react-router` wrap components inside `<Suspense>` on the server. When the client loads the javascript, it mounts the component. However, React compares the initial tree (which had `Suspense`) to the generated one (which is the actual `AuthPage` container) and fails with Error #418 (Hydration Mismatch). The solution was removing `ssr: false` from routes unless specifically using defer mechanisms.
+**Action:** When migrating TanStack Start apps, avoid placing `ssr: false` directly in standard routes unless specifically loading client-only SDKs explicitly mapped to a specific skeleton UI or utilizing generic component fallbacks.
