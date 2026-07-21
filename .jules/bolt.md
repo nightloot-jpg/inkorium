@@ -126,7 +126,12 @@
 
 **Learning:** When expanding a fixed maximum width layout to be more fluid (edge-to-edge), nested grid columns (`grid-cols-[...]`) must be adjusted to allow intermediate columns (`1fr`) to scale without overflowing out of bounds, especially when side columns use minimum pixel requirements. Combining `minmax(px, %)` provides strong baseline scaling across both ultrawide monitors and smaller desktop screens.
 **Action:** When updating a restricted grid layout (`max-w`) to `w-full`, aggressively check the layout rules inside the `route.tsx` and all subsequent children components (`feed.tsx`, `_sidebar.tsx`) rather than only modifying the outermost element.
+
 ## 2023-10-26 - Hybrid Grid Layout
 
 **Learning:** When building responsive edge-to-edge layouts that have distinct sidebars, using purely proportional columns (e.g. `25% 1fr 25%`) can result in sidebars becoming awkwardly wide on large monitors. A hybrid grid approach with fixed outer constraints and a fluid center (e.g. `grid-cols-[240px_minmax(500px,1fr)_320px]`) ensures side content remains compact and usable while the main content area gracefully absorbs all remaining viewport space.
 **Action:** Default to hybrid grid definitions (`fixed-px fluid-fr fixed-px`) over percentage-based columns for sidebar layouts on full-width applications, unless specifically required to stretch sidebar elements.
+## 2023-10-26 - Symmetrical Hybrid Grid & Text Wrapping
+
+**Learning:** When using fixed widths on sidebars, you might inadvertently compress textual content inside if it exceeds the fixed bounds. Specifically, text-overflow classes like `truncate` can prematurely hide content in narrow, fixed-width sidebars. Replacing `truncate` with `break-words` on important identifying elements (like display names) inside narrow fixed containers ensures legibility without breaking layout bounds.
+**Action:** Always check text-wrapping properties (`truncate` vs `break-words`) when narrowing or fixing column widths in grid layouts.
