@@ -221,5 +221,6 @@ Also, `Math.random()` and `new Date()` within initial render inside server-rende
 **Action:** When asked to match visual styles across different parts of a layout, meticulously inspect and apply the exact Tailwind classes for padding, typography, colors, borders, and border-radius from the reference component to the target components. Always verify via screenshots in a real headless browser context to ensure the final result behaves as expected.
 
 ## 2023-10-27 - Navbar update and Accent Color Picker Implementation
+
 **Learning:** When using `localStorage` alongside CSS custom properties to manage theming/accents, it's very effective to append classes directly to the `documentElement` (`<html>` tag). This allows you to rely entirely on CSS variables cascade, reducing the need for React context wrapping for styles.
 **Action:** When adding global design variants (like color accents), use CSS variable overriding controlled by classes on the root element. Ensure to clean up prior variant classes using `element.classList.remove()` before adding the new class to avoid clashing styles. Also, in components that are heavily imported, remember that changing standard `lucide-react` icons and combining them with custom small utilities (like a customized TopNav badge) provides a very polished native-like feel.

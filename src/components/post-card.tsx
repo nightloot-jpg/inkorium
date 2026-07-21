@@ -86,7 +86,7 @@ export function PostCard({ post, currentUserId }: { post: FeedPost; currentUserI
               <Link
                 to="/perfil/$username"
                 params={{ username: post.author.username }}
-                className="font-bold text-[14px] text-[#0b439c] hover:underline block truncate"
+                className="font-bold text-[14px] text-primary hover:underline block truncate"
               >
                 {post.author.display_name}
               </Link>
@@ -102,7 +102,7 @@ export function PostCard({ post, currentUserId }: { post: FeedPost; currentUserI
             )}
           </div>
           <div className="text-[11px] text-muted-foreground flex items-center gap-1 mt-0.5">
-            <span>{timeAgo(post.created_at)} -</span> <span className="text-[#0b439c]">@</span>
+            <span>{timeAgo(post.created_at)} -</span> <span className="text-primary">@</span>
           </div>
           <p className="mt-2 text-[14px] leading-relaxed text-foreground text-pretty whitespace-pre-wrap">
             {post.content}
@@ -293,19 +293,19 @@ export function PostCard({ post, currentUserId }: { post: FeedPost; currentUserI
       {post.type === "event" && post.event && (
         <div className="px-5 pb-5">
           <div className="rounded-sm border border-[#c2c9d6] bg-accent/20 overflow-hidden">
-            <div className="bg-[#0b439c] text-white p-3">
+            <div className="bg-primary text-white p-3">
               <h4 className="font-bold text-sm truncate">{String(post.event.name || "")}</h4>
             </div>
             <div className="p-3 text-sm space-y-2">
               <div className="flex gap-2 text-muted-foreground">
-                <CalendarIcon className="size-4 text-[#0b439c]" />{" "}
+                <CalendarIcon className="size-4 text-primary" />{" "}
                 {String(post.event.event_date || "")}
               </div>
               <div className="flex gap-2 text-muted-foreground">
-                <Clock className="size-4 text-[#0b439c]" /> {String(post.event.event_time || "")}
+                <Clock className="size-4 text-primary" /> {String(post.event.event_time || "")}
               </div>
               <div className="flex gap-2 text-muted-foreground">
-                <MapPin className="size-4 text-[#0b439c]" />{" "}
+                <MapPin className="size-4 text-primary" />{" "}
                 {String(post.event.location || "Sin ubicación")}
               </div>
             </div>
@@ -333,7 +333,7 @@ export function PostCard({ post, currentUserId }: { post: FeedPost; currentUserI
             onClick={() => like.mutate()}
             disabled={like.isPending}
             className={`flex items-center gap-1.5 text-[13px] font-bold transition-colors ${
-              post.liked_by_me ? "text-[#0b439c]" : "text-[#a9a9a9] hover:text-[#0b439c]"
+              post.liked_by_me ? "text-primary" : "text-[#a9a9a9] hover:text-primary"
             }`}
           >
             <Heart className={`size-4 ${post.liked_by_me ? "fill-[#2F5FA7]" : "text-[#a9a9a9]"}`} />
@@ -341,12 +341,12 @@ export function PostCard({ post, currentUserId }: { post: FeedPost; currentUserI
           </button>
           <button
             onClick={() => setShowComments((v) => !v)}
-            className="flex items-center gap-1.5 text-[13px] font-bold text-[#a9a9a9] hover:text-[#0b439c] transition-colors"
+            className="flex items-center gap-1.5 text-[13px] font-bold text-[#a9a9a9] hover:text-primary transition-colors"
           >
             <MessageCircle className="size-4" />
             Comentar
           </button>
-          <button className="flex items-center gap-1.5 text-[13px] font-bold text-[#a9a9a9] hover:text-[#0b439c] transition-colors">
+          <button className="flex items-center gap-1.5 text-[13px] font-bold text-[#a9a9a9] hover:text-primary transition-colors">
             <Share2 className="size-4" />
             Compartir
           </button>
@@ -377,7 +377,7 @@ export function Avatar({
 }) {
   return (
     <div
-      className="rounded-full overflow-hidden shrink-0 border border-[#c2c9d6] bg-muted grid place-items-center text-xs font-bold text-[#0b439c]"
+      className="rounded-full overflow-hidden shrink-0 border border-[#c2c9d6] bg-muted grid place-items-center text-xs font-bold text-primary"
       style={{ width: size, height: size }}
     >
       {profile?.avatar_url ? (
@@ -441,7 +441,7 @@ function Comments({ postId, currentUserId }: { postId: string; currentUserId: st
               <Link
                 to="/perfil/$username"
                 params={{ username: author.username }}
-                className="font-bold text-[#0b439c] hover:underline mr-1.5"
+                className="font-bold text-primary hover:underline mr-1.5"
               >
                 {author.display_name}
               </Link>
@@ -466,7 +466,7 @@ function Comments({ postId, currentUserId }: { postId: string; currentUserId: st
         <button
           type="submit"
           disabled={!text.trim() || add.isPending}
-          className="text-xs font-bold bg-[#0b439c] hover:bg-[#0b439c] text-white px-4 rounded-lg disabled:opacity-40 transition-colors"
+          className="text-xs font-bold bg-primary hover:bg-primary text-white px-4 rounded-lg disabled:opacity-40 transition-colors"
         >
           Comentar
         </button>

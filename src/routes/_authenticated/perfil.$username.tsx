@@ -226,7 +226,7 @@ function ProfilePage() {
                   isMe={isMe}
                 />
                 <div className="flex items-center gap-2">
-                  <Calendar className="size-3.5 text-[#2F5FA7]" />
+                  <Calendar className="size-3.5 text-primary" />
                   <span>
                     Se unió en{" "}
                     {new Date(profile.created_at).toLocaleDateString("es-ES", {
@@ -238,7 +238,7 @@ function ProfilePage() {
                 <HoverCard>
                   <HoverCardTrigger asChild>
                     <div className="flex items-center gap-2 cursor-pointer hover:underline">
-                      <Users className="size-3.5 text-[#2F5FA7]" />
+                      <Users className="size-3.5 text-primary" />
                       <span>
                         {((profile as unknown as Record<string, unknown>).visits_count as number) ||
                           0}{" "}
@@ -277,7 +277,7 @@ function ProfilePage() {
                   </HoverCardContent>
                 </HoverCard>
                 <div className="flex items-center gap-2">
-                  <Users className="size-3.5 text-[#2F5FA7]" />
+                  <Users className="size-3.5 text-primary" />
                   <span>348 amigos</span>
                 </div>
               </div>
@@ -329,7 +329,7 @@ function ProfilePage() {
                 Información
               </h3>
               {isMe && (
-                <button className="flex items-center gap-1 text-[11px] font-medium text-[#2F5FA7] hover:underline">
+                <button className="flex items-center gap-1 text-[11px] font-medium text-primary hover:underline">
                   <Pencil className="size-3" /> Editar
                 </button>
               )}
@@ -341,14 +341,14 @@ function ProfilePage() {
               </div>
               <div className="grid grid-cols-[80px_1fr] gap-2">
                 <span className="text-muted-foreground">Estado civil</span>
-                <a href="#" className="text-[#2F5FA7] hover:underline">
+                <a href="#" className="text-primary hover:underline">
                   Soltero/a
                 </a>
               </div>
               <div className="grid grid-cols-[80px_1fr] gap-2">
                 <span className="text-muted-foreground">Estudios</span>
                 <div>
-                  <a href="#" className="text-[#2F5FA7] hover:underline block truncate">
+                  <a href="#" className="text-primary hover:underline block truncate">
                     Universidad Complutense de Madrid
                   </a>
                   <span className="text-muted-foreground text-[10px]">Periodismo</span>
@@ -356,25 +356,25 @@ function ProfilePage() {
               </div>
               <div className="grid grid-cols-[80px_1fr] gap-2">
                 <span className="text-muted-foreground">Trabajo</span>
-                <a href="#" className="text-[#2F5FA7] hover:underline">
+                <a href="#" className="text-primary hover:underline">
                   Estudiante
                 </a>
               </div>
               <div className="grid grid-cols-[80px_1fr] gap-2">
                 <span className="text-muted-foreground">Ciudad actual</span>
-                <a href="#" className="text-[#2F5FA7] hover:underline">
+                <a href="#" className="text-primary hover:underline">
                   {((profile as unknown as Record<string, unknown>).location as string) || "Madrid"}
                 </a>
               </div>
               <div className="grid grid-cols-[80px_1fr] gap-2">
                 <span className="text-muted-foreground">Página web</span>
-                <a href="#" className="text-[#2F5FA7] hover:underline truncate">
+                <a href="#" className="text-primary hover:underline truncate">
                   inkorium.es/{profile.username}
                 </a>
               </div>
             </div>
             <div className="mt-3 pt-3 border-t border-border text-center">
-              <button className="flex items-center justify-center gap-1 text-[#2F5FA7] text-xs font-medium w-full hover:underline">
+              <button className="flex items-center justify-center gap-1 text-primary text-xs font-medium w-full hover:underline">
                 Ver más información <ChevronDown className="size-3" />
               </button>
             </div>
@@ -400,7 +400,7 @@ function ProfilePage() {
               </div>
             </div>
             <div className="mt-3 pt-3 border-t border-border text-right">
-              <button className="flex items-center justify-end gap-1 text-[#2F5FA7] text-xs font-medium w-full hover:underline">
+              <button className="flex items-center justify-end gap-1 text-primary text-xs font-medium w-full hover:underline">
                 Ver todos &rarr;
               </button>
             </div>
@@ -429,7 +429,7 @@ function ProfilePage() {
                     <>
                       <button
                         onClick={() => acceptReq.mutate()}
-                        className="inline-flex items-center gap-1 bg-[#2F5FA7] text-white text-sm font-bold py-1.5 px-3 rounded hover:bg-[#264d87] transition-colors"
+                        className="inline-flex items-center gap-1 bg-primary text-white text-sm font-bold py-1.5 px-3 rounded hover:bg-primary-hover transition-colors"
                       >
                         <Check className="size-4" /> Aceptar
                       </button>
@@ -451,7 +451,7 @@ function ProfilePage() {
                     <button
                       onClick={() => sendReq.mutate()}
                       disabled={sendReq.isPending}
-                      className="inline-flex items-center gap-2 bg-[#2F5FA7] text-white text-sm font-bold py-1.5 px-3 rounded hover:bg-[#264d87] transition-colors"
+                      className="inline-flex items-center gap-2 bg-primary text-white text-sm font-bold py-1.5 px-3 rounded hover:bg-primary-hover transition-colors"
                     >
                       <UserPlus className="size-4" /> Añadir amigo
                     </button>
@@ -476,7 +476,7 @@ function ProfilePage() {
                       onClick={() => setActiveTab(tab)}
                       className={`px-4 py-3 text-sm font-semibold whitespace-nowrap border-b-2 transition-colors ${
                         activeTab === tab
-                          ? "border-[#2F5FA7] text-[#2F5FA7]"
+                          ? "border-primary text-primary"
                           : "border-transparent text-muted-foreground hover:text-foreground"
                       }`}
                     >
@@ -502,9 +502,9 @@ function ProfilePage() {
                   <input
                     type="text"
                     placeholder="Escribe en su tablón..."
-                    className="flex-1 bg-surface border border-[#c2c9d6] rounded px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[#2F5FA7]"
+                    className="flex-1 bg-surface border border-[#c2c9d6] rounded px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary"
                   />
-                  <button className="bg-[#2F5FA7] hover:bg-[#264d87] text-white px-4 py-2 rounded text-sm font-bold transition-colors">
+                  <button className="bg-primary hover:bg-primary-hover text-white px-4 py-2 rounded text-sm font-bold transition-colors">
                     Publicar
                   </button>
                 </div>
@@ -539,7 +539,7 @@ function ProfilePage() {
               <h3 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
                 Fotos
               </h3>
-              <button className="text-[11px] font-medium text-[#2F5FA7] hover:underline flex items-center gap-1">
+              <button className="text-[11px] font-medium text-primary hover:underline flex items-center gap-1">
                 Álbumes (9) <ChevronDown className="size-3" />
               </button>
             </div>
@@ -581,7 +581,7 @@ function ProfilePage() {
                 />
               </div>
             </div>
-            <button className="text-[11px] font-medium text-[#2F5FA7] hover:underline">
+            <button className="text-[11px] font-medium text-primary hover:underline">
               Ver todas las fotos &rarr;
             </button>
           </div>
@@ -592,7 +592,7 @@ function ProfilePage() {
               <h3 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
                 Amigos en común (23)
               </h3>
-              <button className="text-[11px] font-medium text-[#2F5FA7] hover:underline">
+              <button className="text-[11px] font-medium text-primary hover:underline">
                 Ver todos &rarr;
               </button>
             </div>
@@ -602,7 +602,7 @@ function ProfilePage() {
                   src="https://i.pravatar.cc/150?u=5"
                   className="size-10 rounded mx-auto mb-1 object-cover"
                 />
-                <span className="text-[10px] text-[#2F5FA7] hover:underline block truncate w-12">
+                <span className="text-[10px] text-primary hover:underline block truncate w-12">
                   Ricardo
                 </span>
               </div>
@@ -611,7 +611,7 @@ function ProfilePage() {
                   src="https://i.pravatar.cc/150?u=6"
                   className="size-10 rounded mx-auto mb-1 object-cover"
                 />
-                <span className="text-[10px] text-[#2F5FA7] hover:underline block truncate w-12">
+                <span className="text-[10px] text-primary hover:underline block truncate w-12">
                   Ana
                 </span>
               </div>
@@ -620,7 +620,7 @@ function ProfilePage() {
                   src="https://i.pravatar.cc/150?u=7"
                   className="size-10 rounded mx-auto mb-1 object-cover"
                 />
-                <span className="text-[10px] text-[#2F5FA7] hover:underline block truncate w-12">
+                <span className="text-[10px] text-primary hover:underline block truncate w-12">
                   Marta
                 </span>
               </div>
@@ -629,7 +629,7 @@ function ProfilePage() {
                   src="https://i.pravatar.cc/150?u=8"
                   className="size-10 rounded mx-auto mb-1 object-cover"
                 />
-                <span className="text-[10px] text-[#2F5FA7] hover:underline block truncate w-12">
+                <span className="text-[10px] text-primary hover:underline block truncate w-12">
                   Sergio
                 </span>
               </div>
@@ -638,7 +638,7 @@ function ProfilePage() {
                   src="https://i.pravatar.cc/150?u=9"
                   className="size-10 rounded mx-auto mb-1 object-cover"
                 />
-                <span className="text-[10px] text-[#2F5FA7] hover:underline block truncate w-12">
+                <span className="text-[10px] text-primary hover:underline block truncate w-12">
                   Irene
                 </span>
               </div>
@@ -651,7 +651,7 @@ function ProfilePage() {
               <h3 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
                 Visitas a tu perfil
               </h3>
-              <button className="text-[11px] font-medium text-[#2F5FA7] hover:underline">
+              <button className="text-[11px] font-medium text-primary hover:underline">
                 Ver todas &rarr;
               </button>
             </div>
@@ -662,7 +662,7 @@ function ProfilePage() {
                     src="https://i.pravatar.cc/150?u=10"
                     className="size-5 rounded object-cover"
                   />
-                  <span className="text-[#2F5FA7] font-bold hover:underline">Laura Pérez</span>
+                  <span className="text-primary font-bold hover:underline">Laura Pérez</span>
                 </div>
                 <span className="text-muted-foreground text-[10px]">hace 10 minutos</span>
               </div>
@@ -672,9 +672,7 @@ function ProfilePage() {
                     src="https://i.pravatar.cc/150?u=11"
                     className="size-5 rounded object-cover"
                   />
-                  <span className="text-[#2F5FA7] font-bold hover:underline">
-                    Ricardo Bartolomé
-                  </span>
+                  <span className="text-primary font-bold hover:underline">Ricardo Bartolomé</span>
                 </div>
                 <span className="text-muted-foreground text-[10px]">hace 1 hora</span>
               </div>
@@ -684,7 +682,7 @@ function ProfilePage() {
                     src="https://i.pravatar.cc/150?u=12"
                     className="size-5 rounded object-cover"
                   />
-                  <span className="text-[#2F5FA7] font-bold hover:underline">Ana García</span>
+                  <span className="text-primary font-bold hover:underline">Ana García</span>
                 </div>
                 <span className="text-muted-foreground text-[10px]">hace 3 horas</span>
               </div>
@@ -694,7 +692,7 @@ function ProfilePage() {
                     src="https://i.pravatar.cc/150?u=13"
                     className="size-5 rounded object-cover"
                   />
-                  <span className="text-[#2F5FA7] font-bold hover:underline">Carlos López</span>
+                  <span className="text-primary font-bold hover:underline">Carlos López</span>
                 </div>
                 <span className="text-muted-foreground text-[10px]">ayer</span>
               </div>
@@ -704,7 +702,7 @@ function ProfilePage() {
                     src="https://i.pravatar.cc/150?u=14"
                     className="size-5 rounded object-cover"
                   />
-                  <span className="text-[#2F5FA7] font-bold hover:underline">Marta Ruiz</span>
+                  <span className="text-primary font-bold hover:underline">Marta Ruiz</span>
                 </div>
                 <span className="text-muted-foreground text-[10px]">ayer</span>
               </div>
@@ -717,7 +715,7 @@ function ProfilePage() {
               <h3 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
                 Eventos
               </h3>
-              <button className="text-[11px] font-medium text-[#2F5FA7] hover:underline">
+              <button className="text-[11px] font-medium text-primary hover:underline">
                 Ver todos &rarr;
               </button>
             </div>
@@ -739,7 +737,7 @@ function ProfilePage() {
                   <div className="min-w-0">
                     <a
                       href="#"
-                      className="text-xs font-bold text-[#2F5FA7] hover:underline block truncate"
+                      className="text-xs font-bold text-primary hover:underline block truncate"
                     >
                       Concierto Indie en Madrid
                     </a>
@@ -792,7 +790,7 @@ function EditProfileButton({
     return (
       <button
         onClick={() => setOpen(true)}
-        className="inline-flex items-center gap-1 text-[11px] font-medium text-[#2F5FA7] hover:underline"
+        className="inline-flex items-center gap-1 text-[11px] font-medium text-primary hover:underline"
       >
         <Pencil className="size-3" /> Editar
       </button>
@@ -844,7 +842,7 @@ function EditProfileButton({
           <button
             onClick={() => save.mutate()}
             disabled={save.isPending}
-            className="bg-[#2F5FA7] text-white px-4 py-2 text-sm rounded-lg hover:bg-[#264d87]"
+            className="bg-primary text-white px-4 py-2 text-sm rounded-lg hover:bg-primary-hover"
           >
             Guardar
           </button>
@@ -1126,7 +1124,7 @@ function CropModal({
             <button
               onClick={save}
               disabled={loading || !completedCrop}
-              className="bg-[#2F5FA7] text-white px-4 py-2 text-sm rounded-lg hover:bg-[#264d87] disabled:opacity-50 flex items-center gap-2"
+              className="bg-primary text-white px-4 py-2 text-sm rounded-lg hover:bg-primary-hover disabled:opacity-50 flex items-center gap-2"
             >
               {loading ? "Guardando..." : "Guardar"}
             </button>
@@ -1182,7 +1180,7 @@ function ProfileDetailsEditor({
   if (!isMe) {
     return (
       <div className="flex items-center gap-2">
-        <Cake className="size-3.5 text-[#2F5FA7]" />
+        <Cake className="size-3.5 text-primary" />
         <span>{displayString}</span>
       </div>
     );
@@ -1192,7 +1190,7 @@ function ProfileDetailsEditor({
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
         <button className="flex items-center gap-2 hover:underline text-left">
-          <Cake className="size-3.5 text-[#2F5FA7]" />
+          <Cake className="size-3.5 text-primary" />
           <span>{displayString}</span>
         </button>
       </PopoverTrigger>
@@ -1221,7 +1219,7 @@ function ProfileDetailsEditor({
           <button
             onClick={handleSave}
             disabled={updateProfile.isPending}
-            className="w-full bg-[#2F5FA7] text-white py-1.5 text-xs font-semibold rounded-md hover:bg-[#264d87] disabled:opacity-50"
+            className="w-full bg-primary text-white py-1.5 text-xs font-semibold rounded-md hover:bg-primary-hover disabled:opacity-50"
           >
             {updateProfile.isPending ? "Guardando..." : "Guardar"}
           </button>
