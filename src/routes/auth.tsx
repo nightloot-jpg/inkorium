@@ -1,3 +1,4 @@
+import React from "react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
