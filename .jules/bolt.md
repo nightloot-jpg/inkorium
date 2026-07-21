@@ -121,3 +121,7 @@
 **Learning:** When moving or creating a new section (like the friends list) in a layout component that originally didn't have data fetching, it is critical to ensure that all dependencies, components, and variables (e.g., `supabase`, `Avatar`, `Link`) are correctly imported. Omitting these causes fatal runtime crashes in React (ReferenceError).
 
 **Action:** Always cross-reference the required dependencies when copying JSX code or custom logic to a different file, ensuring all necessary imports exist.
+## 2023-10-26 - Responsive Grid Expansion
+
+**Learning:** When expanding a fixed maximum width layout to be more fluid (edge-to-edge), nested grid columns (`grid-cols-[...]`) must be adjusted to allow intermediate columns (`1fr`) to scale without overflowing out of bounds, especially when side columns use minimum pixel requirements. Combining `minmax(px, %)` provides strong baseline scaling across both ultrawide monitors and smaller desktop screens.
+**Action:** When updating a restricted grid layout (`max-w`) to `w-full`, aggressively check the layout rules inside the `route.tsx` and all subsequent children components (`feed.tsx`, `_sidebar.tsx`) rather than only modifying the outermost element.
