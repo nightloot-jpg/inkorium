@@ -146,3 +146,6 @@
 
 **Learning:** Organizing forms modularly through individual components controlled by a master composer component scales far better than inline states, especially when dealing with over 10 distinct types of posts with varying payloads. Utilizing Supabase's JSONB for the metadata ensures flexibility without schema bloat for sparse attributes.
 **Action:** When implementing complex multi-type forms, immediately reach for a strategy pattern or modular layout orchestrator and rely on JSONB columns to prevent an explosion of sparse relational columns.
+## 2024-05-18 - Redesign Music Composer with complex UI
+**Learning:** Replaced a simple input with a much more complex UI inside an existing `feed.tsx` component while keeping the global form state working. Handled a tricky edge case with inline regex replacements in React components where curly braces and escape characters conflict with eslint and prettier rules.
+**Action:** Always be careful with regex escape sequences in inline jsx. When writing a regex in a tsx file via python scripts, ensure escaping doesn't trigger `no-useless-escape` eslint errors. Use a dedicated `patch_regex.py` to fix it locally if needed, or define the regex outside jsx.

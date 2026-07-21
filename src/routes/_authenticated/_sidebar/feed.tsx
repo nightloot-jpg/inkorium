@@ -229,6 +229,45 @@ function FeedPage() {
   );
 }
 
+const MOCK_SONGS = [
+  {
+    id: "gGdGFtwcJnw",
+    title: "Mr. Brightside",
+    artist: "The Killers",
+    album: "Hot Fuss",
+    duration: "3:42",
+    cover: "https://i.ytimg.com/vi/gGdGFtwcJnw/hqdefault.jpg",
+    channel: "TheKillersVEVO",
+  },
+  {
+    id: "fJ9rUzIMcZQ",
+    title: "Bohemian Rhapsody",
+    artist: "Queen",
+    album: "A Night at the Opera",
+    duration: "5:55",
+    cover: "https://i.ytimg.com/vi/fJ9rUzIMcZQ/hqdefault.jpg",
+    channel: "Queen Official",
+  },
+  {
+    id: "4NRXx6U8ABQ",
+    title: "Blinding Lights",
+    artist: "The Weeknd",
+    album: "After Hours",
+    duration: "3:22",
+    cover: "https://i.ytimg.com/vi/4NRXx6U8ABQ/hqdefault.jpg",
+    channel: "TheWeekndVEVO",
+  },
+  {
+    id: "dQw4w9WgXcQ",
+    title: "Never Gonna Give You Up",
+    artist: "Rick Astley",
+    album: "Whenever You Need Somebody",
+    duration: "3:32",
+    cover: "https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg",
+    channel: "Rick Astley",
+  },
+];
+
 function Composer({
   userId,
   avatar,
@@ -237,7 +276,11 @@ function Composer({
   avatar: { display_name: string; avatar_url: string | null } | null | undefined;
 }) {
   const qc = useQueryClient();
+
   const [activeTab, setActiveTab] = useState("status");
+  const [musicSubTab, setMusicSubTab] = useState("search");
+  const [musicSearchQuery, setMusicSearchQuery] = useState("");
+
   const [content, setContent] = useState("");
   const [mediaUrl, setMediaUrl] = useState("");
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -336,109 +379,301 @@ function Composer({
 
   return (
     <div className="bg-white rounded-md border border-[#dbe0e8] flex flex-col p-6 shadow-sm">
-      {/* Row 1: Cabecera con avatar y caja de texto */}
+      {/* Row 1: Cabecera con avatar y caja de texto / Compositores Especiales */}
       <div className="flex gap-3 items-start mb-4">
-        {avatar?.avatar_url ? (
-          <img
-            src={avatar.avatar_url}
-            alt="Avatar"
-            className="w-12 h-12 rounded-lg object-cover border border-[#e6eaf0]"
-          />
-        ) : (
-          <div className="w-12 h-12 rounded-lg bg-[#e6eaf0] flex items-center justify-center shrink-0 border border-[#dbe0e8]">
-            <span className="text-[#0b439c] text-lg font-bold">
-              {avatar?.display_name?.charAt(0)?.toUpperCase()}
-            </span>
-          </div>
-        )}
-        <div className="flex-1 border border-[#dbe0e8] rounded-md p-3 focus-within:border-[#0b439c] focus-within:ring-1 focus-within:ring-[#0b439c]/20 transition-all bg-white flex flex-col">
-          <textarea
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            className="w-full bg-transparent p-0 text-[15px] resize-none h-[24px] outline-none placeholder:text-muted-foreground"
-            placeholder={`¿Qué estás pensando, ${firstName.toLowerCase()}?`}
-          />
+        {activeTab !== "music" &&
+          (avatar?.avatar_url ? (
+            <img
+              src={avatar.avatar_url}
+              alt="Avatar"
+              className="w-12 h-12 rounded-lg object-cover border border-[#e6eaf0]"
+            />
+          ) : (
+            <div className="w-12 h-12 rounded-lg bg-[#e6eaf0] flex items-center justify-center shrink-0 border border-[#dbe0e8]">
+              <span className="text-[#0b439c] text-lg font-bold">
+                {avatar?.display_name?.charAt(0)?.toUpperCase()}
+              </span>
+            </div>
+          ))}
 
-          {/* Opciones extra dinámicas */}
-          <div className="space-y-2 mt-2">
-            <input
-              type="file"
-              ref={fileInputRef}
-              className="hidden"
-              accept={activeTab === "video" ? "video/*" : "image/*"}
-              onChange={handleFileUpload}
+        {activeTab === "music" ? (
+          <div className="flex-1 flex flex-col gap-3">
+            {!extraData.youtube_id ? (
+              <div className="border border-[#dbe0e8] rounded-md p-4 bg-[#f8fafc] flex flex-col gap-4">
+                <div className="flex gap-4 border-b border-[#e6eaf0] pb-2">
+                  <button
+                    onClick={() => setMusicSubTab("search")}
+                    className={`text-[13px] font-medium pb-2 border-b-2 transition-colors ${musicSubTab === "search" ? "border-[#0b439c] text-[#0b439c]" : "border-transparent text-muted-foreground hover:text-black"}`}
+                  >
+                    Buscar
+                  </button>
+                  <button
+                    onClick={() => setMusicSubTab("link")}
+                    className={`text-[13px] font-medium pb-2 border-b-2 transition-colors ${musicSubTab === "link" ? "border-[#0b439c] text-[#0b439c]" : "border-transparent text-muted-foreground hover:text-black"}`}
+                  >
+                    Pegar enlace
+                  </button>
+                  <button
+                    onClick={() => setMusicSubTab("playlist")}
+                    className={`text-[13px] font-medium pb-2 border-b-2 transition-colors ${musicSubTab === "playlist" ? "border-[#0b439c] text-[#0b439c]" : "border-transparent text-muted-foreground hover:text-black"}`}
+                  >
+                    Playlist
+                  </button>
+                  <button
+                    onClick={() => setMusicSubTab("album")}
+                    className={`text-[13px] font-medium pb-2 border-b-2 transition-colors ${musicSubTab === "album" ? "border-[#0b439c] text-[#0b439c]" : "border-transparent text-muted-foreground hover:text-black"}`}
+                  >
+                    Álbum
+                  </button>
+                </div>
+
+                {musicSubTab === "search" && (
+                  <div className="flex flex-col gap-3">
+                    <div className="relative flex items-center">
+                      <Search className="w-5 h-5 absolute left-3 text-muted-foreground" />
+                      <input
+                        type="text"
+                        value={musicSearchQuery}
+                        onChange={(e) => setMusicSearchQuery(e.target.value)}
+                        placeholder="Buscar canción, artista, álbum o pegar enlace"
+                        className="w-full bg-white border border-[#c2c9d6] rounded-md py-3 pl-10 pr-4 text-[14px] outline-none focus:border-[#0b439c] focus:ring-1 focus:ring-[#0b439c]/20 transition-all shadow-sm"
+                      />
+                    </div>
+
+                    {musicSearchQuery.length > 0 && (
+                      <div className="bg-white border border-[#e6eaf0] rounded-md shadow-sm overflow-hidden flex flex-col mt-2">
+                        {MOCK_SONGS.filter(
+                          (s) =>
+                            s.title.toLowerCase().includes(musicSearchQuery.toLowerCase()) ||
+                            s.artist.toLowerCase().includes(musicSearchQuery.toLowerCase()),
+                        ).map((song) => (
+                          <button
+                            key={song.id}
+                            onClick={() => {
+                              setExtraData({
+                                ...extraData,
+                                youtube_id: song.id,
+                                youtube_title: song.title,
+                                youtube_channel: song.artist,
+                                youtube_duration: song.duration,
+                              });
+                            }}
+                            className="flex items-center gap-3 p-3 hover:bg-[#f1f3f6] transition-colors text-left border-b border-[#f1f3f6] last:border-0"
+                          >
+                            <img
+                              src={song.cover}
+                              alt="cover"
+                              className="w-10 h-10 rounded-sm object-cover"
+                            />
+                            <div className="flex flex-col flex-1 min-w-0">
+                              <span className="text-[14px] font-bold text-black truncate">
+                                {song.title}
+                              </span>
+                              <span className="text-[12px] text-muted-foreground truncate">
+                                {song.artist} • {song.album}
+                              </span>
+                            </div>
+                            <span className="text-[12px] text-muted-foreground font-medium">
+                              {song.duration}
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {musicSubTab === "link" && (
+                  <div className="flex flex-col gap-3">
+                    <input
+                      type="text"
+                      value={musicSearchQuery}
+                      onChange={(e) => setMusicSearchQuery(e.target.value)}
+                      placeholder="Pega un enlace de YouTube aquí..."
+                      className="w-full bg-white border border-[#c2c9d6] rounded-md py-3 px-4 text-[14px] outline-none focus:border-[#0b439c] focus:ring-1 focus:ring-[#0b439c]/20 transition-all shadow-sm"
+                    />
+                    <button
+                      onClick={() => {
+                        // Extract youtube ID from link
+                        const match = musicSearchQuery.match(
+                          /(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([^&\n?#]+)/,
+                        );
+                        if (match && match[1]) {
+                          setExtraData({
+                            ...extraData,
+                            youtube_id: match[1],
+                            youtube_title: "Enlace de YouTube",
+                            youtube_channel: "Desconocido",
+                            youtube_duration: "0:00",
+                          });
+                        } else if (musicSearchQuery.length === 11) {
+                          setExtraData({
+                            ...extraData,
+                            youtube_id: musicSearchQuery,
+                            youtube_title: "Enlace de YouTube",
+                            youtube_channel: "Desconocido",
+                            youtube_duration: "0:00",
+                          });
+                        } else {
+                          toast.error("Enlace no válido");
+                        }
+                      }}
+                      className="bg-secondary text-foreground px-4 py-2 rounded-md text-sm font-medium border border-border w-fit"
+                    >
+                      Añadir enlace
+                    </button>
+                  </div>
+                )}
+
+                {(musicSubTab === "playlist" || musicSubTab === "album") && (
+                  <div className="text-[13px] text-muted-foreground py-4 text-center border border-dashed border-[#dbe0e8] rounded-md bg-white">
+                    Esta función estará disponible próximamente.
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="flex flex-col gap-3">
+                <div className="bg-[#f8fafc] border border-[#dbe0e8] rounded-lg p-3 flex gap-4 items-center shadow-sm relative">
+                  <img
+                    src={`https://i.ytimg.com/vi/${extraData.youtube_id}/hqdefault.jpg`}
+                    className="w-16 h-16 rounded-md object-cover shadow-sm border border-[#e6eaf0]"
+                    alt="cover"
+                  />
+                  <div className="flex flex-col flex-1 min-w-0 pr-8">
+                    <div className="flex justify-between items-center w-full">
+                      <span className="text-[15px] font-bold text-black truncate">
+                        {extraData.youtube_title}
+                      </span>
+                      <span className="text-[12px] text-muted-foreground font-medium shrink-0 ml-2">
+                        {extraData.youtube_duration || "0:00"}
+                      </span>
+                    </div>
+                    <span className="text-[13px] text-[#5c6b89] font-medium truncate">
+                      {extraData.youtube_channel} •{" "}
+                      {extraData.youtube_duration ? "Music" : "YouTube"}
+                    </span>
+                  </div>
+                  <button
+                    onClick={() => {
+                      const newData = { ...extraData };
+                      delete newData.youtube_id;
+                      delete newData.youtube_title;
+                      delete newData.youtube_channel;
+                      delete newData.youtube_duration;
+                      setExtraData(newData);
+                    }}
+                    className="absolute top-2 right-2 text-muted-foreground hover:text-destructive bg-white hover:bg-red-50 p-1.5 rounded-md transition-colors border border-transparent hover:border-red-200"
+                    title="Quitar"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+
+                <div className="flex gap-3 items-start mt-2">
+                  {avatar?.avatar_url ? (
+                    <img
+                      src={avatar.avatar_url}
+                      alt="Avatar"
+                      className="w-10 h-10 rounded-lg object-cover border border-[#e6eaf0]"
+                    />
+                  ) : (
+                    <div className="w-10 h-10 rounded-lg bg-[#e6eaf0] flex items-center justify-center shrink-0 border border-[#dbe0e8]">
+                      <span className="text-[#0b439c] text-base font-bold">
+                        {avatar?.display_name?.charAt(0)?.toUpperCase()}
+                      </span>
+                    </div>
+                  )}
+                  <div className="flex-1 border border-[#dbe0e8] rounded-md p-3 focus-within:border-[#0b439c] focus-within:ring-1 focus-within:ring-[#0b439c]/20 transition-all bg-white flex flex-col">
+                    <textarea
+                      value={content}
+                      onChange={(e) => setContent(e.target.value)}
+                      className="w-full bg-transparent p-0 text-[14px] resize-none h-[24px] outline-none placeholder:text-muted-foreground"
+                      placeholder={`Añade un comentario sobre esta música, ${firstName.toLowerCase()}...`}
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="flex-1 border border-[#dbe0e8] rounded-md p-3 focus-within:border-[#0b439c] focus-within:ring-1 focus-within:ring-[#0b439c]/20 transition-all bg-white flex flex-col">
+            <textarea
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              className="w-full bg-transparent p-0 text-[15px] resize-none h-[24px] outline-none placeholder:text-muted-foreground"
+              placeholder={`¿Qué estás pensando, ${firstName.toLowerCase()}?`}
             />
 
-            {activeTab === "photo" && (
-              <div className="flex gap-2">
-                <input
-                  value={mediaUrl}
-                  onChange={(e) => setMediaUrl(e.target.value)}
-                  placeholder="URL de la imagen..."
-                  className="flex-1 bg-secondary rounded-lg px-3 py-2 text-sm outline-none border border-border"
-                />
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={isUploading}
-                  className="bg-secondary text-foreground px-3 py-2 rounded-lg text-sm font-medium border border-border disabled:opacity-50"
-                >
-                  {isUploading ? "Subiendo..." : "Subir"}
-                </button>
-              </div>
-            )}
+            {/* Opciones extra dinámicas */}
+            <div className="space-y-2 mt-2">
+              <input
+                type="file"
+                ref={fileInputRef}
+                className="hidden"
+                accept={activeTab === "video" ? "video/*" : "image/*"}
+                onChange={handleFileUpload}
+              />
 
-            {activeTab === "video" && (
-              <div className="flex gap-2">
-                <input
-                  value={mediaUrl || extraData.video_url || ""}
-                  onChange={(e) => {
-                    setMediaUrl("");
-                    setExtraData({ ...extraData, video_url: e.target.value });
-                  }}
-                  placeholder="URL del vídeo o subir archivo..."
-                  className="flex-1 bg-secondary rounded-lg px-3 py-2 text-sm outline-none border border-border"
-                />
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={isUploading}
-                  className="bg-secondary text-foreground px-3 py-2 rounded-lg text-sm font-medium border border-border disabled:opacity-50"
-                >
-                  {isUploading ? "Subiendo..." : "Subir"}
-                </button>
-              </div>
-            )}
+              {activeTab === "photo" && (
+                <div className="flex gap-2">
+                  <input
+                    value={mediaUrl}
+                    onChange={(e) => setMediaUrl(e.target.value)}
+                    placeholder="URL de la imagen..."
+                    className="flex-1 bg-secondary rounded-lg px-3 py-2 text-sm outline-none border border-border"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={isUploading}
+                    className="bg-secondary text-foreground px-3 py-2 rounded-lg text-sm font-medium border border-border disabled:opacity-50"
+                  >
+                    {isUploading ? "Subiendo..." : "Subir"}
+                  </button>
+                </div>
+              )}
 
-            {activeTab === "music" && (
-              <div className="flex gap-2">
-                <input
-                  value={extraData.youtube_id || ""}
-                  onChange={(e) => setExtraData({ ...extraData, youtube_id: e.target.value })}
-                  placeholder="ID YouTube..."
-                  className="flex-1 bg-secondary rounded-lg px-3 py-2 text-sm outline-none border border-border"
-                />
-              </div>
-            )}
+              {activeTab === "video" && (
+                <div className="flex gap-2">
+                  <input
+                    value={mediaUrl || extraData.video_url || ""}
+                    onChange={(e) => {
+                      setMediaUrl("");
+                      setExtraData({ ...extraData, video_url: e.target.value });
+                    }}
+                    placeholder="URL del vídeo o subir archivo..."
+                    className="flex-1 bg-secondary rounded-lg px-3 py-2 text-sm outline-none border border-border"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={isUploading}
+                    className="bg-secondary text-foreground px-3 py-2 rounded-lg text-sm font-medium border border-border disabled:opacity-50"
+                  >
+                    {isUploading ? "Subiendo..." : "Subir"}
+                  </button>
+                </div>
+              )}
 
-            {activeTab === "event" && (
-              <div className="flex gap-2">
-                <input
-                  value={extraData.name || ""}
-                  onChange={(e) => setExtraData({ ...extraData, name: e.target.value })}
-                  placeholder="Nombre del evento"
-                  className="flex-1 bg-secondary rounded-lg px-3 py-2 text-sm outline-none border border-border"
-                />
-              </div>
-            )}
+              {activeTab === "event" && (
+                <div className="flex gap-2">
+                  <input
+                    value={extraData.name || ""}
+                    onChange={(e) => setExtraData({ ...extraData, name: e.target.value })}
+                    placeholder="Nombre del evento"
+                    className="flex-1 bg-secondary rounded-lg px-3 py-2 text-sm outline-none border border-border"
+                  />
+                </div>
+              )}
 
-            {activeTab === "poll" && (
-              <div className="text-xs text-muted-foreground mt-2">
-                Configura tu encuesta (Placeholder)
-              </div>
-            )}
+              {activeTab === "poll" && (
+                <div className="text-xs text-muted-foreground mt-2">
+                  Configura tu encuesta (Placeholder)
+                </div>
+              )}
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Row 2: Barra de herramientas (Compacta y sin scroll) */}
