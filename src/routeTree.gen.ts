@@ -15,7 +15,6 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedMensajesRouteImport } from './routes/_authenticated/mensajes'
 import { Route as AuthenticatedAmigosRouteImport } from './routes/_authenticated/amigos'
 import { Route as AuthenticatedSidebarRouteImport } from './routes/_authenticated/_sidebar'
-import { Route as ApiMusicSearchRouteImport } from './routes/api/music/search'
 import { Route as AuthenticatedPerfilUsernameRouteImport } from './routes/_authenticated/perfil.$username'
 import { Route as AuthenticatedMensajesUsernameRouteImport } from './routes/_authenticated/mensajes.$username'
 import { Route as AuthenticatedSidebarVideosRouteImport } from './routes/_authenticated/_sidebar/videos'
@@ -56,11 +55,6 @@ const AuthenticatedAmigosRoute = AuthenticatedAmigosRouteImport.update({
 const AuthenticatedSidebarRoute = AuthenticatedSidebarRouteImport.update({
   id: '/_sidebar',
   getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
-const ApiMusicSearchRoute = ApiMusicSearchRouteImport.update({
-  id: '/api/music/search',
-  path: '/api/music/search',
-  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedPerfilUsernameRoute =
   AuthenticatedPerfilUsernameRouteImport.update({
@@ -152,7 +146,6 @@ export interface FileRoutesByFullPath {
   '/videos': typeof AuthenticatedSidebarVideosRoute
   '/mensajes/$username': typeof AuthenticatedMensajesUsernameRoute
   '/perfil/$username': typeof AuthenticatedPerfilUsernameRoute
-  '/api/music/search': typeof ApiMusicSearchRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -171,7 +164,6 @@ export interface FileRoutesByTo {
   '/videos': typeof AuthenticatedSidebarVideosRoute
   '/mensajes/$username': typeof AuthenticatedMensajesUsernameRoute
   '/perfil/$username': typeof AuthenticatedPerfilUsernameRoute
-  '/api/music/search': typeof ApiMusicSearchRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -193,7 +185,6 @@ export interface FileRoutesById {
   '/_authenticated/_sidebar/videos': typeof AuthenticatedSidebarVideosRoute
   '/_authenticated/mensajes/$username': typeof AuthenticatedMensajesUsernameRoute
   '/_authenticated/perfil/$username': typeof AuthenticatedPerfilUsernameRoute
-  '/api/music/search': typeof ApiMusicSearchRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -214,7 +205,6 @@ export interface FileRouteTypes {
     | '/videos'
     | '/mensajes/$username'
     | '/perfil/$username'
-    | '/api/music/search'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -233,7 +223,6 @@ export interface FileRouteTypes {
     | '/videos'
     | '/mensajes/$username'
     | '/perfil/$username'
-    | '/api/music/search'
   id:
     | '__root__'
     | '/'
@@ -254,14 +243,12 @@ export interface FileRouteTypes {
     | '/_authenticated/_sidebar/videos'
     | '/_authenticated/mensajes/$username'
     | '/_authenticated/perfil/$username'
-    | '/api/music/search'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
-  ApiMusicSearchRoute: typeof ApiMusicSearchRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -307,13 +294,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof AuthenticatedSidebarRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/api/music/search': {
-      id: '/api/music/search'
-      path: '/api/music/search'
-      fullPath: '/api/music/search'
-      preLoaderRoute: typeof ApiMusicSearchRouteImport
-      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/perfil/$username': {
       id: '/_authenticated/perfil/$username'
@@ -466,7 +446,6 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
-  ApiMusicSearchRoute: ApiMusicSearchRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -183,3 +183,8 @@
 
 **Learning:** Restarting dev servers is critical when updating environment variables in frameworks like Vite. Testing from the backend route using cURL is an effective way to isolate whether an issue is API-related vs frontend-related when you encounter 500 status codes.
 **Action:** In future interactions when an environment key is updated, I should explicitly remind the user to restart their development server (like `npm run dev`) since the server instance won't hot-reload environment file changes.
+
+## 2026-07-21 - TanStack Start createServerFn vs API Routes
+
+**Learning:** When using TanStack Start, relying on manually defined API routes (e.g. `createFileRoute('/api/...')` with `server.handlers`) can cause failures in certain deployments or client environments where the route isn't caught correctly by the router or when `process.env` isn't fully polyfilled by Vite. Converting the backend logic into an explicit RPC call using `createServerFn` natively resolves these networking and environment variable resolution issues.
+**Action:** When working in TanStack Start 1.x+, always prefer `createServerFn` for backend logic (fetching external APIs, interacting with a database) instead of creating standard REST-like API routes, as RPC functions are natively handled, fully typed, and more resilient across deployment environments.

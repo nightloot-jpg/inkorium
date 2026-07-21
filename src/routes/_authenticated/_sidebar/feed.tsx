@@ -33,6 +33,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
 import { Route as AuthRoute } from "../route";
+import { searchYoutubeFn } from "@/server/youtube";
 
 export const Route = createFileRoute("/_authenticated/_sidebar/feed")({
   head: () => ({ meta: [{ title: "Inicio — Inkorium" }] }),
@@ -253,8 +254,7 @@ function Composer({
     const delayDebounceFn = setTimeout(async () => {
       setIsSearching(true);
       try {
-        const res = await fetch(`/api/music/search?q=${encodeURIComponent(musicSearchQuery)}`);
-        const data = await res.json();
+        const data = await searchYoutubeFn({ data: musicSearchQuery });
         if (data.results) {
           setSearchResults(data.results);
         } else {
