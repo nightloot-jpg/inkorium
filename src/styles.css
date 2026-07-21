@@ -123,3 +123,42 @@
 
   --online: #22c55e;
 }
+
+/* Theme: Purple */
+.theme-purple {
+  --primary: #7c3aed;
+  --primary-hover: #6d28d9;
+  --ring: #7c3aed;
+}
+
+.dark.theme-purple {
+  --primary: #8b5cf6;
+  --primary-hover: #a78bfa;
+  --ring: #8b5cf6;
+}
+
+/* Theme: Magenta */
+.theme-magenta {
+  --primary: #db2777;
+  --primary-hover: #be185d;
+  --ring: #db2777;
+}
+
+.dark.theme-magenta {
+  --primary: #f472b6;
+  --primary-hover: #f9a8d4;
+  --ring: #f472b6;
+}
+
+/* Theme: Orange */
+.theme-orange {
+  --primary: #ea580c;
+  --primary-hover: #c2410c;
+  --ring: #ea580c;
+}
+
+.dark.theme-orange {
+  --primary: #fb923c;
+  --primary-hover: #fdba74;
+  --ring: #fb923c;
+}
