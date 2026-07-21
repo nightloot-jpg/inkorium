@@ -1,28 +1,19 @@
-import { json } from "@tanstack/react-start";
-// @ts-expect-error - implicit any on API
-import { createAPIFileRoute } from "@tanstack/react-start/api";
+import { createServerFn } from "@tanstack/react-start";
 
-export const Route = createAPIFileRoute("/api/music/search")({
-  GET: async ({ request }: { request: Request }) => {
-    const url = new URL(request.url);
-    const query = url.searchParams.get("q");
-
-    if (!query) {
-      return json({ error: 'Query parameter "q" is required' }, { status: 400 });
-    }
-
+export const searchMusic = createServerFn({ method: "GET" })
+  .validator((query: string) => {
+    if (!query) throw new Error("Query is required");
+    return query;
+  })
+  .handler(async ({ data: query }) => {
     const apiKey = process.env.YOUTUBE_API_KEY;
     if (!apiKey) {
-      console.error("YOUTUBE_API_KEY is not set in environment variables.");
-      return json({ error: "Internal Server Error" }, { status: 500 });
+      throw new Error("YOUTUBE_API_KEY is not set in environment variables.");
     }
 
     try {
-      // 1. Search for videos
       const searchRes = await fetch(
-        `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=5&q=${encodeURIComponent(
-          query,
-        )}&type=video&videoCategoryId=10&key=${apiKey}`,
+        `https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=5&q=${encodeURIComponent(query)}&type=video&videoCategoryId=10&key=${apiKey}`,
       );
       const searchData = await searchRes.json();
 
@@ -31,29 +22,21 @@ export const Route = createAPIFileRoute("/api/music/search")({
       }
 
       if (!searchData.items || searchData.items.length === 0) {
-        return json({ results: [] });
+        return { results: [] };
       }
 
-      // Extract video IDs to fetch durations
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const videoIds = searchData.items.map((item: any) => item.id.videoId).join(",");
 
-      // 2. Fetch video details to get duration
       const detailsRes = await fetch(
         `https://www.googleapis.com/youtube/v3/videos?part=contentDetails&id=${videoIds}&key=${apiKey}`,
       );
       const detailsData = await detailsRes.json();
 
-      if (!detailsRes.ok) {
-        console.error("Failed to fetch video details:", detailsData.error?.message);
-        // Gracefully fallback to no duration
-      }
-
       const durationMap: Record<string, string> = {};
       if (detailsData.items) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         detailsData.items.forEach((item: any) => {
-          // Convert ISO 8601 duration (e.g., PT3M42S) to readable format (e.g., 3:42)
           const match = item.contentDetails.duration.match(/PT(\d+H)?(\d+M)?(\d+S)?/);
           if (match) {
             const h = match[1] ? parseInt(match[1].replace("H", "")) : 0;
@@ -70,7 +53,6 @@ export const Route = createAPIFileRoute("/api/music/search")({
         });
       }
 
-      // 3. Map results
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const results = searchData.items.map((item: any) => ({
         id: item.id.videoId,
@@ -83,10 +65,9 @@ export const Route = createAPIFileRoute("/api/music/search")({
         duration: durationMap[item.id.videoId] || "0:00",
       }));
 
-      return json({ results });
+      return { results };
     } catch (error) {
       console.error("YouTube API Error:", error);
-      return json({ error: "Failed to perform search" }, { status: 500 });
+      throw new Error("Failed to perform search", { cause: error });
     }
-  },
-});
+  });

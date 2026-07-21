@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { fetchFeed } from "@/lib/social";
+import { searchMusic } from "@/lib/music";
 import { PostCard, Avatar } from "@/components/post-card";
 import { CalendarCard } from "@/components/CalendarCard";
 import { useState, useRef, useEffect } from "react";
@@ -253,8 +254,8 @@ function Composer({
     const delayDebounceFn = setTimeout(async () => {
       setIsSearching(true);
       try {
-        const res = await fetch(`/api/music/search?q=${encodeURIComponent(musicSearchQuery)}`);
-        const data = await res.json();
+        const data = await searchMusic({ data: musicSearchQuery });
+
         if (data.results) {
           setSearchResults(data.results);
         } else {
