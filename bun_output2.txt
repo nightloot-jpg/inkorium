@@ -1,0 +1,14 @@
+$ vite dev
+The plugin "vite-tsconfig-paths" is detected. Vite now supports tsconfig paths resolution natively via the resolve.tsconfigPaths option. You can remove the plugin and set resolve.tsconfigPaths: true in your Vite config instead.
+Port 8080 is in use, trying another one...
+Port 8081 is in use, trying another one...
+
+  VITE v8.1.5  ready in 2442 ms
+
+  ➜  Local:   http://localhost:8082/
+  ➜  Network: http://192.168.0.2:8082/
+8:25:13 AM [vite] (ssr) connected.
+YOUTUBE_API_KEY is not set in environment variables.
+8:27:02 AM [vite] (ssr) page reload src/routes/api/music/search.ts
+8:27:02 AM [vite] (ssr) program reload
+8:27:39 AM [vite] (ssr) page reload src/routes/api/music/search.ts
