@@ -161,6 +161,7 @@
 
 **Learning:** In newer versions of TanStack Start (v1.168+), `createAPIFileRoute` from `@tanstack/react-start/api` is no longer available. API routes must be defined using `createFileRoute` from `@tanstack/react-router` with a `server: { handlers: { GET: ... } }` block, and returning responses via `Response.json()` instead of the exported `json` helper.
 **Action:** When working with TanStack router or start in the future, carefully check the package version and adhere to the newer server functions or `createFileRoute({ server })` syntax rather than legacy API routes imports.
+
 ## 2024-05-18 - Implemented Music Search with YouTube API
 
 **Learning:** Successfully implemented a music search feature using the YouTube Data API v3. Used debouncing to avoid excessive API requests. Filtered results correctly and retrieved duration, which is useful for displaying a compact view on a post. Encountered an issue where ESLint and Prettier had format conflicting issues.
