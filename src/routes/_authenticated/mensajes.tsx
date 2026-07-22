@@ -71,7 +71,7 @@ function MessagesLayout() {
   const showListOnMobile = pathname === "/mensajes";
 
   return (
-    <main className="w-full py-4">
+    <main className="max-w-6xl mx-auto px-4 py-6">
       <div className="grid grid-cols-1 md:grid-cols-[300px_1fr] gap-4 bg-card border border-[#c2c9d6] rounded-sm shadow-none overflow-hidden min-h-[70vh]">
         <aside
           className={`border-r border-border ${showListOnMobile ? "block" : "hidden md:block"}`}

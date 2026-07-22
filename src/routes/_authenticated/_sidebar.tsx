@@ -60,7 +60,7 @@ function SidebarLayout() {
   });
 
   return (
-    <main className="flex flex-col lg:grid lg:grid-cols-[250px_1fr] lg:justify-center gap-[30px] py-4 w-full">
+    <main className="flex flex-col lg:grid lg:grid-cols-[340px_1fr] lg:justify-center gap-[30px] py-4 w-full">
       <aside className="space-y-4 hidden lg:block">
         <div className="bg-card rounded-sm border border-[#c2c9d6] overflow-hidden p-5">
           <div className="flex gap-5">
