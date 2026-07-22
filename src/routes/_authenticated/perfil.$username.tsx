@@ -413,7 +413,13 @@ function ProfilePage() {
           <div className="bg-card rounded-md border border-[#c2c9d6] ">
             <div className="p-5 pb-0">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <h1 className="text-2xl font-bold tracking-tight">{profile.display_name}</h1>
+                <div>
+                  <h1 className="text-3xl font-bold tracking-tight">{profile.display_name}</h1>
+                  <div className="flex items-start gap-1 mt-1 text-sm text-muted-foreground">
+                    <Quote className="size-3 shrink-0 mt-0.5" />
+                    <span className="italic">{profile.bio || "Vive y deja vivir."}</span>
+                  </div>
+                </div>
                 <div className="flex gap-2 shrink-0">
                   {isMe ? (
                     <EditProfileButton profile={profile} />
@@ -462,19 +468,14 @@ function ProfilePage() {
                 </div>
               </div>
 
-              <div className="mt-4 flex items-start gap-2 text-sm text-foreground">
-                <Quote className="size-4 text-muted-foreground shrink-0 mt-0.5" />
-                <span className="italic">{profile.bio || "Vive y deja vivir."}</span>
-              </div>
-
               {/* Navigation Tabs */}
-              <div className="mt-6 flex overflow-x-auto hide-scrollbar">
+              <div className="mt-6 flex flex-wrap gap-1 hide-scrollbar">
                 {["Tablón", "Información", "Fotos (84)", "Vídeos (7)", "Amigos (348)"].map(
                   (tab) => (
                     <button
                       key={tab}
                       onClick={() => setActiveTab(tab)}
-                      className={`px-4 py-3 text-sm font-semibold whitespace-nowrap border-b-2 transition-colors ${
+                      className={`px-3 py-2 text-sm font-semibold whitespace-nowrap border-b-2 transition-colors ${
                         activeTab === tab
                           ? "border-primary text-primary"
                           : "border-transparent text-muted-foreground hover:text-foreground"
@@ -484,7 +485,7 @@ function ProfilePage() {
                     </button>
                   ),
                 )}
-                <button className="px-4 py-3 text-sm font-semibold text-muted-foreground hover:text-foreground whitespace-nowrap flex items-center gap-1">
+                <button className="px-3 py-2 text-sm font-semibold text-muted-foreground hover:text-foreground whitespace-nowrap flex items-center gap-1">
                   Más <ChevronDown className="size-3" />
                 </button>
               </div>
@@ -537,7 +538,7 @@ function ProfilePage() {
           <div className="bg-card rounded-md border border-[#c2c9d6]  p-4">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
-                Fotos
+                Fotos recientes
               </h3>
               <button className="text-[11px] font-medium text-primary hover:underline flex items-center gap-1">
                 Álbumes (9) <ChevronDown className="size-3" />
@@ -586,6 +587,64 @@ function ProfilePage() {
             </button>
           </div>
 
+          {/* Mi Playlist */}
+          <div className="bg-card rounded-md border border-[#c2c9d6]  p-4">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                MI PLAYLIST
+              </h3>
+              <button className="text-[11px] font-medium text-primary hover:underline">
+                Ver todos &rarr;
+              </button>
+            </div>
+            <div className="flex gap-3 mb-4">
+              <div className="size-16 bg-black rounded-sm overflow-hidden flex-shrink-0">
+                <img
+                  src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=150&q=80&fit=crop"
+                  alt="Playlist"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="min-w-0 flex flex-col justify-center">
+                <p className="text-sm font-bold truncate text-foreground">conciertos 2025</p>
+                <p className="text-xs text-muted-foreground">5 canciones • 18 min</p>
+              </div>
+            </div>
+            <div className="space-y-2 mb-4">
+              {[
+                { n: 1, title: "505", artist: "Arctic Monkeys", duration: "4:13" },
+                { n: 2, title: "Do I Wanna Know?", artist: "Arctic Monkeys", duration: "4:32" },
+                { n: 3, title: "Reptilia", artist: "The Strokes", duration: "3:41" },
+                { n: 4, title: "Last Nite", artist: "The Strokes", duration: "3:13" },
+                { n: 5, title: "Mr. Brightside", artist: "The Killers", duration: "3:43" },
+              ].map((song) => (
+                <div
+                  key={song.n}
+                  className="flex items-center justify-between text-xs hover:bg-secondary/50 p-1.5 -mx-1.5 rounded-sm cursor-pointer transition-colors"
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <span className="text-muted-foreground w-3 text-right font-medium">
+                      {song.n}
+                    </span>
+                    <div className="min-w-0">
+                      <p className="font-medium text-foreground truncate leading-tight">
+                        {song.title}
+                      </p>
+                      <p className="text-[10px] text-muted-foreground truncate leading-tight">
+                        {song.artist}
+                      </p>
+                    </div>
+                  </div>
+                  <span className="text-[10px] text-muted-foreground ml-2 font-medium">
+                    {song.duration}
+                  </span>
+                </div>
+              ))}
+            </div>
+            <button className="w-full flex items-center justify-center gap-1.5 py-1.5 px-2 border border-[#c2c9d6] rounded text-[11px] font-medium hover:bg-secondary transition-colors">
+              <Play className="size-3" /> Abrir reproductor completo
+            </button>
+          </div>
           {/* Amigos en común */}
           <div className="bg-card rounded-md border border-[#c2c9d6]  p-4">
             <div className="flex items-center justify-between mb-3">
@@ -709,48 +768,39 @@ function ProfilePage() {
             </div>
           </div>
 
-          {/* Eventos */}
+          {/* Amigos sugeridos */}
           <div className="bg-card rounded-md border border-[#c2c9d6]  p-4">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
-                Eventos
+                Amigos sugeridos
               </h3>
               <button className="text-[11px] font-medium text-primary hover:underline">
                 Ver todos &rarr;
               </button>
             </div>
-            <div className="flex gap-3">
-              <div className="w-14 h-20 rounded overflow-hidden shrink-0">
-                <img
-                  src="https://images.unsplash.com/photo-1540039155732-68473668f430?w=200&q=80&fit=crop"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div>
-                <div className="flex items-start gap-2 mb-1">
-                  <div className="text-center leading-none">
-                    <span className="block text-sm font-bold">24</span>
-                    <span className="block text-[8px] uppercase font-bold text-muted-foreground">
-                      MAY
-                    </span>
+            <div className="space-y-3">
+              {[
+                { name: "Pedro Pascal", mutual: 5, avatar: "https://i.pravatar.cc/150?u=15" },
+                { name: "Rosalía", mutual: 12, avatar: "https://i.pravatar.cc/150?u=16" },
+                { name: "C. Tangana", mutual: 3, avatar: "https://i.pravatar.cc/150?u=17" },
+              ].map((sugerido, i) => (
+                <div key={i} className="flex items-center justify-between text-xs">
+                  <div className="flex items-center gap-2">
+                    <img src={sugerido.avatar} className="size-8 rounded object-cover" />
+                    <div>
+                      <span className="text-primary font-bold hover:underline block cursor-pointer">
+                        {sugerido.name}
+                      </span>
+                      <span className="text-muted-foreground text-[10px]">
+                        {sugerido.mutual} amigos en común
+                      </span>
+                    </div>
                   </div>
-                  <div className="min-w-0">
-                    <a
-                      href="#"
-                      className="text-xs font-bold text-primary hover:underline block truncate"
-                    >
-                      Concierto Indie en Madrid
-                    </a>
-                    <p className="text-[10px] text-muted-foreground mt-0.5">
-                      Viernes, 24 de Mayo a las 21:00
-                    </p>
-                    <p className="text-[10px] text-muted-foreground">Sala La Riviera</p>
-                  </div>
+                  <button className="text-[10px] bg-secondary border border-[#c2c9d6] px-2 py-1 rounded hover:bg-muted font-medium">
+                    Añadir
+                  </button>
                 </div>
-                <button className="mt-2 px-3 py-1 border border-[#c2c9d6] rounded text-[11px] font-medium hover:bg-secondary transition-colors">
-                  Asistir
-                </button>
-              </div>
+              ))}
             </div>
           </div>
         </div>

@@ -224,3 +224,12 @@ Also, `Math.random()` and `new Date()` within initial render inside server-rende
 
 **Learning:** When using `localStorage` alongside CSS custom properties to manage theming/accents, it's very effective to append classes directly to the `documentElement` (`<html>` tag). This allows you to rely entirely on CSS variables cascade, reducing the need for React context wrapping for styles.
 **Action:** When adding global design variants (like color accents), use CSS variable overriding controlled by classes on the root element. Ensure to clean up prior variant classes using `element.classList.remove()` before adding the new class to avoid clashing styles. Also, in components that are heavily imported, remember that changing standard `lucide-react` icons and combining them with custom small utilities (like a customized TopNav badge) provides a very polished native-like feel.
+
+## 2025-05-24 - [Profile Layout Refactoring]
+
+**Learning:** Moving large UI blocks using basic grep/sed can be fragile in heavily nested JSX (like Tanstack routes). Writing a robust temporary parser in Node is significantly safer for complex column extractions.
+**Action:** Next time large structural changes in JSX files are needed, prioritize using an AST tool or a custom script parsing specific markers before trying to apply regex on multiline tags.
+
+## 2025-05-24 - [Profile Layout Refactoring]
+**Learning:** Moving large UI blocks using basic grep/sed can be fragile in heavily nested JSX (like Tanstack routes). Writing a robust temporary parser in Node is significantly safer for complex column extractions.
+**Action:** Next time large structural changes in JSX files are needed, prioritize using an AST tool or a custom script parsing specific markers before trying to apply regex on multiline tags.
