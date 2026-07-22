@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { Route as AuthRoute } from "./route";
 import { ListeningWidget } from "@/components/ListeningWidget";
+import { TrackData } from "@/lib/music/types";
 
 export const Route = createFileRoute("/_authenticated/_sidebar")({
   component: SidebarLayout,
@@ -37,6 +38,41 @@ function SidebarLayout() {
       return data;
     },
   });
+
+  const { data: latestMusicPost } = useQuery({
+    queryKey: ["latestMusic", userId],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("posts")
+        .select("*")
+        .eq("author_id", userId)
+        .eq("type", "music")
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .single();
+      return data;
+    },
+  });
+
+  const musicTrack: TrackData | undefined = latestMusicPost
+    ? {
+        provider:
+          ((latestMusicPost.metadata as Record<string, string>)?.provider as
+            "YouTube" | "Spotify" | "Deezer" | "SoundCloud") || "YouTube",
+        videoId: latestMusicPost.youtube_id || "",
+        url:
+          (latestMusicPost.metadata as Record<string, string>)?.url ||
+          `https://youtube.com/watch?v=${latestMusicPost.youtube_id}`,
+        title: latestMusicPost.youtube_title || "",
+        artist: latestMusicPost.youtube_channel || "",
+        album: (latestMusicPost.metadata as Record<string, string>)?.album,
+        cover:
+          (latestMusicPost.metadata as Record<string, string>)?.cover ||
+          `https://i.ytimg.com/vi/${latestMusicPost.youtube_id}/maxresdefault.jpg`,
+        duration: latestMusicPost.youtube_duration || "0:00",
+        year: (latestMusicPost.metadata as Record<string, string>)?.year,
+      }
+    : undefined;
 
   const { data: friends = [] } = useQuery({
     queryKey: ["friends", userId],
@@ -144,15 +180,19 @@ function SidebarLayout() {
         </div>
 
         <ListeningWidget
-          title="505"
-          artist="Arctic Monkeys"
-          album="Favourite Worst Nightmare"
-          year="2007"
+          title={musicTrack?.title || "505"}
+          artist={musicTrack?.artist || "Arctic Monkeys"}
+          album={musicTrack?.album || "Favourite Worst Nightmare"}
+          year={musicTrack?.year || "2007"}
           genre="Rock alternativo"
-          duration="4:13"
-          progress="1:42"
-          isPlaying={true}
+          duration={musicTrack?.duration || "4:13"}
+          progress="0:00"
+          isPlaying={false}
           compact={true}
+          cover={musicTrack?.cover}
+          trackData={musicTrack}
+          provider={musicTrack?.provider || "Spotify"}
+          empty={!musicTrack}
         />
       </aside>
 

@@ -12,6 +12,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { supabase } from "@/integrations/supabase/client";
 import { Toaster } from "@/components/ui/sonner";
+import { MusicPlayerProvider } from "@/contexts/MusicPlayerContext";
 
 function NotFoundComponent() {
   return (
@@ -145,7 +146,9 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <Outlet />
+      <MusicPlayerProvider>
+        <Outlet />
+      </MusicPlayerProvider>
       <Toaster position="top-right" />
     </QueryClientProvider>
   );

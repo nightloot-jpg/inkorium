@@ -231,5 +231,10 @@ Also, `Math.random()` and `new Date()` within initial render inside server-rende
 **Action:** Next time large structural changes in JSX files are needed, prioritize using an AST tool or a custom script parsing specific markers before trying to apply regex on multiline tags.
 
 ## 2025-05-24 - [Profile Layout Refactoring]
+
 **Learning:** Moving large UI blocks using basic grep/sed can be fragile in heavily nested JSX (like Tanstack routes). Writing a robust temporary parser in Node is significantly safer for complex column extractions.
 **Action:** Next time large structural changes in JSX files are needed, prioritize using an AST tool or a custom script parsing specific markers before trying to apply regex on multiline tags.
+
+## 2024-05-23 - Build full music player architecture using YouTube API
+**Learning:** React contexts connected to singleton state machines (like `YouTubeProviderClass`) are a very powerful pattern to decouple React state updates from API logic while maintaining access to React features.
+**Action:** Use singletons initialized outside React that expose listeners (like `onStateChange`) when wrapping 3rd party APIs that contain their own state management (like the YouTube iframe API), and simply subscribe to them from a React context.
