@@ -33,6 +33,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
+import { youtubeProvider } from "@/lib/music/YouTubeProvider";
+
 import { Route as AuthRoute } from "../route";
 import { searchYoutubeFn } from "@/lib/youtube";
 import { useDebounce } from "@/hooks/use-debounce";
@@ -258,9 +260,9 @@ function Composer({
     setIsSearching(true);
     const search = async () => {
       try {
-        const data = await searchYoutubeFn({ data: debouncedMusicSearchQuery });
-        if (data.results) {
-          setSearchResults(data.results);
+        const results = await youtubeProvider.search(debouncedMusicSearchQuery);
+        if (results && results.length > 0) {
+          setSearchResults(results);
         } else {
           setSearchResults([]);
         }
@@ -338,11 +340,20 @@ function Composer({
         payload.video_url = mediaUrl || extraData.video_url;
       }
       if (activeTab === "music") {
-        if (!extraData.youtube_id) throw new Error("Añade el ID de YouTube.");
+        if (!extraData.youtube_id) throw new Error("Añade el ID de la canción.");
         payload.youtube_id = extraData.youtube_id;
         payload.youtube_title = extraData.youtube_title;
         payload.youtube_channel = extraData.youtube_channel;
         payload.youtube_duration = extraData.youtube_duration;
+        payload.metadata = {
+          provider:
+            (extraData.music_provider as "YouTube" | "Spotify" | "Deezer" | "SoundCloud") ||
+            "YouTube",
+          url: extraData.music_url,
+          album: extraData.music_album,
+          cover: extraData.music_cover,
+          year: extraData.music_year,
+        };
       }
       if (activeTab === "event") {
         payload.event_name = extraData.name;
@@ -463,22 +474,32 @@ function Composer({
                         ) : searchResults.length > 0 ? (
                           searchResults.map(
                             (song: {
-                              id: string;
+                              videoId: string;
                               title: string;
                               artist: string;
-                              cover: string;
                               duration: string;
+                              provider: "YouTube" | "Spotify" | "Deezer" | "SoundCloud";
+                              url: string;
+                              album?: string;
+                              cover?: string;
+                              year?: string;
                             }) => (
                               <button
-                                key={song.id}
-                                onClick={() => {
+                                key={song.videoId}
+                                onClick={async () => {
+                                  const enriched = await youtubeProvider.enrichTrackData(song);
                                   setExtraData({
-                                    ...extraData,
-                                    youtube_id: song.id,
-                                    youtube_title: song.title,
-                                    youtube_channel: song.artist,
-                                    youtube_duration: song.duration,
+                                    youtube_id: enriched.videoId,
+                                    youtube_title: enriched.title,
+                                    youtube_channel: enriched.artist,
+                                    youtube_duration: enriched.duration,
+                                    music_provider: enriched.provider,
+                                    music_url: enriched.url,
+                                    music_album: enriched.album,
+                                    music_cover: enriched.cover,
+                                    music_year: enriched.year,
                                   });
+                                  setMusicSubTab("");
                                 }}
                                 className="flex items-center gap-3 p-3 hover:bg-[#f1f3f6] transition-colors text-left border-b border-[#f1f3f6] last:border-0"
                               >

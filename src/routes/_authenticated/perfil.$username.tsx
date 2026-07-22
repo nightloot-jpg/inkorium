@@ -35,6 +35,7 @@ import {
 import { toast } from "sonner";
 import { Link } from "@tanstack/react-router";
 import { ListeningWidget } from "@/components/ListeningWidget";
+import { TrackData } from "@/lib/music/types";
 import ReactCrop, { type Crop } from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -86,6 +87,42 @@ function ProfilePage() {
   }, [profile, profile?.id, userId]);
 
   const isMe = profile?.id === userId;
+
+  const { data: latestMusicPost } = useQuery({
+    queryKey: ["latestMusic", profile?.id],
+    enabled: !!profile?.id,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("posts")
+        .select("*")
+        .eq("author_id", profile!.id)
+        .eq("type", "music")
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .single();
+      return data;
+    },
+  });
+
+  const musicTrack: TrackData | undefined = latestMusicPost
+    ? {
+        provider:
+          ((latestMusicPost.metadata as Record<string, string>)?.provider as
+            "YouTube" | "Spotify" | "Deezer" | "SoundCloud") || "YouTube",
+        videoId: latestMusicPost.youtube_id || "",
+        url:
+          (latestMusicPost.metadata as Record<string, string>)?.url ||
+          `https://youtube.com/watch?v=${latestMusicPost.youtube_id}`,
+        title: latestMusicPost.youtube_title || "",
+        artist: latestMusicPost.youtube_channel || "",
+        album: (latestMusicPost.metadata as Record<string, string>)?.album,
+        cover:
+          (latestMusicPost.metadata as Record<string, string>)?.cover ||
+          `https://i.ytimg.com/vi/${latestMusicPost.youtube_id}/maxresdefault.jpg`,
+        duration: latestMusicPost.youtube_duration || "0:00",
+        year: (latestMusicPost.metadata as Record<string, string>)?.year,
+      }
+    : undefined;
 
   const { data: feed = [] } = useQuery({
     queryKey: ["profile-posts", profile?.id],
@@ -286,15 +323,19 @@ function ProfilePage() {
 
         {/* Escuchando ahora */}
         <ListeningWidget
-          title="505"
-          artist="Arctic Monkeys"
-          album="Favourite Worst Nightmare"
-          year="2007"
+          title={musicTrack?.title || "505"}
+          artist={musicTrack?.artist || "Arctic Monkeys"}
+          album={musicTrack?.album || "Favourite Worst Nightmare"}
+          year={musicTrack?.year || "2007"}
           genre="Rock alternativo"
-          duration="4:13"
-          progress="1:42"
-          isPlaying={true}
+          duration={musicTrack?.duration || "4:13"}
+          progress="0:00"
+          isPlaying={false}
           compact={false}
+          cover={musicTrack?.cover}
+          trackData={musicTrack}
+          provider={musicTrack?.provider || "Spotify"}
+          empty={!musicTrack}
         />
 
         {/* Información */}
