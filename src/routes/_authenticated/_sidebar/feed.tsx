@@ -151,7 +151,7 @@ function FeedPage() {
 
   const queryClient = useQueryClient();
   return (
-    <div className="flex flex-col lg:grid lg:grid-cols-[minmax(500px,1fr)_330px] lg:justify-center gap-[30px] w-full">
+    <div className="flex flex-col lg:grid lg:grid-cols-[minmax(0,1fr)_250px] gap-6 w-full">
       {/* Feed */}
       <div className="space-y-4">
         <Composer userId={userId} avatar={me} />
