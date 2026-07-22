@@ -169,13 +169,26 @@ function ProfilePage() {
   if (!profile) return null;
 
   return (
-    <div className="w-full">
-      <div className="flex flex-col lg:grid lg:grid-cols-[minmax(500px,1fr)_330px] lg:justify-center gap-[30px] w-full">
-        {/* LEFT COLUMN */}
-        <div className="space-y-4 hidden lg:block">
-          {/* Profile Card */}
-          <div className="bg-card rounded-md border border-[#c2c9d6]  overflow-hidden">
-            <CoverImage
+    <main className="flex flex-col lg:grid lg:grid-cols-[340px_minmax(500px,1fr)_330px] lg:justify-center gap-[30px] py-4 w-full">
+      {/* LEFT COLUMN */}
+      <div className="space-y-4 hidden lg:block">
+        {/* Profile Card */}
+        <div className="bg-card rounded-md border border-[#c2c9d6]  overflow-hidden">
+          <CoverImage
+            currentUserId={userId}
+            isMe={isMe}
+            profile={
+              profile as unknown as {
+                id: string;
+                display_name: string;
+                avatar_url: string | null;
+                cover_url: string | null;
+                status_message: string | null;
+              }
+            }
+          />
+          <div className="px-4 pb-4 relative">
+            <AvatarImage
               currentUserId={userId}
               isMe={isMe}
               profile={
@@ -188,624 +201,590 @@ function ProfilePage() {
                 }
               }
             />
-            <div className="px-4 pb-4 relative">
-              <AvatarImage
-                currentUserId={userId}
+
+            <div className="pt-12">
+              <h1 className="text-lg font-bold tracking-tight text-foreground">
+                {profile.display_name}
+              </h1>
+              <div className="flex items-center gap-1.5 mt-1 text-xs">
+                <span className="size-2 rounded-full bg-green-500"></span>
+                <span className="text-muted-foreground">En línea</span>
+              </div>
+              <StatusMessageEditor
+                profileId={profile.id}
+                initialStatus={profile.status_message}
                 isMe={isMe}
-                profile={
-                  profile as unknown as {
-                    id: string;
-                    display_name: string;
-                    avatar_url: string | null;
-                    cover_url: string | null;
-                    status_message: string | null;
-                  }
-                }
               />
+            </div>
 
-              <div className="pt-12">
-                <h1 className="text-lg font-bold tracking-tight text-foreground">
-                  {profile.display_name}
-                </h1>
-                <div className="flex items-center gap-1.5 mt-1 text-xs">
-                  <span className="size-2 rounded-full bg-green-500"></span>
-                  <span className="text-muted-foreground">En línea</span>
-                </div>
-                <StatusMessageEditor
-                  profileId={profile.id}
-                  initialStatus={profile.status_message}
-                  isMe={isMe}
-                />
+            <div className="mt-4 space-y-2.5 text-xs text-foreground/80">
+              <ProfileDetailsEditor
+                profileId={profile.id}
+                initialAge={(profile as unknown as { age: number | null }).age}
+                initialLocation={profile.location}
+                isMe={isMe}
+              />
+              <div className="flex items-center gap-2">
+                <Calendar className="size-3.5 text-primary" />
+                <span>
+                  Se unió en{" "}
+                  {new Date(profile.created_at).toLocaleDateString("es-ES", {
+                    month: "long",
+                    year: "numeric",
+                  })}
+                </span>
               </div>
-
-              <div className="mt-4 space-y-2.5 text-xs text-foreground/80">
-                <ProfileDetailsEditor
-                  profileId={profile.id}
-                  initialAge={(profile as unknown as { age: number | null }).age}
-                  initialLocation={profile.location}
-                  isMe={isMe}
-                />
-                <div className="flex items-center gap-2">
-                  <Calendar className="size-3.5 text-primary" />
-                  <span>
-                    Se unió en{" "}
-                    {new Date(profile.created_at).toLocaleDateString("es-ES", {
-                      month: "long",
-                      year: "numeric",
-                    })}
-                  </span>
-                </div>
-                <HoverCard>
-                  <HoverCardTrigger asChild>
-                    <div className="flex items-center gap-2 cursor-pointer hover:underline">
-                      <Users className="size-3.5 text-primary" />
-                      <span>
-                        {((profile as unknown as Record<string, unknown>).visits_count as number) ||
-                          0}{" "}
-                        visitas a tu perfil
-                      </span>
-                    </div>
-                  </HoverCardTrigger>
-                  <HoverCardContent className="w-56" align="start">
-                    <div className="space-y-2">
-                      <h4 className="text-sm font-semibold">Visitas recientes</h4>
-                      {recentVisitors.length > 0 ? (
-                        <ul className="text-xs space-y-1">
-                          {recentVisitors.map(
-                            (
-                              v: {
-                                visitor: { display_name?: string; username?: string } | null;
-                                visited_at: string;
-                              },
-                              i: number,
-                            ) => (
-                              <li key={i} className="flex justify-between items-center">
-                                <span className="font-medium truncate mr-2">
-                                  {v.visitor?.display_name || v.visitor?.username}
-                                </span>
-                                <span className="text-muted-foreground shrink-0 text-[10px]">
-                                  {new Date(v.visited_at).toLocaleDateString()}
-                                </span>
-                              </li>
-                            ),
-                          )}
-                        </ul>
-                      ) : (
-                        <p className="text-xs text-muted-foreground">No hay visitas recientes</p>
-                      )}
-                    </div>
-                  </HoverCardContent>
-                </HoverCard>
-                <div className="flex items-center gap-2">
-                  <Users className="size-3.5 text-primary" />
-                  <span>348 amigos</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Escuchando ahora */}
-          <div className="bg-card rounded-md border border-[#c2c9d6]  p-4">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
-                Escuchando ahora
-              </h3>
-              <div className="size-5 rounded-full bg-green-500 grid place-items-center">
-                <Music className="size-3 text-white" />
-              </div>
-            </div>
-            <div className="flex gap-3">
-              <div className="size-12 bg-black rounded-sm overflow-hidden flex-shrink-0">
-                <img
-                  src="https://upload.wikimedia.org/wikipedia/en/8/88/Favourite_Worst_Nightmare.jpg"
-                  alt="Album"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="min-w-0">
-                <p className="text-sm font-bold truncate">505</p>
-                <p className="text-xs text-muted-foreground truncate">Arctic Monkeys</p>
-                <p className="text-[10px] text-muted-foreground italic truncate">
-                  Favourite Worst Nightmare
-                </p>
-              </div>
-            </div>
-            <div className="mt-3 flex items-center justify-between text-[10px] text-muted-foreground font-medium">
-              <span>1:42</span>
-              <div className="flex-1 h-1 bg-secondary mx-2 rounded-full overflow-hidden">
-                <div className="h-full bg-green-500 w-1/3"></div>
-              </div>
-              <span>4:13</span>
-            </div>
-            <button className="w-full mt-3 flex items-center justify-center gap-1.5 py-1.5 px-2 border border-[#c2c9d6] rounded text-[11px] font-medium hover:bg-secondary transition-colors">
-              <Play className="size-3" /> Abrir en Spotify
-            </button>
-          </div>
-
-          {/* Información */}
-          <div className="bg-card rounded-md border border-[#c2c9d6]  p-4">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
-                Información
-              </h3>
-              {isMe && (
-                <button className="flex items-center gap-1 text-[11px] font-medium text-primary hover:underline">
-                  <Pencil className="size-3" /> Editar
-                </button>
-              )}
-            </div>
-            <div className="space-y-2.5 text-xs">
-              <div className="grid grid-cols-[80px_1fr] gap-2">
-                <span className="text-muted-foreground">Sexo</span>
-                <span>Sin especificar</span>
-              </div>
-              <div className="grid grid-cols-[80px_1fr] gap-2">
-                <span className="text-muted-foreground">Estado civil</span>
-                <a href="#" className="text-primary hover:underline">
-                  Soltero/a
-                </a>
-              </div>
-              <div className="grid grid-cols-[80px_1fr] gap-2">
-                <span className="text-muted-foreground">Estudios</span>
-                <div>
-                  <a href="#" className="text-primary hover:underline block truncate">
-                    Universidad Complutense de Madrid
-                  </a>
-                  <span className="text-muted-foreground text-[10px]">Periodismo</span>
-                </div>
-              </div>
-              <div className="grid grid-cols-[80px_1fr] gap-2">
-                <span className="text-muted-foreground">Trabajo</span>
-                <a href="#" className="text-primary hover:underline">
-                  Estudiante
-                </a>
-              </div>
-              <div className="grid grid-cols-[80px_1fr] gap-2">
-                <span className="text-muted-foreground">Ciudad actual</span>
-                <a href="#" className="text-primary hover:underline">
-                  {((profile as unknown as Record<string, unknown>).location as string) || "Madrid"}
-                </a>
-              </div>
-              <div className="grid grid-cols-[80px_1fr] gap-2">
-                <span className="text-muted-foreground">Página web</span>
-                <a href="#" className="text-primary hover:underline truncate">
-                  inkorium.es/{profile.username}
-                </a>
-              </div>
-            </div>
-            <div className="mt-3 pt-3 border-t border-border text-center">
-              <button className="flex items-center justify-center gap-1 text-primary text-xs font-medium w-full hover:underline">
-                Ver más información <ChevronDown className="size-3" />
-              </button>
-            </div>
-          </div>
-
-          {/* Amigos List */}
-          <div className="bg-card rounded-md border border-[#c2c9d6]  p-4">
-            <h3 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-3">
-              Amigos (348)
-            </h3>
-            <div className="flex gap-2">
-              <div className="size-10 rounded bg-muted overflow-hidden">
-                <img src="https://i.pravatar.cc/150?u=1" className="size-full object-cover" />
-              </div>
-              <div className="size-10 rounded bg-muted overflow-hidden">
-                <img src="https://i.pravatar.cc/150?u=2" className="size-full object-cover" />
-              </div>
-              <div className="size-10 rounded bg-muted overflow-hidden">
-                <img src="https://i.pravatar.cc/150?u=3" className="size-full object-cover" />
-              </div>
-              <div className="size-10 rounded bg-muted overflow-hidden">
-                <img src="https://i.pravatar.cc/150?u=4" className="size-full object-cover" />
-              </div>
-            </div>
-            <div className="mt-3 pt-3 border-t border-border text-right">
-              <button className="flex items-center justify-end gap-1 text-primary text-xs font-medium w-full hover:underline">
-                Ver todos &rarr;
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* CENTER COLUMN */}
-        <div className="space-y-4">
-          {/* Main Header Card */}
-          <div className="bg-card rounded-md border border-[#c2c9d6] ">
-            <div className="p-5 pb-0">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div>
-                  <h1 className="text-3xl font-bold tracking-tight">{profile.display_name}</h1>
-                  <div className="flex items-start gap-1 mt-1 text-sm text-muted-foreground">
-                    <Quote className="size-3 shrink-0 mt-0.5" />
-                    <span className="italic">{profile.bio || "Vive y deja vivir."}</span>
-                  </div>
-                </div>
-                <div className="flex gap-2 shrink-0">
-                  {isMe ? (
-                    <EditProfileButton profile={profile} />
-                  ) : friendship?.status === "accepted" ? (
-                    <Link
-                      to="/mensajes/$username"
-                      params={{ username: profile.username }}
-                      className="inline-flex items-center gap-2 bg-secondary text-secondary-foreground text-sm font-bold py-1.5 px-3 rounded hover:bg-muted transition-colors border border-[#c2c9d6]"
-                    >
-                      <MessageCircle className="size-4" /> Mensaje privado
-                    </Link>
-                  ) : friendship?.status === "pending" && friendship.addressee_id === userId ? (
-                    <>
-                      <button
-                        onClick={() => acceptReq.mutate()}
-                        className="inline-flex items-center gap-1 bg-primary text-white text-sm font-bold py-1.5 px-3 rounded hover:bg-primary-hover transition-colors"
-                      >
-                        <Check className="size-4" /> Aceptar
-                      </button>
-                      <button
-                        onClick={() => removeReq.mutate()}
-                        className="inline-flex items-center gap-1 bg-secondary text-secondary-foreground text-sm py-1.5 px-3 rounded hover:bg-muted border border-[#c2c9d6]"
-                      >
-                        <X className="size-4" />
-                      </button>
-                    </>
-                  ) : friendship?.status === "pending" ? (
-                    <button
-                      onClick={() => removeReq.mutate()}
-                      className="inline-flex items-center gap-2 bg-secondary text-secondary-foreground text-sm py-1.5 px-3 rounded hover:bg-muted border border-[#c2c9d6]"
-                    >
-                      Solicitud enviada
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => sendReq.mutate()}
-                      disabled={sendReq.isPending}
-                      className="inline-flex items-center gap-2 bg-primary text-white text-sm font-bold py-1.5 px-3 rounded hover:bg-primary-hover transition-colors"
-                    >
-                      <UserPlus className="size-4" /> Añadir amigo
-                    </button>
-                  )}
-                  <button className="px-2 py-1.5 border border-[#c2c9d6] rounded hover:bg-secondary transition-colors text-muted-foreground">
-                    <MoreHorizontal className="size-4" />
-                  </button>
-                </div>
-              </div>
-
-              {/* Navigation Tabs */}
-              <div className="mt-6 flex flex-wrap gap-1 hide-scrollbar">
-                {["Tablón", "Información", "Fotos (84)", "Vídeos (7)", "Amigos (348)"].map(
-                  (tab) => (
-                    <button
-                      key={tab}
-                      onClick={() => setActiveTab(tab)}
-                      className={`px-3 py-2 text-sm font-semibold whitespace-nowrap border-b-2 transition-colors ${
-                        activeTab === tab
-                          ? "border-primary text-primary"
-                          : "border-transparent text-muted-foreground hover:text-foreground"
-                      }`}
-                    >
-                      {tab}
-                    </button>
-                  ),
-                )}
-                <button className="px-3 py-2 text-sm font-semibold text-muted-foreground hover:text-foreground whitespace-nowrap flex items-center gap-1">
-                  Más <ChevronDown className="size-3" />
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {activeTab === "Tablón" && (
-            <>
-              {/* Post Composer */}
-              <div className="bg-card rounded-md border border-[#c2c9d6]  p-4 flex gap-3">
-                <div className="size-10 rounded bg-[#6F779E] shrink-0 grid place-items-center text-white font-bold">
-                  {initials(profile.display_name)}
-                </div>
-                <div className="flex-1 flex gap-2">
-                  <input
-                    type="text"
-                    placeholder="Escribe en su tablón..."
-                    className="flex-1 bg-surface border border-[#c2c9d6] rounded px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary"
-                  />
-                  <button className="bg-primary hover:bg-primary-hover text-white px-4 py-2 rounded text-sm font-bold transition-colors">
-                    Publicar
-                  </button>
-                </div>
-              </div>
-
-              {/* Feed */}
-              <div className="space-y-4">
-                {feed.length === 0 && (
-                  <div className="bg-card rounded-md border border-[#c2c9d6] p-6 text-center text-sm text-muted-foreground">
-                    Aún no hay publicaciones en este tablón.
-                  </div>
-                )}
-                {feed.map((p) => (
-                  <PostCard key={p.id} post={p} currentUserId={userId} />
-                ))}
-              </div>
-            </>
-          )}
-
-          {activeTab !== "Tablón" && (
-            <div className="bg-card rounded-md border border-[#c2c9d6]  p-6 text-center text-sm text-muted-foreground">
-              Contenido de la pestaña {activeTab}
-            </div>
-          )}
-        </div>
-
-        {/* RIGHT COLUMN */}
-        <div className="space-y-4 hidden lg:block">
-          {/* Fotos */}
-          <div className="bg-card rounded-md border border-[#c2c9d6]  p-4">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
-                Fotos recientes
-              </h3>
-              <button className="text-[11px] font-medium text-primary hover:underline flex items-center gap-1">
-                Álbumes (9) <ChevronDown className="size-3" />
-              </button>
-            </div>
-            <div className="grid grid-cols-3 gap-1 mb-3">
-              <div className="aspect-square bg-muted">
-                <img
-                  src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=150&q=80&fit=crop"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="aspect-square bg-muted">
-                <img
-                  src="https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=150&q=80&fit=crop"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="aspect-square bg-muted">
-                <img
-                  src="https://images.unsplash.com/photo-1505118380757-91f5f5632de0?w=150&q=80&fit=crop"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="aspect-square bg-muted">
-                <img
-                  src="https://images.unsplash.com/photo-1480796927426-f609979314bd?w=150&q=80&fit=crop"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="aspect-square bg-muted">
-                <img
-                  src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=150&q=80&fit=crop"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="aspect-square bg-muted">
-                <img
-                  src="https://images.unsplash.com/photo-1473496169904-658ba37448eb?w=150&q=80&fit=crop"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            </div>
-            <button className="text-[11px] font-medium text-primary hover:underline">
-              Ver todas las fotos &rarr;
-            </button>
-          </div>
-
-          {/* Mi Playlist */}
-          <div className="bg-card rounded-md border border-[#c2c9d6]  p-4">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
-                MI PLAYLIST
-              </h3>
-              <button className="text-[11px] font-medium text-primary hover:underline">
-                Ver todos &rarr;
-              </button>
-            </div>
-            <div className="flex gap-3 mb-4">
-              <div className="size-16 bg-black rounded-sm overflow-hidden flex-shrink-0">
-                <img
-                  src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=150&q=80&fit=crop"
-                  alt="Playlist"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="min-w-0 flex flex-col justify-center">
-                <p className="text-sm font-bold truncate text-foreground">conciertos 2025</p>
-                <p className="text-xs text-muted-foreground">5 canciones • 18 min</p>
-              </div>
-            </div>
-            <div className="space-y-2 mb-4">
-              {[
-                { n: 1, title: "505", artist: "Arctic Monkeys", duration: "4:13" },
-                { n: 2, title: "Do I Wanna Know?", artist: "Arctic Monkeys", duration: "4:32" },
-                { n: 3, title: "Reptilia", artist: "The Strokes", duration: "3:41" },
-                { n: 4, title: "Last Nite", artist: "The Strokes", duration: "3:13" },
-                { n: 5, title: "Mr. Brightside", artist: "The Killers", duration: "3:43" },
-              ].map((song) => (
-                <div
-                  key={song.n}
-                  className="flex items-center justify-between text-xs hover:bg-secondary/50 p-1.5 -mx-1.5 rounded-sm cursor-pointer transition-colors"
-                >
-                  <div className="flex items-center gap-3 min-w-0">
-                    <span className="text-muted-foreground w-3 text-right font-medium">
-                      {song.n}
+              <HoverCard>
+                <HoverCardTrigger asChild>
+                  <div className="flex items-center gap-2 cursor-pointer hover:underline">
+                    <Users className="size-3.5 text-primary" />
+                    <span>
+                      {((profile as unknown as Record<string, unknown>).visits_count as number) ||
+                        0}{" "}
+                      visitas a tu perfil
                     </span>
-                    <div className="min-w-0">
-                      <p className="font-medium text-foreground truncate leading-tight">
-                        {song.title}
-                      </p>
-                      <p className="text-[10px] text-muted-foreground truncate leading-tight">
-                        {song.artist}
-                      </p>
-                    </div>
                   </div>
-                  <span className="text-[10px] text-muted-foreground ml-2 font-medium">
-                    {song.duration}
-                  </span>
-                </div>
-              ))}
+                </HoverCardTrigger>
+                <HoverCardContent className="w-56" align="start">
+                  <div className="space-y-2">
+                    <h4 className="text-sm font-semibold">Visitas recientes</h4>
+                    {recentVisitors.length > 0 ? (
+                      <ul className="text-xs space-y-1">
+                        {recentVisitors.map(
+                          (
+                            v: {
+                              visitor: { display_name?: string; username?: string } | null;
+                              visited_at: string;
+                            },
+                            i: number,
+                          ) => (
+                            <li key={i} className="flex justify-between items-center">
+                              <span className="font-medium truncate mr-2">
+                                {v.visitor?.display_name || v.visitor?.username}
+                              </span>
+                              <span className="text-muted-foreground shrink-0 text-[10px]">
+                                {new Date(v.visited_at).toLocaleDateString()}
+                              </span>
+                            </li>
+                          ),
+                        )}
+                      </ul>
+                    ) : (
+                      <p className="text-xs text-muted-foreground">No hay visitas recientes</p>
+                    )}
+                  </div>
+                </HoverCardContent>
+              </HoverCard>
+              <div className="flex items-center gap-2">
+                <Users className="size-3.5 text-primary" />
+                <span>348 amigos</span>
+              </div>
             </div>
-            <button className="w-full flex items-center justify-center gap-1.5 py-1.5 px-2 border border-[#c2c9d6] rounded text-[11px] font-medium hover:bg-secondary transition-colors">
-              <Play className="size-3" /> Abrir reproductor completo
+          </div>
+        </div>
+
+        {/* Escuchando ahora */}
+        <div className="bg-card rounded-md border border-[#c2c9d6]  p-4">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+              Escuchando ahora
+            </h3>
+            <div className="size-5 rounded-full bg-green-500 grid place-items-center">
+              <Music className="size-3 text-white" />
+            </div>
+          </div>
+          <div className="flex gap-3">
+            <div className="size-12 bg-black rounded-sm overflow-hidden flex-shrink-0">
+              <img
+                src="https://upload.wikimedia.org/wikipedia/en/8/88/Favourite_Worst_Nightmare.jpg"
+                alt="Album"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="min-w-0">
+              <p className="text-sm font-bold truncate">505</p>
+              <p className="text-xs text-muted-foreground truncate">Arctic Monkeys</p>
+              <p className="text-[10px] text-muted-foreground italic truncate">
+                Favourite Worst Nightmare
+              </p>
+            </div>
+          </div>
+          <div className="mt-3 flex items-center justify-between text-[10px] text-muted-foreground font-medium">
+            <span>1:42</span>
+            <div className="flex-1 h-1 bg-secondary mx-2 rounded-full overflow-hidden">
+              <div className="h-full bg-green-500 w-1/3"></div>
+            </div>
+            <span>4:13</span>
+          </div>
+          <button className="w-full mt-3 flex items-center justify-center gap-1.5 py-1.5 px-2 border border-[#c2c9d6] rounded text-[11px] font-medium hover:bg-secondary transition-colors">
+            <Play className="size-3" /> Abrir en Spotify
+          </button>
+        </div>
+
+        {/* Información */}
+        <div className="bg-card rounded-md border border-[#c2c9d6]  p-4">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+              Información
+            </h3>
+            {isMe && (
+              <button className="flex items-center gap-1 text-[11px] font-medium text-primary hover:underline">
+                <Pencil className="size-3" /> Editar
+              </button>
+            )}
+          </div>
+          <div className="space-y-2.5 text-xs">
+            <div className="grid grid-cols-[80px_1fr] gap-2">
+              <span className="text-muted-foreground">Sexo</span>
+              <span>Sin especificar</span>
+            </div>
+            <div className="grid grid-cols-[80px_1fr] gap-2">
+              <span className="text-muted-foreground">Estado civil</span>
+              <a href="#" className="text-primary hover:underline">
+                Soltero/a
+              </a>
+            </div>
+            <div className="grid grid-cols-[80px_1fr] gap-2">
+              <span className="text-muted-foreground">Estudios</span>
+              <div>
+                <a href="#" className="text-primary hover:underline block truncate">
+                  Universidad Complutense de Madrid
+                </a>
+                <span className="text-muted-foreground text-[10px]">Periodismo</span>
+              </div>
+            </div>
+            <div className="grid grid-cols-[80px_1fr] gap-2">
+              <span className="text-muted-foreground">Trabajo</span>
+              <a href="#" className="text-primary hover:underline">
+                Estudiante
+              </a>
+            </div>
+            <div className="grid grid-cols-[80px_1fr] gap-2">
+              <span className="text-muted-foreground">Ciudad actual</span>
+              <a href="#" className="text-primary hover:underline">
+                {((profile as unknown as Record<string, unknown>).location as string) || "Madrid"}
+              </a>
+            </div>
+            <div className="grid grid-cols-[80px_1fr] gap-2">
+              <span className="text-muted-foreground">Página web</span>
+              <a href="#" className="text-primary hover:underline truncate">
+                inkorium.es/{profile.username}
+              </a>
+            </div>
+          </div>
+          <div className="mt-3 pt-3 border-t border-border text-center">
+            <button className="flex items-center justify-center gap-1 text-primary text-xs font-medium w-full hover:underline">
+              Ver más información <ChevronDown className="size-3" />
             </button>
           </div>
-          {/* Amigos en común */}
-          <div className="bg-card rounded-md border border-[#c2c9d6]  p-4">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
-                Amigos en común (23)
-              </h3>
-              <button className="text-[11px] font-medium text-primary hover:underline">
-                Ver todos &rarr;
-              </button>
+        </div>
+
+        {/* Amigos List */}
+        <div className="bg-card rounded-md border border-[#c2c9d6]  p-4">
+          <h3 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-3">
+            Amigos (348)
+          </h3>
+          <div className="flex gap-2">
+            <div className="size-10 rounded bg-muted overflow-hidden">
+              <img src="https://i.pravatar.cc/150?u=1" className="size-full object-cover" />
             </div>
-            <div className="flex justify-between gap-1">
-              <div className="text-center">
-                <img
-                  src="https://i.pravatar.cc/150?u=5"
-                  className="size-10 rounded mx-auto mb-1 object-cover"
-                />
-                <span className="text-[10px] text-primary hover:underline block truncate w-12">
-                  Ricardo
-                </span>
-              </div>
-              <div className="text-center">
-                <img
-                  src="https://i.pravatar.cc/150?u=6"
-                  className="size-10 rounded mx-auto mb-1 object-cover"
-                />
-                <span className="text-[10px] text-primary hover:underline block truncate w-12">
-                  Ana
-                </span>
-              </div>
-              <div className="text-center">
-                <img
-                  src="https://i.pravatar.cc/150?u=7"
-                  className="size-10 rounded mx-auto mb-1 object-cover"
-                />
-                <span className="text-[10px] text-primary hover:underline block truncate w-12">
-                  Marta
-                </span>
-              </div>
-              <div className="text-center">
-                <img
-                  src="https://i.pravatar.cc/150?u=8"
-                  className="size-10 rounded mx-auto mb-1 object-cover"
-                />
-                <span className="text-[10px] text-primary hover:underline block truncate w-12">
-                  Sergio
-                </span>
-              </div>
-              <div className="text-center">
-                <img
-                  src="https://i.pravatar.cc/150?u=9"
-                  className="size-10 rounded mx-auto mb-1 object-cover"
-                />
-                <span className="text-[10px] text-primary hover:underline block truncate w-12">
-                  Irene
-                </span>
-              </div>
+            <div className="size-10 rounded bg-muted overflow-hidden">
+              <img src="https://i.pravatar.cc/150?u=2" className="size-full object-cover" />
+            </div>
+            <div className="size-10 rounded bg-muted overflow-hidden">
+              <img src="https://i.pravatar.cc/150?u=3" className="size-full object-cover" />
+            </div>
+            <div className="size-10 rounded bg-muted overflow-hidden">
+              <img src="https://i.pravatar.cc/150?u=4" className="size-full object-cover" />
             </div>
           </div>
-
-          {/* Visitas a tu perfil */}
-          <div className="bg-card rounded-md border border-[#c2c9d6]  p-4">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
-                Visitas a tu perfil
-              </h3>
-              <button className="text-[11px] font-medium text-primary hover:underline">
-                Ver todas &rarr;
-              </button>
-            </div>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between text-xs">
-                <div className="flex items-center gap-2">
-                  <img
-                    src="https://i.pravatar.cc/150?u=10"
-                    className="size-5 rounded object-cover"
-                  />
-                  <span className="text-primary font-bold hover:underline">Laura Pérez</span>
-                </div>
-                <span className="text-muted-foreground text-[10px]">hace 10 minutos</span>
-              </div>
-              <div className="flex items-center justify-between text-xs">
-                <div className="flex items-center gap-2">
-                  <img
-                    src="https://i.pravatar.cc/150?u=11"
-                    className="size-5 rounded object-cover"
-                  />
-                  <span className="text-primary font-bold hover:underline">Ricardo Bartolomé</span>
-                </div>
-                <span className="text-muted-foreground text-[10px]">hace 1 hora</span>
-              </div>
-              <div className="flex items-center justify-between text-xs">
-                <div className="flex items-center gap-2">
-                  <img
-                    src="https://i.pravatar.cc/150?u=12"
-                    className="size-5 rounded object-cover"
-                  />
-                  <span className="text-primary font-bold hover:underline">Ana García</span>
-                </div>
-                <span className="text-muted-foreground text-[10px]">hace 3 horas</span>
-              </div>
-              <div className="flex items-center justify-between text-xs">
-                <div className="flex items-center gap-2">
-                  <img
-                    src="https://i.pravatar.cc/150?u=13"
-                    className="size-5 rounded object-cover"
-                  />
-                  <span className="text-primary font-bold hover:underline">Carlos López</span>
-                </div>
-                <span className="text-muted-foreground text-[10px]">ayer</span>
-              </div>
-              <div className="flex items-center justify-between text-xs">
-                <div className="flex items-center gap-2">
-                  <img
-                    src="https://i.pravatar.cc/150?u=14"
-                    className="size-5 rounded object-cover"
-                  />
-                  <span className="text-primary font-bold hover:underline">Marta Ruiz</span>
-                </div>
-                <span className="text-muted-foreground text-[10px]">ayer</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Amigos sugeridos */}
-          <div className="bg-card rounded-md border border-[#c2c9d6]  p-4">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
-                Amigos sugeridos
-              </h3>
-              <button className="text-[11px] font-medium text-primary hover:underline">
-                Ver todos &rarr;
-              </button>
-            </div>
-            <div className="space-y-3">
-              {[
-                { name: "Pedro Pascal", mutual: 5, avatar: "https://i.pravatar.cc/150?u=15" },
-                { name: "Rosalía", mutual: 12, avatar: "https://i.pravatar.cc/150?u=16" },
-                { name: "C. Tangana", mutual: 3, avatar: "https://i.pravatar.cc/150?u=17" },
-              ].map((sugerido, i) => (
-                <div key={i} className="flex items-center justify-between text-xs">
-                  <div className="flex items-center gap-2">
-                    <img src={sugerido.avatar} className="size-8 rounded object-cover" />
-                    <div>
-                      <span className="text-primary font-bold hover:underline block cursor-pointer">
-                        {sugerido.name}
-                      </span>
-                      <span className="text-muted-foreground text-[10px]">
-                        {sugerido.mutual} amigos en común
-                      </span>
-                    </div>
-                  </div>
-                  <button className="text-[10px] bg-secondary border border-[#c2c9d6] px-2 py-1 rounded hover:bg-muted font-medium">
-                    Añadir
-                  </button>
-                </div>
-              ))}
-            </div>
+          <div className="mt-3 pt-3 border-t border-border text-right">
+            <button className="flex items-center justify-end gap-1 text-primary text-xs font-medium w-full hover:underline">
+              Ver todos &rarr;
+            </button>
           </div>
         </div>
       </div>
-    </div>
+
+      {/* CENTER COLUMN */}
+      <div className="space-y-4">
+        {/* Main Header Card */}
+        <div className="bg-card rounded-md border border-[#c2c9d6] ">
+          <div className="p-5 pb-0">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <h1 className="text-3xl font-bold tracking-tight">{profile.display_name}</h1>
+                <div className="flex items-start gap-1 mt-1 text-sm text-muted-foreground">
+                  <Quote className="size-3 shrink-0 mt-0.5" />
+                  <span className="italic">{profile.bio || "Vive y deja vivir."}</span>
+                </div>
+              </div>
+              <div className="flex gap-2 shrink-0">
+                {isMe ? (
+                  <EditProfileButton profile={profile} />
+                ) : friendship?.status === "accepted" ? (
+                  <Link
+                    to="/mensajes/$username"
+                    params={{ username: profile.username }}
+                    className="inline-flex items-center gap-2 bg-secondary text-secondary-foreground text-sm font-bold py-1.5 px-3 rounded hover:bg-muted transition-colors border border-[#c2c9d6]"
+                  >
+                    <MessageCircle className="size-4" /> Mensaje privado
+                  </Link>
+                ) : friendship?.status === "pending" && friendship.addressee_id === userId ? (
+                  <>
+                    <button
+                      onClick={() => acceptReq.mutate()}
+                      className="inline-flex items-center gap-1 bg-primary text-white text-sm font-bold py-1.5 px-3 rounded hover:bg-primary-hover transition-colors"
+                    >
+                      <Check className="size-4" /> Aceptar
+                    </button>
+                    <button
+                      onClick={() => removeReq.mutate()}
+                      className="inline-flex items-center gap-1 bg-secondary text-secondary-foreground text-sm py-1.5 px-3 rounded hover:bg-muted border border-[#c2c9d6]"
+                    >
+                      <X className="size-4" />
+                    </button>
+                  </>
+                ) : friendship?.status === "pending" ? (
+                  <button
+                    onClick={() => removeReq.mutate()}
+                    className="inline-flex items-center gap-2 bg-secondary text-secondary-foreground text-sm py-1.5 px-3 rounded hover:bg-muted border border-[#c2c9d6]"
+                  >
+                    Solicitud enviada
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => sendReq.mutate()}
+                    disabled={sendReq.isPending}
+                    className="inline-flex items-center gap-2 bg-primary text-white text-sm font-bold py-1.5 px-3 rounded hover:bg-primary-hover transition-colors"
+                  >
+                    <UserPlus className="size-4" /> Añadir amigo
+                  </button>
+                )}
+                <button className="px-2 py-1.5 border border-[#c2c9d6] rounded hover:bg-secondary transition-colors text-muted-foreground">
+                  <MoreHorizontal className="size-4" />
+                </button>
+              </div>
+            </div>
+
+            {/* Navigation Tabs */}
+            <div className="mt-6 flex flex-wrap gap-1 hide-scrollbar">
+              {["Tablón", "Información", "Fotos (84)", "Vídeos (7)", "Amigos (348)"].map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`px-3 py-2 text-sm font-semibold whitespace-nowrap border-b-2 transition-colors ${
+                    activeTab === tab
+                      ? "border-primary text-primary"
+                      : "border-transparent text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  {tab}
+                </button>
+              ))}
+              <button className="px-3 py-2 text-sm font-semibold text-muted-foreground hover:text-foreground whitespace-nowrap flex items-center gap-1">
+                Más <ChevronDown className="size-3" />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {activeTab === "Tablón" && (
+          <>
+            {/* Post Composer */}
+            <div className="bg-card rounded-md border border-[#c2c9d6]  p-4 flex gap-3">
+              <div className="size-10 rounded bg-[#6F779E] shrink-0 grid place-items-center text-white font-bold">
+                {initials(profile.display_name)}
+              </div>
+              <div className="flex-1 flex gap-2">
+                <input
+                  type="text"
+                  placeholder="Escribe en su tablón..."
+                  className="flex-1 bg-surface border border-[#c2c9d6] rounded px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-primary"
+                />
+                <button className="bg-primary hover:bg-primary-hover text-white px-4 py-2 rounded text-sm font-bold transition-colors">
+                  Publicar
+                </button>
+              </div>
+            </div>
+
+            {/* Feed */}
+            <div className="space-y-4">
+              {feed.length === 0 && (
+                <div className="bg-card rounded-md border border-[#c2c9d6] p-6 text-center text-sm text-muted-foreground">
+                  Aún no hay publicaciones en este tablón.
+                </div>
+              )}
+              {feed.map((p) => (
+                <PostCard key={p.id} post={p} currentUserId={userId} />
+              ))}
+            </div>
+          </>
+        )}
+
+        {activeTab !== "Tablón" && (
+          <div className="bg-card rounded-md border border-[#c2c9d6]  p-6 text-center text-sm text-muted-foreground">
+            Contenido de la pestaña {activeTab}
+          </div>
+        )}
+      </div>
+
+      {/* RIGHT COLUMN */}
+      <div className="space-y-4 hidden lg:block">
+        {/* Fotos */}
+        <div className="bg-card rounded-md border border-[#c2c9d6]  p-4">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+              Fotos recientes
+            </h3>
+            <button className="text-[11px] font-medium text-primary hover:underline flex items-center gap-1">
+              Álbumes (9) <ChevronDown className="size-3" />
+            </button>
+          </div>
+          <div className="grid grid-cols-3 gap-1 mb-3">
+            <div className="aspect-square bg-muted">
+              <img
+                src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=150&q=80&fit=crop"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="aspect-square bg-muted">
+              <img
+                src="https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=150&q=80&fit=crop"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="aspect-square bg-muted">
+              <img
+                src="https://images.unsplash.com/photo-1505118380757-91f5f5632de0?w=150&q=80&fit=crop"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="aspect-square bg-muted">
+              <img
+                src="https://images.unsplash.com/photo-1480796927426-f609979314bd?w=150&q=80&fit=crop"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="aspect-square bg-muted">
+              <img
+                src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=150&q=80&fit=crop"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="aspect-square bg-muted">
+              <img
+                src="https://images.unsplash.com/photo-1473496169904-658ba37448eb?w=150&q=80&fit=crop"
+                className="w-full h-full object-cover"
+              />
+            </div>
+          </div>
+          <button className="text-[11px] font-medium text-primary hover:underline">
+            Ver todas las fotos &rarr;
+          </button>
+        </div>
+
+        {/* Mi Playlist */}
+        <div className="bg-card rounded-md border border-[#c2c9d6]  p-4">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+              MI PLAYLIST
+            </h3>
+            <button className="text-[11px] font-medium text-primary hover:underline">
+              Ver todos &rarr;
+            </button>
+          </div>
+          <div className="flex gap-3 mb-4">
+            <div className="size-16 bg-black rounded-sm overflow-hidden flex-shrink-0">
+              <img
+                src="https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=150&q=80&fit=crop"
+                alt="Playlist"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="min-w-0 flex flex-col justify-center">
+              <p className="text-sm font-bold truncate text-foreground">conciertos 2025</p>
+              <p className="text-xs text-muted-foreground">5 canciones • 18 min</p>
+            </div>
+          </div>
+          <div className="space-y-2 mb-4">
+            {[
+              { n: 1, title: "505", artist: "Arctic Monkeys", duration: "4:13" },
+              { n: 2, title: "Do I Wanna Know?", artist: "Arctic Monkeys", duration: "4:32" },
+              { n: 3, title: "Reptilia", artist: "The Strokes", duration: "3:41" },
+              { n: 4, title: "Last Nite", artist: "The Strokes", duration: "3:13" },
+              { n: 5, title: "Mr. Brightside", artist: "The Killers", duration: "3:43" },
+            ].map((song) => (
+              <div
+                key={song.n}
+                className="flex items-center justify-between text-xs hover:bg-secondary/50 p-1.5 -mx-1.5 rounded-sm cursor-pointer transition-colors"
+              >
+                <div className="flex items-center gap-3 min-w-0">
+                  <span className="text-muted-foreground w-3 text-right font-medium">{song.n}</span>
+                  <div className="min-w-0">
+                    <p className="font-medium text-foreground truncate leading-tight">
+                      {song.title}
+                    </p>
+                    <p className="text-[10px] text-muted-foreground truncate leading-tight">
+                      {song.artist}
+                    </p>
+                  </div>
+                </div>
+                <span className="text-[10px] text-muted-foreground ml-2 font-medium">
+                  {song.duration}
+                </span>
+              </div>
+            ))}
+          </div>
+          <button className="w-full flex items-center justify-center gap-1.5 py-1.5 px-2 border border-[#c2c9d6] rounded text-[11px] font-medium hover:bg-secondary transition-colors">
+            <Play className="size-3" /> Abrir reproductor completo
+          </button>
+        </div>
+        {/* Amigos en común */}
+        <div className="bg-card rounded-md border border-[#c2c9d6]  p-4">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+              Amigos en común (23)
+            </h3>
+            <button className="text-[11px] font-medium text-primary hover:underline">
+              Ver todos &rarr;
+            </button>
+          </div>
+          <div className="flex justify-between gap-1">
+            <div className="text-center">
+              <img
+                src="https://i.pravatar.cc/150?u=5"
+                className="size-10 rounded mx-auto mb-1 object-cover"
+              />
+              <span className="text-[10px] text-primary hover:underline block truncate w-12">
+                Ricardo
+              </span>
+            </div>
+            <div className="text-center">
+              <img
+                src="https://i.pravatar.cc/150?u=6"
+                className="size-10 rounded mx-auto mb-1 object-cover"
+              />
+              <span className="text-[10px] text-primary hover:underline block truncate w-12">
+                Ana
+              </span>
+            </div>
+            <div className="text-center">
+              <img
+                src="https://i.pravatar.cc/150?u=7"
+                className="size-10 rounded mx-auto mb-1 object-cover"
+              />
+              <span className="text-[10px] text-primary hover:underline block truncate w-12">
+                Marta
+              </span>
+            </div>
+            <div className="text-center">
+              <img
+                src="https://i.pravatar.cc/150?u=8"
+                className="size-10 rounded mx-auto mb-1 object-cover"
+              />
+              <span className="text-[10px] text-primary hover:underline block truncate w-12">
+                Sergio
+              </span>
+            </div>
+            <div className="text-center">
+              <img
+                src="https://i.pravatar.cc/150?u=9"
+                className="size-10 rounded mx-auto mb-1 object-cover"
+              />
+              <span className="text-[10px] text-primary hover:underline block truncate w-12">
+                Irene
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Visitas a tu perfil */}
+        <div className="bg-card rounded-md border border-[#c2c9d6]  p-4">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+              Visitas a tu perfil
+            </h3>
+            <button className="text-[11px] font-medium text-primary hover:underline">
+              Ver todas &rarr;
+            </button>
+          </div>
+          <div className="space-y-3">
+            <div className="flex items-center justify-between text-xs">
+              <div className="flex items-center gap-2">
+                <img src="https://i.pravatar.cc/150?u=10" className="size-5 rounded object-cover" />
+                <span className="text-primary font-bold hover:underline">Laura Pérez</span>
+              </div>
+              <span className="text-muted-foreground text-[10px]">hace 10 minutos</span>
+            </div>
+            <div className="flex items-center justify-between text-xs">
+              <div className="flex items-center gap-2">
+                <img src="https://i.pravatar.cc/150?u=11" className="size-5 rounded object-cover" />
+                <span className="text-primary font-bold hover:underline">Ricardo Bartolomé</span>
+              </div>
+              <span className="text-muted-foreground text-[10px]">hace 1 hora</span>
+            </div>
+            <div className="flex items-center justify-between text-xs">
+              <div className="flex items-center gap-2">
+                <img src="https://i.pravatar.cc/150?u=12" className="size-5 rounded object-cover" />
+                <span className="text-primary font-bold hover:underline">Ana García</span>
+              </div>
+              <span className="text-muted-foreground text-[10px]">hace 3 horas</span>
+            </div>
+            <div className="flex items-center justify-between text-xs">
+              <div className="flex items-center gap-2">
+                <img src="https://i.pravatar.cc/150?u=13" className="size-5 rounded object-cover" />
+                <span className="text-primary font-bold hover:underline">Carlos López</span>
+              </div>
+              <span className="text-muted-foreground text-[10px]">ayer</span>
+            </div>
+            <div className="flex items-center justify-between text-xs">
+              <div className="flex items-center gap-2">
+                <img src="https://i.pravatar.cc/150?u=14" className="size-5 rounded object-cover" />
+                <span className="text-primary font-bold hover:underline">Marta Ruiz</span>
+              </div>
+              <span className="text-muted-foreground text-[10px]">ayer</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Amigos sugeridos */}
+        <div className="bg-card rounded-md border border-[#c2c9d6]  p-4">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+              Amigos sugeridos
+            </h3>
+            <button className="text-[11px] font-medium text-primary hover:underline">
+              Ver todos &rarr;
+            </button>
+          </div>
+          <div className="space-y-3">
+            {[
+              { name: "Pedro Pascal", mutual: 5, avatar: "https://i.pravatar.cc/150?u=15" },
+              { name: "Rosalía", mutual: 12, avatar: "https://i.pravatar.cc/150?u=16" },
+              { name: "C. Tangana", mutual: 3, avatar: "https://i.pravatar.cc/150?u=17" },
+            ].map((sugerido, i) => (
+              <div key={i} className="flex items-center justify-between text-xs">
+                <div className="flex items-center gap-2">
+                  <img src={sugerido.avatar} className="size-8 rounded object-cover" />
+                  <div>
+                    <span className="text-primary font-bold hover:underline block cursor-pointer">
+                      {sugerido.name}
+                    </span>
+                    <span className="text-muted-foreground text-[10px]">
+                      {sugerido.mutual} amigos en común
+                    </span>
+                  </div>
+                </div>
+                <button className="text-[10px] bg-secondary border border-[#c2c9d6] px-2 py-1 rounded hover:bg-muted font-medium">
+                  Añadir
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </main>
   );
 }
 
