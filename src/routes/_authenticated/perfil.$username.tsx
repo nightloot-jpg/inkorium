@@ -169,8 +169,8 @@ function ProfilePage() {
   if (!profile) return null;
 
   return (
-    <div className="max-w-[1100px] mx-auto px-4 py-6">
-      <div className="lg:grid lg:grid-cols-[250px_minmax(0,1fr)_250px] gap-4">
+    <div className="w-full py-4">
+      <div className="lg:grid lg:grid-cols-[250px_minmax(0,1fr)_250px] gap-6">
         {/* LEFT COLUMN */}
         <div className="space-y-4 hidden lg:block">
           {/* Profile Card */}

@@ -233,3 +233,7 @@ Also, `Math.random()` and `new Date()` within initial render inside server-rende
 ## 2025-05-24 - [Profile Layout Refactoring]
 **Learning:** Moving large UI blocks using basic grep/sed can be fragile in heavily nested JSX (like Tanstack routes). Writing a robust temporary parser in Node is significantly safer for complex column extractions.
 **Action:** Next time large structural changes in JSX files are needed, prioritize using an AST tool or a custom script parsing specific markers before trying to apply regex on multiline tags.
+## 2024-07-22 - Layout Synchronization
+
+**Learning:** Container sizes were specified at various levels in the nested routes (`_sidebar.tsx`, `amigos.tsx`, `mensajes.tsx`, `perfil.$username.tsx`) which made them have varying widths.
+**Action:** When updating app layouts, ensure to use `route.tsx` at the layout level (`_authenticated/route.tsx`) to constrain total app width to the desired dimension. Standardize column sizing uniformly in nested routes (e.g. `[250px_1fr]` or `[250px_minmax(0,1fr)_250px]`) and use `w-full` on the inner wrappers rather than redefining explicit `max-w-` limits.
