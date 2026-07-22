@@ -16,6 +16,7 @@ import {
   Settings,
 } from "lucide-react";
 import { Route as AuthRoute } from "./route";
+import { ListeningWidget } from "@/components/ListeningWidget";
 
 export const Route = createFileRoute("/_authenticated/_sidebar")({
   component: SidebarLayout,
@@ -142,30 +143,17 @@ function SidebarLayout() {
           </div>
         </div>
 
-        <div className="bg-card rounded-sm border border-[#c2c9d6] p-5 flex flex-col gap-3">
-          <h4 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wide">
-            ESCUCHANDO AHORA
-          </h4>
-          <div className="flex items-center gap-3">
-            <div className="size-12 rounded bg-black flex-shrink-0 flex items-center justify-center overflow-hidden">
-              <span className="text-white text-[10px] text-center leading-tight opacity-50 px-1">
-                Favourite Worst
-              </span>
-            </div>
-            <div className="flex flex-col min-w-0">
-              <span className="text-[13px] font-bold text-foreground truncate">505</span>
-              <span className="text-[13px] text-muted-foreground truncate">Arctic Monkeys</span>
-              <span className="text-[13px] text-muted-foreground truncate">Favourite Wor...</span>
-            </div>
-          </div>
-          <div className="flex items-center gap-3 mt-1">
-            <span className="text-[11px] text-muted-foreground">1:42</span>
-            <div className="flex-1 h-1.5 bg-secondary rounded-full overflow-hidden">
-              <div className="w-2/5 h-full bg-primary" />
-            </div>
-            <span className="text-[11px] text-muted-foreground">4:13</span>
-          </div>
-        </div>
+        <ListeningWidget
+          title="505"
+          artist="Arctic Monkeys"
+          album="Favourite Worst Nightmare"
+          year="2007"
+          genre="Rock alternativo"
+          duration="4:13"
+          progress="1:42"
+          isPlaying={true}
+          compact={true}
+        />
       </aside>
 
       <Outlet />
