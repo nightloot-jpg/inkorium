@@ -34,6 +34,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { Link } from "@tanstack/react-router";
+import { ListeningWidget } from "@/components/ListeningWidget";
 import ReactCrop, { type Crop } from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -284,42 +285,17 @@ function ProfilePage() {
         </div>
 
         {/* Escuchando ahora */}
-        <div className="bg-card rounded-md border border-[#c2c9d6]  p-4">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
-              Escuchando ahora
-            </h3>
-            <div className="size-5 rounded-full bg-green-500 grid place-items-center">
-              <Music className="size-3 text-white" />
-            </div>
-          </div>
-          <div className="flex gap-3">
-            <div className="size-12 bg-black rounded-sm overflow-hidden flex-shrink-0">
-              <img
-                src="https://upload.wikimedia.org/wikipedia/en/8/88/Favourite_Worst_Nightmare.jpg"
-                alt="Album"
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div className="min-w-0">
-              <p className="text-sm font-bold truncate">505</p>
-              <p className="text-xs text-muted-foreground truncate">Arctic Monkeys</p>
-              <p className="text-[10px] text-muted-foreground italic truncate">
-                Favourite Worst Nightmare
-              </p>
-            </div>
-          </div>
-          <div className="mt-3 flex items-center justify-between text-[10px] text-muted-foreground font-medium">
-            <span>1:42</span>
-            <div className="flex-1 h-1 bg-secondary mx-2 rounded-full overflow-hidden">
-              <div className="h-full bg-green-500 w-1/3"></div>
-            </div>
-            <span>4:13</span>
-          </div>
-          <button className="w-full mt-3 flex items-center justify-center gap-1.5 py-1.5 px-2 border border-[#c2c9d6] rounded text-[11px] font-medium hover:bg-secondary transition-colors">
-            <Play className="size-3" /> Abrir en Spotify
-          </button>
-        </div>
+        <ListeningWidget
+          title="505"
+          artist="Arctic Monkeys"
+          album="Favourite Worst Nightmare"
+          year="2007"
+          genre="Rock alternativo"
+          duration="4:13"
+          progress="1:42"
+          isPlaying={true}
+          compact={false}
+        />
 
         {/* Información */}
         <div className="bg-card rounded-md border border-[#c2c9d6]  p-4">
