@@ -16,8 +16,18 @@ export interface EventData {
   time: string;
   attendees: Attendee[];
   interested: number;
+  artist?: string;
+  organizer?: string;
+  price: number;
+  isOnline: boolean;
+  dateISO: string;
+  friendsAttending: number;
+  createdAt: string;
 }
 
+// Current date in memory is 2026-07-23.
+// We will create events for today, this week, this month to test filters.
+// 2026-07-23 is a Thursday.
 export const MOCK_EVENTS: EventData[] = [
   {
     id: "1",
@@ -36,6 +46,13 @@ export const MOCK_EVENTS: EventData[] = [
       { id: "a3", name: "Elena", avatar: "https://i.pravatar.cc/150?u=a3" },
     ],
     interested: 1245,
+    artist: "Arctic Monkeys",
+    organizer: "Live Nation",
+    price: 50,
+    isOnline: false,
+    dateISO: "2026-10-15T21:00:00Z",
+    friendsAttending: 2,
+    createdAt: "2026-07-01T10:00:00Z",
   },
   {
     id: "2",
@@ -46,13 +63,20 @@ export const MOCK_EVENTS: EventData[] = [
     category: "Arte",
     location: "Matadero",
     city: "Madrid",
-    date: "20 Oct",
+    date: "23 Jul", // Today
     time: "10:00",
     attendees: [
       { id: "a4", name: "David", avatar: "https://i.pravatar.cc/150?u=a4" },
       { id: "a5", name: "Sofía", avatar: "https://i.pravatar.cc/150?u=a5" },
     ],
     interested: 342,
+    artist: "Varios",
+    organizer: "Ayuntamiento de Madrid",
+    price: 0,
+    isOnline: false,
+    dateISO: "2026-07-23T10:00:00Z",
+    friendsAttending: 0,
+    createdAt: "2026-07-15T10:00:00Z",
   },
   {
     id: "3",
@@ -61,12 +85,19 @@ export const MOCK_EVENTS: EventData[] = [
     cover:
       "https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
     category: "Gaming",
-    location: "Palacio Vistalegre",
-    city: "Madrid",
-    date: "05 Nov",
+    location: "Twitch",
+    city: "Online",
+    date: "25 Jul", // This week (Saturday)
     time: "17:00",
     attendees: [{ id: "a6", name: "Javier", avatar: "https://i.pravatar.cc/150?u=a6" }],
     interested: 890,
+    artist: "Riot Games",
+    organizer: "LVP",
+    price: 0,
+    isOnline: true,
+    dateISO: "2026-07-25T17:00:00Z",
+    friendsAttending: 1,
+    createdAt: "2026-07-20T10:00:00Z",
   },
   {
     id: "4",
@@ -77,7 +108,7 @@ export const MOCK_EVENTS: EventData[] = [
     category: "Gastronomía",
     location: "IFEMA",
     city: "Madrid",
-    date: "12 Nov",
+    date: "28 Jul", // This month
     time: "12:00",
     attendees: [
       { id: "a7", name: "Lucía", avatar: "https://i.pravatar.cc/150?u=a7" },
@@ -86,6 +117,13 @@ export const MOCK_EVENTS: EventData[] = [
       { id: "a10", name: "Pedro", avatar: "https://i.pravatar.cc/150?u=a10" },
     ],
     interested: 2100,
+    artist: "Varios Chefs",
+    organizer: "IFEMA",
+    price: 15,
+    isOnline: false,
+    dateISO: "2026-07-28T12:00:00Z",
+    friendsAttending: 3,
+    createdAt: "2026-07-22T10:00:00Z",
   },
 ];
 
