@@ -1,37 +1,88 @@
 $ vite dev
 The plugin "vite-tsconfig-paths" is detected. Vite now supports tsconfig paths resolution natively via the resolve.tsconfigPaths option. You can remove the plugin and set resolve.tsconfigPaths: true in your Vite config instead.
 
-  VITE v8.1.5  ready in 2345 ms
+  VITE v8.1.5  ready in 1386 ms
 
   ➜  Local:   http://localhost:8080/
   ➜  Network: http://192.168.0.2:8080/
-11:34:10 PM [vite] (client) [optimizer] bundling dependencies...
-Error: Conflicting configuration paths were found for the following routes: "/eventos", "/eventos".
-Please ensure each Route has a unique full path.
-Conflicting files:
- /app/src/routes/_authenticated/eventos.tsx
- /app/src/routes/_authenticated/_sidebar/eventos.tsx
-
-    at file:///app/node_modules/@tanstack/router-generator/dist/esm/generator.js:143:13
-Error: Conflicting configuration paths were found for the following routes: "/eventos", "/eventos".
-Please ensure each Route has a unique full path.
-Conflicting files:
- /app/src/routes/_authenticated/eventos.tsx
- /app/src/routes/_authenticated/_sidebar/eventos.tsx
-
-    at file:///app/node_modules/@tanstack/router-generator/dist/esm/generator.js:143:13
-Error: Conflicting configuration paths were found for the following routes: "/eventos", "/eventos".
-Please ensure each Route has a unique full path.
-Conflicting files:
- /app/src/routes/_authenticated/eventos.tsx
- /app/src/routes/_authenticated/_sidebar/eventos.tsx
-
-    at file:///app/node_modules/@tanstack/router-generator/dist/esm/generator.js:143:13
-    at async generate (file:///app/node_modules/@tanstack/router-plugin/dist/esm/core/router-generator-plugin.js:39:4)
-    at async PluginContext.watchChange (file:///app/node_modules/@tanstack/router-plugin/dist/esm/core/router-generator-plugin.js:49:4)
-    at async Promise.all (index 2)
-    at async EnvironmentPluginContainer.hookParallel (file:///app/node_modules/vite/dist/node/chunks/node.js:30060:3)
-    at async EnvironmentPluginContainer.watchChange (file:///app/node_modules/vite/dist/node/chunks/node.js:30227:3)
-    at async Promise.all (index 0)
-    at async onFileAddUnlink (file:///app/node_modules/vite/dist/node/chunks/node.js:25975:3)
-error: script "dev" exited with code 143
+4:03:18 PM [vite] (client) page reload playwright-report/index.html
+4:04:54 PM [vite] (ssr) connected.
+Generated path "/perfil/" for route "/_authenticated/perfil/$username" matched route "undefined" instead. This can happen when multiple route templates resolve to the same URL. Use the route template that matches the intended route, or adjust params.stringify if it changed the target path.
+Error in renderToReadableStream: TypeError: Cannot read properties of undefined (reading 'split')
+    at EventCard (/app/src/components/events/EventCard.tsx:41:38)
+    at Object.react_stack_bottom_frame (/app/node_modules/react-dom/cjs/react-dom-server.node.development.js:10288:18)
+    at renderWithHooks (/app/node_modules/react-dom/cjs/react-dom-server.node.development.js:5298:19)
+    at renderElement (/app/node_modules/react-dom/cjs/react-dom-server.node.development.js:5733:23)
+    at retryNode (/app/node_modules/react-dom/cjs/react-dom-server.node.development.js:6664:31)
+    at renderNodeDestructive (/app/node_modules/react-dom/cjs/react-dom-server.node.development.js:6614:11)
+    at renderNode (/app/node_modules/react-dom/cjs/react-dom-server.node.development.js:7152:18)
+    at renderChildrenArray (/app/node_modules/react-dom/cjs/react-dom-server.node.development.js:6921:11)
+    at retryNode (/app/node_modules/react-dom/cjs/react-dom-server.node.development.js:6688:13)
+    at renderNodeDestructive (/app/node_modules/react-dom/cjs/react-dom-server.node.development.js:6614:11) { componentStack: [Getter] }
+4:05:03 PM [vite] (client) page reload playwright-report/index.html
+4:05:04 PM [vite] (client) [optimizer] bundling dependencies...
+4:05:05 PM [vite] (client) dependencies optimized: @tanstack/router-core, @tanstack/router-core/isServer, @tanstack/router-core/ssr/client, seroval
+4:05:05 PM [vite] (client) optimized dependencies changed. reloading
+Generated path "/perfil/" for route "/_authenticated/perfil/$username" matched route "undefined" instead. This can happen when multiple route templates resolve to the same URL. Use the route template that matches the intended route, or adjust params.stringify if it changed the target path.
+Error in renderToReadableStream: TypeError: Cannot read properties of undefined (reading 'split')
+    at EventCard (/app/src/components/events/EventCard.tsx:41:38)
+    at Object.react_stack_bottom_frame (/app/node_modules/react-dom/cjs/react-dom-server.node.development.js:10288:18)
+    at renderWithHooks (/app/node_modules/react-dom/cjs/react-dom-server.node.development.js:5298:19)
+    at renderElement (/app/node_modules/react-dom/cjs/react-dom-server.node.development.js:5733:23)
+    at retryNode (/app/node_modules/react-dom/cjs/react-dom-server.node.development.js:6664:31)
+    at renderNodeDestructive (/app/node_modules/react-dom/cjs/react-dom-server.node.development.js:6614:11)
+    at renderNode (/app/node_modules/react-dom/cjs/react-dom-server.node.development.js:7152:18)
+    at renderChildrenArray (/app/node_modules/react-dom/cjs/react-dom-server.node.development.js:6921:11)
+    at retryNode (/app/node_modules/react-dom/cjs/react-dom-server.node.development.js:6688:13)
+    at renderNodeDestructive (/app/node_modules/react-dom/cjs/react-dom-server.node.development.js:6614:11) { componentStack: [Getter] }
+Generated path "/perfil/" for route "/_authenticated/perfil/$username" matched route "undefined" instead. This can happen when multiple route templates resolve to the same URL. Use the route template that matches the intended route, or adjust params.stringify if it changed the target path.
+Error in renderToReadableStream: TypeError: Cannot read properties of undefined (reading 'split')
+    at EventCard (/app/src/components/events/EventCard.tsx:41:38)
+    at Object.react_stack_bottom_frame (/app/node_modules/react-dom/cjs/react-dom-server.node.development.js:10288:18)
+    at renderWithHooks (/app/node_modules/react-dom/cjs/react-dom-server.node.development.js:5298:19)
+    at renderElement (/app/node_modules/react-dom/cjs/react-dom-server.node.development.js:5733:23)
+    at retryNode (/app/node_modules/react-dom/cjs/react-dom-server.node.development.js:6664:31)
+    at renderNodeDestructive (/app/node_modules/react-dom/cjs/react-dom-server.node.development.js:6614:11)
+    at renderNode (/app/node_modules/react-dom/cjs/react-dom-server.node.development.js:7152:18)
+    at renderChildrenArray (/app/node_modules/react-dom/cjs/react-dom-server.node.development.js:6921:11)
+    at retryNode (/app/node_modules/react-dom/cjs/react-dom-server.node.development.js:6688:13)
+    at renderNodeDestructive (/app/node_modules/react-dom/cjs/react-dom-server.node.development.js:6614:11) { componentStack: [Getter] }
+4:06:00 PM [vite] (client) page reload playwright-report/index.html
+4:06:00 PM [vite] (client) page reload playwright-report/index.html
+4:11:10 PM [vite] (client) hmr update /src/styles.css?direct, /src/routes/_authenticated/eventos/route.tsx, /src/routes/_authenticated/eventos/route.tsx?tsr-split=component
+4:11:10 PM [vite] (ssr) page reload src/routes/_authenticated/eventos/route.tsx
+4:11:10 PM [vite] (ssr) program reload
+4:11:10 PM [vite] (client) hmr update /src/styles.css?direct, /src/routes/_authenticated/eventos/$id.tsx
+4:11:10 PM [vite] (ssr) page reload src/routes/_authenticated/eventos/$id.tsx
+Generated path "/perfil/" for route "/_authenticated/perfil/$username" matched route "undefined" instead. This can happen when multiple route templates resolve to the same URL. Use the route template that matches the intended route, or adjust params.stringify if it changed the target path.
+Error in renderToReadableStream: TypeError: Cannot read properties of undefined (reading 'split')
+    at EventCard (/app/src/components/events/EventCard.tsx:41:38)
+    at Object.react_stack_bottom_frame (/app/node_modules/react-dom/cjs/react-dom-server.node.development.js:10288:18)
+    at renderWithHooks (/app/node_modules/react-dom/cjs/react-dom-server.node.development.js:5298:19)
+    at renderElement (/app/node_modules/react-dom/cjs/react-dom-server.node.development.js:5733:23)
+    at retryNode (/app/node_modules/react-dom/cjs/react-dom-server.node.development.js:6664:31)
+    at renderNodeDestructive (/app/node_modules/react-dom/cjs/react-dom-server.node.development.js:6614:11)
+    at renderNode (/app/node_modules/react-dom/cjs/react-dom-server.node.development.js:7152:18)
+    at renderChildrenArray (/app/node_modules/react-dom/cjs/react-dom-server.node.development.js:6921:11)
+    at retryNode (/app/node_modules/react-dom/cjs/react-dom-server.node.development.js:6688:13)
+    at renderNodeDestructive (/app/node_modules/react-dom/cjs/react-dom-server.node.development.js:6614:11) { componentStack: [Getter] }
+4:11:46 PM [vite] (client) page reload playwright-report/index.html
+Generated path "/perfil/" for route "/_authenticated/perfil/$username" matched route "undefined" instead. This can happen when multiple route templates resolve to the same URL. Use the route template that matches the intended route, or adjust params.stringify if it changed the target path.
+Error in renderToReadableStream: TypeError: Cannot read properties of undefined (reading 'split')
+    at EventCard (/app/src/components/events/EventCard.tsx:41:38)
+    at Object.react_stack_bottom_frame (/app/node_modules/react-dom/cjs/react-dom-server.node.development.js:10288:18)
+    at renderWithHooks (/app/node_modules/react-dom/cjs/react-dom-server.node.development.js:5298:19)
+    at renderElement (/app/node_modules/react-dom/cjs/react-dom-server.node.development.js:5733:23)
+    at retryNode (/app/node_modules/react-dom/cjs/react-dom-server.node.development.js:6664:31)
+    at renderNodeDestructive (/app/node_modules/react-dom/cjs/react-dom-server.node.development.js:6614:11)
+    at renderNode (/app/node_modules/react-dom/cjs/react-dom-server.node.development.js:7152:18)
+    at renderChildrenArray (/app/node_modules/react-dom/cjs/react-dom-server.node.development.js:6921:11)
+    at retryNode (/app/node_modules/react-dom/cjs/react-dom-server.node.development.js:6688:13)
+    at renderNodeDestructive (/app/node_modules/react-dom/cjs/react-dom-server.node.development.js:6614:11) { componentStack: [Getter] }
+4:12:40 PM [vite] (client) page reload playwright-report/index.html
+4:12:40 PM [vite] (client) page reload playwright-report/index.html
+4:15:01 PM [vite] (client) page reload src/routeTree.gen.ts
+4:15:01 PM [vite] (ssr) page reload src/routeTree.gen.ts
+4:15:01 PM [vite] (ssr) program reload
+4:15:01 PM [vite] (client) page reload src/routeTree.gen.ts
+4:15:01 PM [vite] (ssr) page reload src/routeTree.gen.ts

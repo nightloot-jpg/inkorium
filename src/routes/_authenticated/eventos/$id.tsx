@@ -51,7 +51,7 @@ function EventDetailPage() {
         .select("*")
         .eq("author_id", event.author_id)
         .neq("id", event.id)
-        .order("date", { ascending: true })
+        .order("event_date", { ascending: true })
         .limit(3);
 
       if (relatedError) {
