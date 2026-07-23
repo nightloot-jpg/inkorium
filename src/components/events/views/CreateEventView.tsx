@@ -207,6 +207,7 @@ export function CreateEventView({ existingEvent }: CreateEventViewProps) {
   });
 
   const navigate = useNavigate();
+  const [uploadingImage, setUploadingImage] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const onSubmit = async (data: any, status: "published" | "draft" = "published") => {

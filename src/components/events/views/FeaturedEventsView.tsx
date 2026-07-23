@@ -2,7 +2,6 @@ import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { Search } from "lucide-react";
 import { EventCard } from "@/components/events/EventCard";
-import { MOCK_EVENTS } from "@/components/events/types";
 import { Route } from "@/routes/_authenticated/eventos/route";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
@@ -47,12 +46,43 @@ export function FeaturedEventsView() {
   const { data: events = [] } = useQuery({
     queryKey: ["featured-events"],
     queryFn: async () => {
+      // Obtener el usuario actual
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
       const { data, error } = await supabase
         .from("events")
-        .select("*, creator:profiles!events_author_id_fkey(*)")
+        .select(
+          `
+          *,
+          author:profiles!events_author_id_fkey(*),
+          event_attendees(user_id, status)
+        `,
+        )
         .eq("status", "published");
+
       if (error) throw error;
-      return data || [];
+
+      // Transformar los datos para el frontend
+      return (data || []).map((event) => {
+        const attendees = event.event_attendees?.filter((a: any) => a.status === "attending") || [];
+        const interested =
+          event.event_attendees?.filter((a: any) => a.status === "interested") || [];
+        const userStatus = user
+          ? event.event_attendees?.find((a: any) => a.user_id === user.id)?.status
+          : null;
+
+        return {
+          ...event,
+          attendees: attendees,
+          attendeesCount: attendees.length,
+          interestedCount: interested.length,
+          status: userStatus,
+          author_name: (event.author as any)?.name || event.organizer_name || "Desconocido",
+          author_avatar: (event.author as any)?.avatar_url || "https://github.com/shadcn.png",
+        };
+      });
     },
   });
 
@@ -67,7 +97,7 @@ export function FeaturedEventsView() {
       const q = searchQuery.toLowerCase();
       result = result.filter(
         (e) =>
-          (e.name || "").toLowerCase().includes(q) ||
+          ((e as any).title || "").toLowerCase().includes(q) ||
           (e.organizer_name || "").toLowerCase().includes(q) ||
           (e.city || "").toLowerCase().includes(q) ||
           ((e as any).location || "").toLowerCase().includes(q) ||
@@ -79,16 +109,19 @@ export function FeaturedEventsView() {
     result.sort((a, b) => {
       switch (activeSort) {
         case "Más populares":
-          return (b.max_attendees || 0) - (a.max_attendees || 0);
+          return ((b as any).attendeesCount || 0) - ((a as any).attendeesCount || 0);
         case "Más asistentes":
-          return ((b as any).attendees?.length || 0) - ((a as any).attendees?.length || 0);
+          return ((b as any).attendeesCount || 0) - ((a as any).attendeesCount || 0);
         case "Alfabético":
-          return (a.name || "").localeCompare(b.name || "");
+          return ((a as any).title || "").localeCompare((b as any).title || "");
         case "Más recientes":
           return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime();
         case "Más próximos":
         default:
-          return new Date(a.event_date || 0).getTime() - new Date(b.event_date || 0).getTime();
+          return (
+            new Date((a as any).start_date || 0).getTime() -
+            new Date((b as any).start_date || 0).getTime()
+          );
       }
     });
 
