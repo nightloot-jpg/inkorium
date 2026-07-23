@@ -67,6 +67,8 @@
         "@types/node": "^22.16.5",
         "@types/react": "^19.2.0",
         "@types/react-dom": "^19.2.0",
+        "@types/react-image-crop": "^9.0.2",
+        "@types/react-youtube": "^7.10.0",
         "@vitejs/plugin-react": "^5.2.0",
         "eslint": "^9.32.0",
         "eslint-config-prettier": "^10.1.1",
@@ -468,6 +470,10 @@
     "@types/react": ["@types/react@19.2.17", "", { "dependencies": { "csstype": "^3.2.2" } }, "sha512-MXfmqaVPEVgkBT/aY0aGCkRWWtByiYQXo3xdQ8r5RzuFrPiRn8Gar2tQdXSUQ2GKV3bkXckek89V8wQBY2Q/Aw=="],
 
     "@types/react-dom": ["@types/react-dom@19.2.3", "", { "peerDependencies": { "@types/react": "^19.2.0" } }, "sha512-jp2L/eY6fn+KgVVQAOqYItbF0VY/YApe5Mz2F0aykSO8gx31bYCZyvSeYxCHKvzHG5eZjc+zyaS5BrBWya2+kQ=="],
+
+    "@types/react-image-crop": ["@types/react-image-crop@9.0.2", "", { "dependencies": { "react-image-crop": "*" } }, "sha512-gOa5G6CuPuRuvEfQty7Ho4GxsKNwRTdk2jwS/XmI3agPFvsVEmtxR9y3tt5Y3UNp4NkRHbnH4U4YLR04YlSARw=="],
+
+    "@types/react-youtube": ["@types/react-youtube@7.10.0", "", { "dependencies": { "react-youtube": "*" } }, "sha512-RtEyYn9kze525y1DIpNByvKCj2mwqAuPIAZx+HVJMsK7cXIWbOLemYNsBHSInMhjeGRiKDEz4pIgLX1mAGbDqQ=="],
 
     "@types/unist": ["@types/unist@3.0.3", "", {}, "sha512-ko/gIFJRv177XgZsZcBwnqJN5x/Gien8qNOn0D5bQU/zAzVf9Zt3BlcUiLqhV9y4ARk0GbT3tnUiPNgnTXzc/Q=="],
 

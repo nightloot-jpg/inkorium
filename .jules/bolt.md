@@ -268,5 +268,9 @@ Also, `Math.random()` and `new Date()` within initial render inside server-rende
 **Action:** When designing lists of content (posts, events, products), suggest employing structural variant hierarchies (1 featured -> 2 large -> grid of smalls) instead of just dumping everything into a massive uniform 3-column grid. Control uniform heights across variants using CSS flexbox classes (`h-full`, `flex-col`, `mt-auto`).
 
 ## 2024-11-20 - Events Detail Implementation
+
 **Learning:** For conditional rendering of complex widgets in a standard multi-column layout with react-router, `useMatches()` from `@tanstack/react-router` can be a powerful way to override the default RightSidebar component in a parent route based on a specific child route context, without restructuring the whole router setup.
 **Action:** Use `useMatches()` when you need a sibling component in a layout to adapt significantly based on the current child route without rewriting the parent layout's DOM structure.
+## 2024-08-14 - React Forms con drag & drop
+**Learning:** En React con react-hook-form y zod, es crítico asegurar que los eventos de DOM (`onClick`, `onDrop`) estén propiamente bindeados en el JSX después de actualizarlos, o el componente visual se desconectará de la lógica y Zod rechazará la validación estricta de archivos requeridos.
+**Action:** Al usar scripts customizados para parchar código, siempre verificar con `cat` o un regex que el output del HTML de hecho haya sido reemplazado correctamente.
