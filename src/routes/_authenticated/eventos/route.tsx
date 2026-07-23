@@ -5,6 +5,9 @@ import { RightSidebar } from "@/components/events/RightSidebar";
 
 const eventsSearchSchema = z.object({
   category: z.string().optional().default("Todos"),
+  q: z.string().optional().default(""),
+  filters: z.array(z.string()).optional().default([]),
+  sort: z.string().optional().default("Más próximos"),
 });
 
 export const Route = createFileRoute("/_authenticated/eventos")({
