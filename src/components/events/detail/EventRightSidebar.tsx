@@ -9,42 +9,57 @@ import {
   Info,
   Clock,
   Globe,
-  MoreHorizontal
+  MoreHorizontal,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface EventRightSidebarProps {
   organizer: any;
   relatedEvents: any[];
-  eventData: any;
+  event: any;
   attendees: any[];
 }
 
-export function EventRightSidebar({ organizer, relatedEvents, eventData, attendees }: EventRightSidebarProps) {
-
+export function EventRightSidebar({
+  organizer,
+  relatedEvents,
+  event,
+  attendees,
+}: EventRightSidebarProps) {
   const handleCopyLink = () => {
     navigator.clipboard.writeText(window.location.href);
   };
 
   const handleShareWhatsApp = () => {
-    window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(eventData.title + " " + window.location.href)}`, "_blank");
+    window.open(
+      `https://api.whatsapp.com/send?text=${encodeURIComponent(event.title + " " + window.location.href)}`,
+      "_blank",
+    );
   };
 
   const handleShareTelegram = () => {
-    window.open(`https://t.me/share/url?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(eventData.title)}`, "_blank");
+    window.open(
+      `https://t.me/share/url?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(event.title)}`,
+      "_blank",
+    );
   };
 
   const handleShareFacebook = () => {
-    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`, "_blank");
+    window.open(
+      `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`,
+      "_blank",
+    );
   };
 
   const handleShareX = () => {
-    window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(eventData.title)}`, "_blank");
+    window.open(
+      `https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(event.title)}`,
+      "_blank",
+    );
   };
 
   return (
     <aside className="space-y-6 hidden xl:block w-[300px] shrink-0">
-
       {/* Organizer Profile */}
       {organizer && (
         <div className="bg-card rounded-sm border border-[#c2c9d6] p-5 shadow-sm text-center flex flex-col items-center">
@@ -78,13 +93,22 @@ export function EventRightSidebar({ organizer, relatedEvents, eventData, attende
           <div className="flex flex-col gap-3">
             {relatedEvents.map((ev) => (
               <div key={ev.id} className="flex gap-3 group">
-                <img src={ev.cover} alt={ev.title} className="w-[60px] h-[60px] rounded object-cover border border-border shrink-0" />
+                <img
+                  src={ev.cover}
+                  alt={ev.title}
+                  className="w-[60px] h-[60px] rounded object-cover border border-border shrink-0"
+                />
                 <div className="flex flex-col flex-1 min-w-0 justify-center">
                   <span className="text-[13px] font-bold text-foreground line-clamp-1 group-hover:text-primary transition-colors">
-                    <Link to="/eventos/$id" params={{ id: ev.id }}>{ev.title}</Link>
+                    <Link to="/eventos/$id" params={{ id: ev.id }}>
+                      {ev.title}
+                    </Link>
                   </span>
                   <span className="text-[12px] text-muted-foreground">
-                    {new Date(ev.date).toLocaleDateString("es-ES", { day: "numeric", month: "short" })}
+                    {new Date(ev.date).toLocaleDateString("es-ES", {
+                      day: "numeric",
+                      month: "short",
+                    })}
                   </span>
                 </div>
               </div>
@@ -108,18 +132,23 @@ export function EventRightSidebar({ organizer, relatedEvents, eventData, attende
               <div key={att.id} className="flex items-center gap-3">
                 <Link to="/perfil/$username" params={{ username: att.username }}>
                   <img
-                    src={att.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(att.name)}&background=random`}
+                    src={
+                      att.avatar ||
+                      `https://ui-avatars.com/api/?name=${encodeURIComponent(att.name)}&background=random`
+                    }
                     alt={att.name}
                     className="w-8 h-8 rounded-full object-cover"
                   />
                 </Link>
                 <div className="flex flex-col min-w-0 flex-1">
-                  <Link to="/perfil/$username" params={{ username: att.username }} className="text-[13px] font-medium text-foreground hover:underline truncate">
+                  <Link
+                    to="/perfil/$username"
+                    params={{ username: att.username }}
+                    className="text-[13px] font-medium text-foreground hover:underline truncate"
+                  >
                     {att.name}
                   </Link>
-                  <span className="text-[11px] text-muted-foreground truncate">
-                    Madrid
-                  </span>
+                  <span className="text-[11px] text-muted-foreground truncate">Madrid</span>
                 </div>
               </div>
             ))}
@@ -143,24 +172,35 @@ export function EventRightSidebar({ organizer, relatedEvents, eventData, attende
 
         <div className="flex flex-col gap-3">
           <div className="flex justify-between items-center text-[13px]">
-            <span className="text-muted-foreground flex items-center gap-1.5"><Clock className="size-3.5" /> Creado</span>
-            <span className="font-medium">{new Date(eventData.created_at || Date.now()).toLocaleDateString("es-ES")}</span>
+            <span className="text-muted-foreground flex items-center gap-1.5">
+              <Clock className="size-3.5" /> Creado
+            </span>
+            <span className="font-medium">
+              {new Date(event.created_at || Date.now()).toLocaleDateString("es-ES")}
+            </span>
           </div>
           <div className="flex justify-between items-center text-[13px]">
-            <span className="text-muted-foreground flex items-center gap-1.5"><Clock className="size-3.5" /> Últ. actualiz.</span>
+            <span className="text-muted-foreground flex items-center gap-1.5">
+              <Clock className="size-3.5" /> Últ. actualiz.
+            </span>
             <span className="font-medium">Hoy</span>
           </div>
           <div className="flex justify-between items-center text-[13px]">
-            <span className="text-muted-foreground flex items-center gap-1.5"><Globe className="size-3.5" /> Idioma</span>
+            <span className="text-muted-foreground flex items-center gap-1.5">
+              <Globe className="size-3.5" /> Idioma
+            </span>
             <span className="font-medium">Español</span>
           </div>
 
-          {eventData.tags && eventData.tags.length > 0 && (
+          {event.tags && event.tags.length > 0 && (
             <div className="mt-2 pt-3 border-t border-border/50">
               <span className="text-[12px] text-muted-foreground mb-2 block">Etiquetas:</span>
               <div className="flex flex-wrap gap-1.5">
-                {eventData.tags.map((tag: string) => (
-                  <span key={tag} className="text-[11px] bg-secondary text-secondary-foreground px-2 py-0.5 rounded">
+                {event.tags.map((tag: string) => (
+                  <span
+                    key={tag}
+                    className="text-[11px] bg-secondary text-secondary-foreground px-2 py-0.5 rounded"
+                  >
                     {tag}
                   </span>
                 ))}
@@ -178,24 +218,53 @@ export function EventRightSidebar({ organizer, relatedEvents, eventData, attende
         </h4>
 
         <div className="grid grid-cols-5 gap-2">
-           <Button variant="outline" size="icon" className="w-full h-10" onClick={handleCopyLink} title="Copiar enlace">
-             <LinkIcon className="size-4 text-muted-foreground" />
-           </Button>
-           <Button variant="outline" size="icon" className="w-full h-10" onClick={handleShareWhatsApp} title="WhatsApp">
-             <span className="font-bold text-[#25D366]">W</span>
-           </Button>
-           <Button variant="outline" size="icon" className="w-full h-10" onClick={handleShareTelegram} title="Telegram">
-             <span className="font-bold text-[#0088cc]">T</span>
-           </Button>
-           <Button variant="outline" size="icon" className="w-full h-10" onClick={handleShareFacebook} title="Facebook">
-             <span className="font-bold text-[#1877F2]">f</span>
-           </Button>
-           <Button variant="outline" size="icon" className="w-full h-10" onClick={handleShareX} title="X">
-             <span className="font-bold text-foreground">X</span>
-           </Button>
+          <Button
+            variant="outline"
+            size="icon"
+            className="w-full h-10"
+            onClick={handleCopyLink}
+            title="Copiar enlace"
+          >
+            <LinkIcon className="size-4 text-muted-foreground" />
+          </Button>
+          <Button
+            variant="outline"
+            size="icon"
+            className="w-full h-10"
+            onClick={handleShareWhatsApp}
+            title="WhatsApp"
+          >
+            <span className="font-bold text-[#25D366]">W</span>
+          </Button>
+          <Button
+            variant="outline"
+            size="icon"
+            className="w-full h-10"
+            onClick={handleShareTelegram}
+            title="Telegram"
+          >
+            <span className="font-bold text-[#0088cc]">T</span>
+          </Button>
+          <Button
+            variant="outline"
+            size="icon"
+            className="w-full h-10"
+            onClick={handleShareFacebook}
+            title="Facebook"
+          >
+            <span className="font-bold text-[#1877F2]">f</span>
+          </Button>
+          <Button
+            variant="outline"
+            size="icon"
+            className="w-full h-10"
+            onClick={handleShareX}
+            title="X"
+          >
+            <span className="font-bold text-foreground">X</span>
+          </Button>
         </div>
       </div>
-
     </aside>
   );
 }

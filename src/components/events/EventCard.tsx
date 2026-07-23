@@ -26,7 +26,7 @@ import {
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface EventCardProps {
-  event: EventData;
+  event: any;
   variant?: "featured" | "important" | "compact" | "sidebar";
 }
 
@@ -35,10 +35,10 @@ export function EventCard({ event, variant = "compact" }: EventCardProps) {
   const [isInterested, setIsInterested] = useState(event.status === "interested");
   const [isAttending, setIsAttending] = useState(event.status === "attending");
   const [isSaved, setIsSaved] = useState(event.status === "saved");
-  const [interestedCount, setInterestedCount] = useState(event.interested);
+  const [interestedCount, setInterestedCount] = useState(event.max_attendees || 0);
   const [attendeesCount, setAttendeesCount] = useState(event.attendees.length);
 
-  const dateParts = event.date.split(" ");
+  const dateParts = event.event_date.split(" ");
   const day = dateParts[0];
   const month = dateParts[1];
 
@@ -46,11 +46,11 @@ export function EventCard({ event, variant = "compact" }: EventCardProps) {
     e.stopPropagation();
     if (isInterested) {
       setIsInterested(false);
-      setInterestedCount((prev) => prev - 1);
+      setInterestedCount((prev: any) => prev - 1);
     } else {
       setIsInterested(true);
       setIsAttending(false);
-      setInterestedCount((prev) => prev + 1);
+      setInterestedCount((prev: any) => prev + 1);
       setIsSaved(true);
     }
   };
@@ -59,11 +59,11 @@ export function EventCard({ event, variant = "compact" }: EventCardProps) {
     e.stopPropagation();
     if (isAttending) {
       setIsAttending(false);
-      setAttendeesCount((prev) => prev - 1);
+      setAttendeesCount((prev: any) => prev - 1);
     } else {
       setIsAttending(true);
       setIsInterested(false);
-      setAttendeesCount((prev) => prev + 1);
+      setAttendeesCount((prev: any) => prev + 1);
     }
   };
 
@@ -81,7 +81,7 @@ export function EventCard({ event, variant = "compact" }: EventCardProps) {
     if (!event.tags || event.tags.length === 0) return null;
     return (
       <div className="flex flex-wrap gap-1.5 mt-2">
-        {event.tags.map((tag) => (
+        {event.tags.map((tag: any) => (
           <span
             key={tag}
             className="bg-secondary/50 text-secondary-foreground text-[10px] font-bold px-2 py-0.5 rounded-sm"
@@ -156,15 +156,15 @@ export function EventCard({ event, variant = "compact" }: EventCardProps) {
       <div onClick={handleCardClick} className="flex gap-3 group cursor-pointer w-full">
         <img
           src={event.cover}
-          alt={event.title}
+          alt={event.name}
           className="w-[60px] h-[60px] rounded object-cover border border-border shrink-0"
         />
         <div className="flex flex-col justify-center min-w-0">
           <h5 className="text-[13px] font-bold text-foreground group-hover:text-primary transition-colors truncate">
-            {event.title}
+            {event.name}
           </h5>
           <span className="text-[12px] text-muted-foreground truncate">{event.location}</span>
-          <span className="text-[11px] font-medium text-primary mt-0.5">{event.date}</span>
+          <span className="text-[11px] font-medium text-primary mt-0.5">{event.event_date}</span>
         </div>
       </div>
     );
@@ -190,7 +190,7 @@ export function EventCard({ event, variant = "compact" }: EventCardProps) {
         </div>
 
         <div className="w-full md:w-3/5 h-[200px] md:h-auto shrink-0 relative border-r border-border/50">
-          <img src={event.cover} alt={event.title} className="w-full h-full object-cover" />
+          <img src={event.cover} alt={event.name} className="w-full h-full object-cover" />
           <div className="absolute top-3 right-3 bg-black/60 backdrop-blur-sm text-white px-2.5 py-1 rounded-sm text-[12px] font-medium">
             {event.category}
           </div>
@@ -200,7 +200,7 @@ export function EventCard({ event, variant = "compact" }: EventCardProps) {
           <div className="flex flex-col gap-3">
             <div className="flex justify-between items-start">
               <h3 className="text-xl font-bold text-foreground leading-tight line-clamp-2 pr-2">
-                {event.title}
+                {event.name}
               </h3>
               <div className="hidden md:block shrink-0">
                 <DesktopMoreOptions />
@@ -218,7 +218,7 @@ export function EventCard({ event, variant = "compact" }: EventCardProps) {
               </div>
               <div className="flex items-center gap-2 text-[13px] text-foreground font-medium">
                 <Clock className="size-4 text-muted-foreground shrink-0" />
-                <span>{event.time}</span>
+                <span>{event.event_time}</span>
               </div>
               <div className="flex items-center gap-2 text-[13px] text-foreground font-medium">
                 <Users className="size-4 text-muted-foreground shrink-0" />
@@ -272,7 +272,7 @@ export function EventCard({ event, variant = "compact" }: EventCardProps) {
       className="bg-card rounded-sm border border-[#c2c9d6] flex flex-col shadow-sm hover:border-primary/50 hover:shadow-md transition-all duration-200 overflow-hidden cursor-pointer w-full h-full group"
     >
       <div className={`w-full shrink-0 relative ${imageClasses}`}>
-        <img src={event.cover} alt={event.title} className="w-full h-full object-cover" />
+        <img src={event.cover} alt={event.name} className="w-full h-full object-cover" />
         <div className="absolute top-2 left-2 flex flex-col items-center justify-center bg-background text-foreground shadow-md rounded-sm w-[42px] h-[46px] border border-border">
           <span className="text-[18px] font-extrabold leading-none text-primary">{day}</span>
           <span className="text-[9px] font-bold uppercase">{month}</span>
@@ -287,7 +287,7 @@ export function EventCard({ event, variant = "compact" }: EventCardProps) {
           <h3
             className={`${titleClasses} font-bold text-foreground leading-tight line-clamp-2 pr-2`}
           >
-            {event.title}
+            {event.name}
           </h3>
           <div className="shrink-0">
             <DropdownMenu>
@@ -331,7 +331,7 @@ export function EventCard({ event, variant = "compact" }: EventCardProps) {
           </div>
           <div className="flex items-center gap-2 text-[12px] text-muted-foreground">
             <Clock className="size-3.5 shrink-0" />
-            <span>{event.time}</span>
+            <span>{event.event_time}</span>
           </div>
           <div className="flex items-center gap-2 text-[12px] text-muted-foreground">
             <span className="font-bold text-foreground shrink-0">
@@ -350,7 +350,7 @@ export function EventCard({ event, variant = "compact" }: EventCardProps) {
           <div className="flex items-center gap-2">
             {event.attendees.length > 0 ? (
               <div className="flex -space-x-1.5">
-                {event.attendees.slice(0, 3).map((attendee, i) => (
+                {event.attendees.slice(0, 3).map((attendee: any, i: number) => (
                   <TooltipProvider key={attendee.id}>
                     <Tooltip>
                       <TooltipTrigger asChild>

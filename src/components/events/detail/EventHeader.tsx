@@ -151,7 +151,7 @@ export function EventHeader({ event, organizer, attendeesCount }: EventHeaderPro
   return (
     <div className="bg-card rounded-sm border border-[#c2c9d6] overflow-hidden flex flex-col shadow-sm">
       <div className="w-full h-[300px] relative">
-        <img src={coverUrl} alt={event.title} className="w-full h-full object-cover" />
+        <img src={coverUrl} alt={event.name} className="w-full h-full object-cover" />
         <div className="absolute top-4 left-4 flex flex-col items-center justify-center bg-background text-foreground shadow-md rounded-sm w-[60px] h-[65px] border border-border">
           <span className="text-[26px] font-extrabold leading-none text-primary">{day}</span>
           <span className="text-[13px] font-bold uppercase">{month}</span>
@@ -162,7 +162,7 @@ export function EventHeader({ event, organizer, attendeesCount }: EventHeaderPro
       </div>
 
       <div className="p-6 md:p-8 flex flex-col">
-        <h1 className="text-3xl font-extrabold text-foreground mb-4">{event.title}</h1>
+        <h1 className="text-3xl font-extrabold text-foreground mb-4">{event.name}</h1>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           <div className="flex items-center gap-3 text-[15px] text-muted-foreground font-medium">
