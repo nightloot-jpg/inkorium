@@ -25,11 +25,19 @@ function EventDetailPage() {
       } = await supabase.auth.getUser();
 
       // Fetch event
-      const { data: event, error: eventError } = await supabase
-        .from("events")
-        .select("*, creator:profiles!events_author_id_fkey(*)")
-        .or(`id.eq.${id},slug.eq.${id}`)
-        .maybeSingle();
+
+      // Check if id is a UUID
+      const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+
+      let query = supabase.from("events").select("*, creator:profiles!events_author_id_fkey(*)");
+
+      if (isUUID) {
+        query = query.eq("id", id);
+      } else {
+        query = query.eq("slug", id);
+      }
+
+      const { data: event, error: eventError } = await query.maybeSingle();
 
       if (eventError) throw eventError;
 

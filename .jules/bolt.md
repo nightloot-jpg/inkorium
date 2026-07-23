@@ -29,3 +29,11 @@ Completed tests and fixed UI Event issues
 
 **Learning:** El entorno de Vite utiliza el `SUPABASE_PROJECT_ID` y `SUPABASE_URL` de las variables de entorno `.env` (`mgzajnjzzfilmbuptdrg`). Si aplicas una migración SQL en un proyecto diferente (`ycepybbbwytrtuiksdsb`), las peticiones a la DB y Storage desde el frontend fallarán con HTTP 400 (Bad Request) o relaciones que no existen.
 **Action:** Siempre verificar exhaustivamente cuál es el proyecto de base de datos que está usando el frontend leyendo el `.env` antes de ejecutar una migración de Supabase.
+
+## 2025-02-28 - PostgREST Schema Caching 400 Errors
+
+**Learning:** Supabase / PostgREST aggressively caches schema definitions. When executing raw DDL SQL commands (like `ALTER TABLE ... ADD CONSTRAINT`) to fix missing foreign key relationships for relational joins, the frontend will continue throwing HTTP 400 errors (Could not find a relationship...) until the cache is explicitly reloaded.
+**Action:** After making DDL schema changes via Supabase execute SQL, ALWAYS run `NOTIFY pgrst, 'reload schema';` to ensure the API immediately reflects the database changes. Alternatively, making changes through the Supabase Dashboard triggers this automatically. Also, mapped foreign keys must use the correct names (e.g., `events_author_id_fkey`) matching the constraint.
+## 2025-02-28 - PostgREST UUID 400 Bad Request
+**Learning:** PostgREST strictly enforces type safety when querying. If a query like `.or('id.eq.MY-SLUG,slug.eq.MY-SLUG')` is executed, and `id` is a UUID column but `MY-SLUG` is not a valid UUID format, PostgREST will fail the entire query with a 400 Bad Request error (invalid UUID).
+**Action:** When querying by either an ID or a slug, dynamically construct the query in JavaScript by checking if the parameter is a valid UUID regex before appending `.eq('id', param)` vs `.eq('slug', param)`.

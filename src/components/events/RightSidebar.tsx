@@ -11,13 +11,21 @@ export function RightSidebar() {
       id: "f1",
       name: "Carlos Gómez",
       avatar: "https://i.pravatar.cc/150?u=a2",
-      event: [][0],
+      event: {
+        title: "Concierto",
+        cover_url: "https://images.unsplash.com/photo-1540039155732-d68832aeb482?ixlib=rb-4.0.3",
+        start_date: "2026-08-06",
+      },
     },
     {
       id: "f2",
       name: "Sofía Martínez",
       avatar: "https://i.pravatar.cc/150?u=a5",
-      event: [][1],
+      event: {
+        title: "Festival",
+        cover_url: "https://images.unsplash.com/photo-1459749411175-04bf5292ceea?ixlib=rb-4.0.3",
+        start_date: "2026-08-08",
+      },
     },
   ];
 
