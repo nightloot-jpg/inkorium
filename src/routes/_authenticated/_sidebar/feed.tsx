@@ -247,7 +247,7 @@ function Composer({
   const [musicSubTab, setMusicSubTab] = useState("search");
   const [musicSearchQuery, setMusicSearchQuery] = useState("");
   const debouncedMusicSearchQuery = useDebounce(musicSearchQuery, 500);
-  const [searchResults, setSearchResults] = useState<any[]>([]); // eslint-disable-line @typescript-eslint/no-explicit-any
+  const [searchResults, setSearchResults] = useState<any[]>([]);
   const [isSearching, setIsSearching] = useState(false);
 
   useEffect(() => {
@@ -279,7 +279,7 @@ function Composer({
 
   const [content, setContent] = useState("");
   const [mediaUrl, setMediaUrl] = useState("");
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   const [extraData, setExtraData] = useState<any>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -323,7 +323,7 @@ function Composer({
         throw new Error("Añade algún contenido.");
 
       const finalType = activeTab;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
       const payload: any = {
         author_id: userId,
         content: text,

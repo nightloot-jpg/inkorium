@@ -281,3 +281,13 @@ Also, `Math.random()` and `new Date()` within initial render inside server-rende
 
 **Learning:** When using TanStack query and Supabase for data-driven UI, it is essential to consider the exact schema expected by the frontend vs what actually exists in Supabase. Creating the `saved_events` table through a migration rather than using a mock state ensures that the data layer remains consistent and respects the "real backend" requirements. Also, properly propagating the props from a Tanstack Router layout to deeper components (e.g. passing attendees from `route.tsx` to `EventRightSidebar.tsx`) simplifies state management and prevents redundant network requests.
 **Action:** Always verify if a required table exists via `types.ts` before attempting to use it in `useMutation` hooks. If it doesn't exist, create a migration first. For routing and layouts, ensure data loaded at the route level trickles down correctly to sidebar and main-content components instead of re-fetching individually.
+
+## 2026-07-23 - Eventos e2e conectados
+
+**Learning:** Generar e insertar payloads complejos a base de datos suele dar problemas con los tipos autogenerados de Supabase si la estructura diverge ligeramente (por ejemplo, omitiendo campos opcionales o añadiendo extras al insertar). La interfaz genérica de TypeScript requiere que cada clave esté correctamente tipada, lo que en objetos formados con desestructuración puede saltar fácilmente por propiedades perdidas como .
+**Action:** En flujos complejos que actualicen múltiples campos o permitan edición y creación a la vez, mapear explícitamente el `Insert` y `Update` payload por separado y, cuando estemos bloqueados, utilizar aserciones tipo `as any` o actualizar los `types.ts` y reiniciar el servidor de Typescript para asegurar que pasa localmente y en el CI de commit, evitando retrasos productivos.
+
+## 2026-07-23 - Eventos e2e conectados
+
+**Learning:** Generar e insertar payloads complejos a base de datos suele dar problemas con los tipos autogenerados de Supabase si la estructura diverge ligeramente (por ejemplo, omitiendo campos opcionales o añadiendo extras al insertar). La interfaz genérica de TypeScript events requiere que cada clave esté correctamente tipada, lo que en objetos formados con desestructuración puede saltar fácilmente por propiedades perdidas.
+**Action:** En flujos complejos que actualicen múltiples campos o permitan edición y creación a la vez, mapear explícitamente el Insert y Update payload por separado y utilizar aserciones o regenerar tipos evitando retrasos en Typescript.

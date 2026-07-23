@@ -4,6 +4,8 @@ import { Search } from "lucide-react";
 import { EventCard } from "@/components/events/EventCard";
 import { MOCK_EVENTS } from "@/components/events/types";
 import { Route } from "@/routes/_authenticated/eventos/route";
+import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from "@tanstack/react-query";
 
 const SORT_OPTIONS = [
   "Más próximos",
@@ -42,8 +44,20 @@ export function FeaturedEventsView() {
     });
   };
 
+  const { data: events = [] } = useQuery({
+    queryKey: ["featured-events"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("events")
+        .select("*, creator:profiles!events_author_id_fkey(*)")
+        .eq("status", "published");
+      if (error) throw error;
+      return data || [];
+    },
+  });
+
   const filteredEvents = useMemo(() => {
-    let result = [...MOCK_EVENTS];
+    let result = [...events];
 
     if (activeCategory !== "Todos") {
       result = result.filter((e) => e.category === activeCategory);
@@ -53,34 +67,33 @@ export function FeaturedEventsView() {
       const q = searchQuery.toLowerCase();
       result = result.filter(
         (e) =>
-          e.title.toLowerCase().includes(q) ||
-          e.artist?.toLowerCase().includes(q) ||
-          e.organizer?.toLowerCase().includes(q) ||
-          e.city.toLowerCase().includes(q) ||
-          e.location.toLowerCase().includes(q) ||
-          e.category.toLowerCase().includes(q) ||
-          e.description.toLowerCase().includes(q),
+          (e.name || "").toLowerCase().includes(q) ||
+          (e.organizer_name || "").toLowerCase().includes(q) ||
+          (e.city || "").toLowerCase().includes(q) ||
+          ((e as any).location || "").toLowerCase().includes(q) ||
+          (e.category || "").toLowerCase().includes(q) ||
+          (e.description || "").toLowerCase().includes(q),
       );
     }
 
     result.sort((a, b) => {
       switch (activeSort) {
         case "Más populares":
-          return b.interested - a.interested;
+          return (b.max_attendees || 0) - (a.max_attendees || 0);
         case "Más asistentes":
-          return b.attendees.length - a.attendees.length;
+          return ((b as any).attendees?.length || 0) - ((a as any).attendees?.length || 0);
         case "Alfabético":
-          return a.title.localeCompare(b.title);
+          return (a.name || "").localeCompare(b.name || "");
         case "Más recientes":
-          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+          return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime();
         case "Más próximos":
         default:
-          return new Date(a.dateISO).getTime() - new Date(b.dateISO).getTime();
+          return new Date(a.event_date || 0).getTime() - new Date(b.event_date || 0).getTime();
       }
     });
 
     return result;
-  }, [activeCategory, searchQuery, activeSort]);
+  }, [activeCategory, searchQuery, activeSort, events]);
 
   const featuredEvent = filteredEvents.length > 0 ? filteredEvents[0] : null;
   const importantEvents = filteredEvents.slice(1, 3);

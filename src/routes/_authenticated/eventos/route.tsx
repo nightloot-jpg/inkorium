@@ -37,7 +37,7 @@ function EventosLayout() {
     queryFn: async () => {
       const { data: event, error } = await supabase
         .from("events")
-        .select("*, creator:profiles!events_created_by_fkey(*)")
+        .select("*, creator:profiles!events_author_id_fkey(*)")
         .eq("id", eventId || "")
         .single();
 
@@ -46,7 +46,7 @@ function EventosLayout() {
       const { data: relatedEventsData } = await supabase
         .from("events")
         .select("*")
-        .eq("created_by", event.created_by)
+        .eq("author_id", event.author_id)
         .neq("id", event.id)
         .order("date", { ascending: true })
         .limit(3);
@@ -74,9 +74,10 @@ function EventosLayout() {
       </div>
       {isEventDetail && eventData ? (
         <EventRightSidebar
+          event={eventData.event}
           organizer={eventData.organizer}
           relatedEvents={eventData.relatedEvents}
-          eventData={eventData.event}
+          attendees={[]}
         />
       ) : (
         <RightSidebar />

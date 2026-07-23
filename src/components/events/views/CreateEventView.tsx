@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import { z } from "zod";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -111,7 +114,11 @@ const eventSchema = z.object({
 
 export type EventFormValues = z.infer<typeof eventSchema>;
 
-export function CreateEventView() {
+interface CreateEventViewProps {
+  existingEvent?: any;
+}
+
+export function CreateEventView({ existingEvent }: CreateEventViewProps) {
   const [coverPreview, setCoverPreview] = useState<string | null>(null);
   const [posterPreview, setPosterPreview] = useState<string | null>(null);
 
@@ -163,20 +170,189 @@ export function CreateEventView() {
   } = useForm<z.infer<typeof eventSchema>>({
     resolver: zodResolver(eventSchema) as any,
     defaultValues: {
-      showMap: false,
-      isPaid: false,
-      showAttendees: true,
-      allowComments: true,
-      allowShares: true,
-      allowPhotos: true,
-      privacy: "public",
-      tags: [],
+      title: existingEvent?.name || "",
+      category: existingEvent?.category || "",
+      shortDescription: existingEvent?.short_description || "",
+      fullDescription: existingEvent?.description || "",
+      startDate: existingEvent?.event_date || "",
+      startTime: existingEvent?.event_time || "",
+      endDate: existingEvent?.end_date || "",
+      endTime: existingEvent?.end_time || "",
+      city: existingEvent?.city || "",
+      address: existingEvent?.address || "",
+      venue: existingEvent?.venue || "",
+      postalCode: existingEvent?.postal_code || "",
+      country: existingEvent?.country || "",
+      showMap: existingEvent?.show_map ?? false,
+      isPaid: existingEvent?.is_paid ?? false,
+      price: existingEvent?.price || "",
+      ticketUrl: existingEvent?.ticket_url || "",
+      organizerName: existingEvent?.organizer_name || "",
+      organizerEmail: existingEvent?.organizer_email || "",
+      organizerWebsite: existingEvent?.organizer_website || "",
+      organizerInstagram: existingEvent?.organizer_instagram || "",
+      organizerFacebook: existingEvent?.organizer_facebook || "",
+      organizerX: existingEvent?.organizer_x || "",
+      organizerTikTok: existingEvent?.organizer_tiktok || "",
+      maxAttendees: existingEvent?.max_attendees ? String(existingEvent.max_attendees) : "",
+      showAttendees: existingEvent?.show_attendees ?? true,
+      allowComments: existingEvent?.allow_comments ?? true,
+      allowShares: existingEvent?.allow_shares ?? true,
+      allowPhotos: existingEvent?.allow_photos ?? true,
+      privacy: existingEvent?.privacy || "public",
+      tags: existingEvent?.tags || [],
+      youtubeSong: existingEvent?.youtube_song || "",
+      youtubePlaylist: existingEvent?.youtube_playlist || "",
     },
   });
 
-  const onSubmit = (data: any) => {
-    console.log("Form Data:", data);
-    // Submit logic here
+  const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const onSubmit = async (data: any, status: "published" | "draft" = "published") => {
+    try {
+      setIsSubmitting(true);
+
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (!session?.user) {
+        toast.error("Debes iniciar sesión para crear eventos");
+        return;
+      }
+
+      const author_id = session.user.id;
+
+      // Generar slug
+      const slugBase = data.title
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/(^-|-$)+/g, "");
+      const uniqueSuffix = Math.random().toString(36).substring(2, 8);
+      const slug = `${slugBase}-${uniqueSuffix}`;
+
+      // Subir imágenes
+      let cover_url = null;
+      if (data.coverImage) {
+        // En una implementación real, aquí leeríamos el File, generaríamos un nombre único y subiríamos a bucket "media".
+        // Para simplificar, asumiremos que coverImage puede ser un blob/URL temporal que ya se estaba manejando o subiremos directamente si es File.
+        // Si el usuario sube un archivo real, se debería subir aquí. Para este componente vamos a hacer un mock de subida real con storage de supabase
+        if (data.coverImage instanceof FileList && data.coverImage.length > 0) {
+          const file = data.coverImage[0];
+          const fileExt = file.name.split(".").pop();
+          const fileName = `${Math.random()}.${fileExt}`;
+          const filePath = `events/${slug}/${fileName}`;
+
+          const { error: uploadError } = await supabase.storage
+            .from("media")
+            .upload(filePath, file);
+          if (!uploadError) {
+            const { data: publicUrlData } = supabase.storage.from("media").getPublicUrl(filePath);
+            cover_url = publicUrlData.publicUrl;
+          }
+        }
+      }
+
+      let poster_url = null;
+      if (data.posterImage) {
+        if (data.posterImage instanceof FileList && data.posterImage.length > 0) {
+          const file = data.posterImage[0];
+          const fileExt = file.name.split(".").pop();
+          const fileName = `${Math.random()}.${fileExt}`;
+          const filePath = `events/${slug}/poster_${fileName}`;
+
+          const { error: uploadError } = await supabase.storage
+            .from("media")
+            .upload(filePath, file);
+          if (!uploadError) {
+            const { data: publicUrlData } = supabase.storage.from("media").getPublicUrl(filePath);
+            poster_url = publicUrlData.publicUrl;
+          }
+        }
+      }
+
+      // Insertar en events
+      const eventPayload: any = {
+        name: data.title,
+        category: data.category,
+        short_description: data.shortDescription,
+        description: data.fullDescription,
+        event_date: data.startDate,
+        event_time: data.startTime || "00:00:00",
+        end_date: data.endDate || null,
+        end_time: data.endTime || null,
+        city: data.city,
+        address: data.address,
+        venue: data.venue,
+        postal_code: data.postalCode,
+        country: data.country,
+        show_map: data.showMap,
+        cover_url,
+        poster_url,
+        is_paid: data.isPaid,
+        price: data.price,
+        ticket_url: data.ticketUrl,
+        organizer_name: data.organizerName,
+        organizer_email: data.organizerEmail,
+        organizer_website: data.organizerWebsite,
+        organizer_instagram: data.organizerInstagram,
+        organizer_facebook: data.organizerFacebook,
+        organizer_x: data.organizerX,
+        organizer_tiktok: data.organizerTikTok,
+        max_attendees: data.maxAttendees ? parseInt(data.maxAttendees) : null,
+        show_attendees: data.showAttendees,
+        allow_comments: data.allowComments,
+        allow_shares: data.allowShares,
+        allow_photos: data.allowPhotos,
+        privacy: data.privacy,
+        tags: data.tags,
+        youtube_song: data.youtubeSong,
+        youtube_playlist: data.youtubePlaylist,
+        status,
+        slug,
+      };
+
+      let newEvent;
+      let error;
+      if (existingEvent) {
+        const res = await supabase
+          .from("events")
+          .update(eventPayload)
+          .eq("id", existingEvent.id)
+          .select()
+          .single();
+        newEvent = res.data;
+        error = res.error;
+      } else {
+        const res = await supabase
+          .from("events")
+          .insert({ ...eventPayload, author_id } as any)
+          .select()
+          .single();
+        newEvent = res.data;
+        error = res.error;
+      }
+
+      if (error) throw error;
+
+      toast.success(
+        status === "published" ? "Evento publicado correctamente" : "Borrador guardado",
+      );
+
+      if (status === "published") {
+        navigate({
+          to: "/eventos/$id",
+          params: { id: (newEvent as any).slug || (newEvent as any).id },
+        });
+      } else {
+        navigate({ to: "/eventos/mis-eventos" });
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Ocurrió un error al guardar el evento");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -188,7 +364,7 @@ export function CreateEventView() {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+      <form onSubmit={handleSubmit((data) => onSubmit(data, "published"))} className="space-y-8">
         <Card className="bg-card rounded-sm border border-[#c2c9d6] shadow-sm">
           <CardHeader>
             <CardTitle>1. Información del evento</CardTitle>
@@ -758,13 +934,33 @@ export function CreateEventView() {
         </Card>
 
         <div className="flex flex-col sm:flex-row gap-3 justify-end pt-4 pb-12">
-          <Button type="button" variant="outline" className="w-full sm:w-auto">
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full sm:w-auto"
+            onClick={() => {
+              if (window.confirm("¿Deseas salir sin guardar? Los cambios se perderán.")) {
+                navigate({ to: "/eventos" });
+              }
+            }}
+            disabled={isSubmitting}
+          >
             Cancelar
           </Button>
-          <Button type="button" variant="secondary" className="w-full sm:w-auto bg-muted">
+          <Button
+            type="button"
+            variant="secondary"
+            className="w-full sm:w-auto bg-muted"
+            onClick={handleSubmit((data) => onSubmit(data, "draft"))}
+            disabled={isSubmitting}
+          >
             Guardar borrador
           </Button>
-          <Button type="submit" className="w-full sm:w-auto font-medium shadow-sm">
+          <Button
+            type="submit"
+            className="w-full sm:w-auto font-medium shadow-sm"
+            disabled={isSubmitting}
+          >
             Publicar evento
           </Button>
         </div>

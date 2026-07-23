@@ -21,8 +21,8 @@ function EventDetailPage() {
       // Fetch event
       const { data: event, error: eventError } = await supabase
         .from("events")
-        .select("*, creator:profiles!events_created_by_fkey(*)")
-        .eq("id", id)
+        .select("*, creator:profiles!events_author_id_fkey(*)")
+        .or(`id.eq.${id},slug.eq.${id}`)
         .single();
 
       if (eventError) throw eventError;
@@ -49,7 +49,7 @@ function EventDetailPage() {
       const { data: relatedEventsData, error: relatedError } = await supabase
         .from("events")
         .select("*")
-        .eq("created_by", event.created_by)
+        .eq("author_id", event.author_id)
         .neq("id", event.id)
         .order("date", { ascending: true })
         .limit(3);

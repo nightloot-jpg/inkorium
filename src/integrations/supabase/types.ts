@@ -8,6 +8,39 @@ export type Database = {
   };
   public: {
     Tables: {
+      saved_events: {
+        Row: {
+          event_id: string;
+          user_id: string;
+          created_at: string;
+        };
+        Insert: {
+          event_id: string;
+          user_id: string;
+          created_at?: string;
+        };
+        Update: {
+          event_id?: string;
+          user_id?: string;
+          created_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "saved_events_event_id_fkey";
+            columns: ["event_id"];
+            isOneToOne: false;
+            referencedRelation: "events";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "saved_events_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       event_attendees: {
         Row: {
           created_at: string;
@@ -46,43 +79,130 @@ export type Database = {
       };
       events: {
         Row: {
-          category: string;
-          city: string;
+          author_id: string;
+          name: string;
+          event_date: string;
+          event_time: string;
+          slug: string | null;
+          category: string | null;
+          short_description: string | null;
+          end_date: string | null;
+          end_time: string | null;
+          city: string | null;
+          address: string | null;
+          venue: string | null;
+          postal_code: string | null;
+          country: string | null;
+          show_map: boolean | null;
           cover_url: string | null;
+          poster_url: string | null;
+          is_paid: boolean | null;
+          price: string | null;
+          ticket_url: string | null;
+          organizer_name: string | null;
+          organizer_email: string | null;
+          organizer_website: string | null;
+          organizer_instagram: string | null;
+          organizer_facebook: string | null;
+          organizer_x: string | null;
+          organizer_tiktok: string | null;
+          max_attendees: number | null;
+          show_attendees: boolean | null;
+          allow_comments: boolean | null;
+          allow_shares: boolean | null;
+          allow_photos: boolean | null;
+          privacy: string | null;
+          tags: string[] | null;
+          youtube_song: string | null;
+          youtube_playlist: string | null;
+          status: string | null;
+          description: string | null;
           created_at: string;
-          created_by: string;
-          date: string;
-          description: string;
           id: string;
-          location: string;
-          time: string;
-          title: string;
         };
         Insert: {
-          category: string;
-          city: string;
+          author_id: string;
+          name: string;
+          event_date: string;
+          event_time: string;
+          slug?: string | null;
+          category?: string | null;
+          short_description?: string | null;
+          end_date?: string | null;
+          end_time?: string | null;
+          city?: string | null;
+          address?: string | null;
+          venue?: string | null;
+          postal_code?: string | null;
+          country?: string | null;
+          show_map?: boolean | null;
           cover_url?: string | null;
+          poster_url?: string | null;
+          is_paid?: boolean | null;
+          price?: string | null;
+          ticket_url?: string | null;
+          organizer_name?: string | null;
+          organizer_email?: string | null;
+          organizer_website?: string | null;
+          organizer_instagram?: string | null;
+          organizer_facebook?: string | null;
+          organizer_x?: string | null;
+          organizer_tiktok?: string | null;
+          max_attendees?: number | null;
+          show_attendees?: boolean | null;
+          allow_comments?: boolean | null;
+          allow_shares?: boolean | null;
+          allow_photos?: boolean | null;
+          privacy?: string | null;
+          tags?: string[] | null;
+          youtube_song?: string | null;
+          youtube_playlist?: string | null;
+          status?: string | null;
+          description?: string | null;
           created_at?: string;
-          created_by: string;
-          date: string;
-          description: string;
           id?: string;
-          location: string;
-          time: string;
-          title: string;
         };
         Update: {
-          category?: string;
-          city?: string;
+          author_id?: string;
+          name?: string;
+          event_date?: string;
+          event_time?: string;
+          slug?: string | null;
+          category?: string | null;
+          short_description?: string | null;
+          end_date?: string | null;
+          end_time?: string | null;
+          city?: string | null;
+          address?: string | null;
+          venue?: string | null;
+          postal_code?: string | null;
+          country?: string | null;
+          show_map?: boolean | null;
           cover_url?: string | null;
+          poster_url?: string | null;
+          is_paid?: boolean | null;
+          price?: string | null;
+          ticket_url?: string | null;
+          organizer_name?: string | null;
+          organizer_email?: string | null;
+          organizer_website?: string | null;
+          organizer_instagram?: string | null;
+          organizer_facebook?: string | null;
+          organizer_x?: string | null;
+          organizer_tiktok?: string | null;
+          max_attendees?: number | null;
+          show_attendees?: boolean | null;
+          allow_comments?: boolean | null;
+          allow_shares?: boolean | null;
+          allow_photos?: boolean | null;
+          privacy?: string | null;
+          tags?: string[] | null;
+          youtube_song?: string | null;
+          youtube_playlist?: string | null;
+          status?: string | null;
+          description?: string | null;
           created_at?: string;
-          created_by?: string;
-          date?: string;
-          description?: string;
           id?: string;
-          location?: string;
-          time?: string;
-          title?: string;
         };
         Relationships: [
           {

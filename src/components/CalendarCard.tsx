@@ -36,7 +36,6 @@ export function CalendarCard({ userId }: { userId: string }) {
         date.getFullYear(),
       ].join("/");
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const payload: any = {
         author_id: userId,
         content: `Evento: ${name} | ${formattedDate} ${time} | ${location} | ${description}`.trim(),
