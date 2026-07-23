@@ -99,7 +99,7 @@ function ProfilePage() {
         .eq("type", "music")
         .order("created_at", { ascending: false })
         .limit(1)
-        .single();
+        .maybeSingle();
       return data;
     },
   });

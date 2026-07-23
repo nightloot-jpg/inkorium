@@ -19,7 +19,11 @@ export function EventComments({ eventId }: EventCommentsProps) {
     queryKey: ["profile", currentUserId],
     queryFn: async () => {
       if (!currentUserId) return null;
-      const { data } = await supabase.from("profiles").select("*").eq("id", currentUserId).single();
+      const { data } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", currentUserId)
+        .maybeSingle();
       return data;
     },
   });

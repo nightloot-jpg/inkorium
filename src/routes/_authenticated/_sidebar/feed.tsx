@@ -55,7 +55,7 @@ function FeedPage() {
           "id, username, display_name, avatar_url, bio, status_message, online_status, visits_count, location",
         )
         .eq("id", userId)
-        .single();
+        .maybeSingle();
       return data;
     },
   });

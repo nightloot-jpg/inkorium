@@ -52,7 +52,7 @@ function AuthenticatedLayout() {
         .from("profiles")
         .select("id, username, display_name, avatar_url, bio")
         .eq("id", userId)
-        .single();
+        .maybeSingle();
       if (error) throw error;
       return data;
     },
