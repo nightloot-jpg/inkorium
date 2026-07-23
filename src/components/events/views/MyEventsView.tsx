@@ -15,9 +15,9 @@ export function MyEventsView() {
       </div>
 
       {savedEvents.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {savedEvents.map((event) => (
-            <EventCard key={event.id} event={event} />
+            <EventCard key={event.id} event={event} variant="important" />
           ))}
         </div>
       ) : (

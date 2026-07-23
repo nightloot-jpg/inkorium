@@ -23,16 +23,16 @@ export function RightSidebar() {
   ];
 
   return (
-    <aside className="space-y-4 hidden xl:block w-[300px] shrink-0">
+    <aside className="space-y-6 hidden xl:block w-[300px] shrink-0">
       <div className="bg-card rounded-sm border border-[#c2c9d6] p-4 flex flex-col items-center">
         <Calendar mode="single" selected={date} onSelect={setDate} className="rounded-md w-full" />
       </div>
 
-      <div className="bg-card rounded-sm border border-[#c2c9d6] p-5">
-        <h4 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wide mb-4">
+      <div className="bg-card rounded-sm border border-[#c2c9d6] p-4">
+        <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide mb-4">
           AMIGOS QUE ASISTIRÁN ({friendsAttending.length})
         </h4>
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-3">
           {friendsAttending.map((friend) => (
             <div key={friend.id} className="flex gap-3">
               <img
@@ -53,7 +53,7 @@ export function RightSidebar() {
                       className="w-10 h-10 rounded object-cover"
                     />
                     <div className="flex flex-col min-w-0 justify-center">
-                      <span className="text-[11px] font-bold text-foreground truncate">
+                      <span className="text-[10px] font-bold text-foreground truncate">
                         {friend.event.title}
                       </span>
                       <span className="text-[10px] text-muted-foreground">{friend.event.date}</span>
@@ -66,13 +66,13 @@ export function RightSidebar() {
         </div>
       </div>
 
-      <div className="bg-card rounded-sm border border-[#c2c9d6] p-5">
-        <h4 className="text-[11px] font-bold text-muted-foreground uppercase tracking-wide mb-4">
+      <div className="bg-card rounded-sm border border-[#c2c9d6] p-4">
+        <h4 className="text-[10px] font-bold text-muted-foreground uppercase tracking-wide mb-4">
           EVENTOS RECOMENDADOS
         </h4>
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-3">
           {MOCK_EVENTS.map((event) => (
-            <EventCard key={event.id} event={event} />
+            <EventCard key={event.id} event={event} variant="sidebar" />
           ))}
         </div>
       </div>
