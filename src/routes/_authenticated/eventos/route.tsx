@@ -42,6 +42,7 @@ function EventosLayout() {
         .maybeSingle();
 
       if (error) throw error;
+      if (!event) throw new Error("Event not found");
 
       const { data: relatedEventsData } = await supabase
         .from("events")

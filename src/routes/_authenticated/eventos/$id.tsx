@@ -27,6 +27,7 @@ function EventDetailPage() {
 
       if (eventError) throw eventError;
 
+      if (!event) throw new Error("Event not found");
       // Fetch attendees
       const { data: attendeesData, error: attError } = await supabase
         .from("event_attendees")
