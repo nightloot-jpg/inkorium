@@ -43,7 +43,7 @@ export function EventCard({ event, variant = "compact" }: EventCardProps) {
 
   // Safe split for date
   const dateStr = event.event_date || "";
-  const dateParts = dateStr.split(" ");
+  const dateParts = (dateStr ?? "").split(" ");
   const day = dateParts[0] || "";
   const month = dateParts[1] || "";
 
