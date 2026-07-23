@@ -1,4 +1,4 @@
-
+/* eslint-disable */
 
 // @ts-nocheck
 
@@ -33,6 +33,7 @@ import { Route as AuthenticatedSidebarFotosRouteImport } from './routes/_authent
 import { Route as AuthenticatedSidebarFeedRouteImport } from './routes/_authenticated/_sidebar/feed'
 import { Route as AuthenticatedSidebarEncuestasRouteImport } from './routes/_authenticated/_sidebar/encuestas'
 import { Route as AuthenticatedSidebarConfiguracionRouteImport } from './routes/_authenticated/_sidebar/configuracion'
+import { Route as AuthenticatedEventosEditarIdRouteImport } from './routes/_authenticated/eventos/editar.$id'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
@@ -169,6 +170,12 @@ const AuthenticatedSidebarConfiguracionRoute =
     path: '/configuracion',
     getParentRoute: () => AuthenticatedSidebarRoute,
   } as any)
+const AuthenticatedEventosEditarIdRoute =
+  AuthenticatedEventosEditarIdRouteImport.update({
+    id: '/editar/$id',
+    path: '/editar/$id',
+    getParentRoute: () => AuthenticatedEventosRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -193,6 +200,7 @@ export interface FileRoutesByFullPath {
   '/mensajes/$username': typeof AuthenticatedMensajesUsernameRoute
   '/perfil/$username': typeof AuthenticatedPerfilUsernameRoute
   '/eventos/': typeof AuthenticatedEventosIndexRoute
+  '/eventos/editar/$id': typeof AuthenticatedEventosEditarIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -216,6 +224,7 @@ export interface FileRoutesByTo {
   '/mensajes/$username': typeof AuthenticatedMensajesUsernameRoute
   '/perfil/$username': typeof AuthenticatedPerfilUsernameRoute
   '/eventos': typeof AuthenticatedEventosIndexRoute
+  '/eventos/editar/$id': typeof AuthenticatedEventosEditarIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -243,6 +252,7 @@ export interface FileRoutesById {
   '/_authenticated/mensajes/$username': typeof AuthenticatedMensajesUsernameRoute
   '/_authenticated/perfil/$username': typeof AuthenticatedPerfilUsernameRoute
   '/_authenticated/eventos/': typeof AuthenticatedEventosIndexRoute
+  '/_authenticated/eventos/editar/$id': typeof AuthenticatedEventosEditarIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -269,6 +279,7 @@ export interface FileRouteTypes {
     | '/mensajes/$username'
     | '/perfil/$username'
     | '/eventos/'
+    | '/eventos/editar/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -292,6 +303,7 @@ export interface FileRouteTypes {
     | '/mensajes/$username'
     | '/perfil/$username'
     | '/eventos'
+    | '/eventos/editar/$id'
   id:
     | '__root__'
     | '/'
@@ -318,6 +330,7 @@ export interface FileRouteTypes {
     | '/_authenticated/mensajes/$username'
     | '/_authenticated/perfil/$username'
     | '/_authenticated/eventos/'
+    | '/_authenticated/eventos/editar/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -496,6 +509,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSidebarConfiguracionRouteImport
       parentRoute: typeof AuthenticatedSidebarRoute
     }
+    '/_authenticated/eventos/editar/$id': {
+      id: '/_authenticated/eventos/editar/$id'
+      path: '/editar/$id'
+      fullPath: '/eventos/editar/$id'
+      preLoaderRoute: typeof AuthenticatedEventosEditarIdRouteImport
+      parentRoute: typeof AuthenticatedEventosRouteRoute
+    }
   }
 }
 
@@ -506,6 +526,7 @@ interface AuthenticatedEventosRouteRouteChildren {
   AuthenticatedEventosCrearRoute: typeof AuthenticatedEventosCrearRoute
   AuthenticatedEventosMisEventosRoute: typeof AuthenticatedEventosMisEventosRoute
   AuthenticatedEventosIndexRoute: typeof AuthenticatedEventosIndexRoute
+  AuthenticatedEventosEditarIdRoute: typeof AuthenticatedEventosEditarIdRoute
 }
 
 const AuthenticatedEventosRouteRouteChildren: AuthenticatedEventosRouteRouteChildren =
@@ -516,6 +537,7 @@ const AuthenticatedEventosRouteRouteChildren: AuthenticatedEventosRouteRouteChil
     AuthenticatedEventosCrearRoute: AuthenticatedEventosCrearRoute,
     AuthenticatedEventosMisEventosRoute: AuthenticatedEventosMisEventosRoute,
     AuthenticatedEventosIndexRoute: AuthenticatedEventosIndexRoute,
+    AuthenticatedEventosEditarIdRoute: AuthenticatedEventosEditarIdRoute,
   }
 
 const AuthenticatedEventosRouteRouteWithChildren =

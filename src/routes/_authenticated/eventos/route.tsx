@@ -38,7 +38,7 @@ function EventosLayout() {
       const { data: event, error } = await supabase
         .from("events")
         .select("*, creator:profiles!events_author_id_fkey(*)")
-        .eq("id", eventId || "")
+        .or(`id.eq.${eventId || "00000000-0000-0000-0000-000000000000"},slug.eq.${eventId || ""}`)
         .single();
 
       if (error) throw error;
@@ -48,7 +48,7 @@ function EventosLayout() {
         .select("*")
         .eq("author_id", event.author_id)
         .neq("id", event.id)
-        .order("date", { ascending: true })
+        .order("event_date", { ascending: true })
         .limit(3);
 
       const relatedEvents = (relatedEventsData || []).map((ev) => ({
