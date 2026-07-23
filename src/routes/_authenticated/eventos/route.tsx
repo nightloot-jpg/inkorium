@@ -39,7 +39,7 @@ function EventosLayout() {
         .from("events")
         .select("*, creator:profiles!events_author_id_fkey(*)")
         .or(`id.eq.${eventId || "00000000-0000-0000-0000-000000000000"},slug.eq.${eventId || ""}`)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
 

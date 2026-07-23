@@ -36,11 +36,31 @@ export function EventCard({ event, variant = "compact" }: EventCardProps) {
   const [isAttending, setIsAttending] = useState(event.status === "attending");
   const [isSaved, setIsSaved] = useState(event.status === "saved");
   const [interestedCount, setInterestedCount] = useState(event.max_attendees || 0);
-  const [attendeesCount, setAttendeesCount] = useState(event.attendees.length);
 
-  const dateParts = event.event_date.split(" ");
-  const day = dateParts[0];
-  const month = dateParts[1];
+  // Safe default for attendees
+  const attendeesList = Array.isArray(event.attendees) ? event.attendees : [];
+  const [attendeesCount, setAttendeesCount] = useState(attendeesList.length);
+
+  // Safe split for date
+  const dateStr = event.event_date || "";
+  const dateParts = dateStr.split(" ");
+  const day = dateParts[0] || "";
+  const month = dateParts[1] || "";
+
+  // Safe defaults
+  const eventName = event.name || "Evento sin título";
+  const eventCity = event.city || "Sin ubicación";
+  const eventLocation = event.location || eventCity; // fallback to city if location is undefined
+  const eventDateDisplay = event.event_date || "Fecha pendiente";
+  const eventTimeDisplay = event.event_time || "Hora pendiente";
+  const eventDescription = event.description || "";
+  const eventCategory = event.category || "Categoría";
+  const coverUrl =
+    event.cover ||
+    event.cover_url ||
+    "https://images.unsplash.com/photo-1540039155732-d68832aeb482?ixlib=rb-4.0.3";
+  const tagsList = Array.isArray(event.tags) ? event.tags : [];
+  const organizerName = event.organizer || event.organizer_name || "";
 
   const handleInterest = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -73,15 +93,22 @@ export function EventCard({ event, variant = "compact" }: EventCardProps) {
   };
 
   const handleCardClick = () => {
-    navigate({ to: "/eventos" }); // Temporary fallback
+    // If it has a slug or id, use it for navigation
+    if (event.slug) {
+      navigate({ to: `/eventos/${event.slug}` } as any);
+    } else if (event.id) {
+      navigate({ to: `/eventos/${event.id}` } as any);
+    } else {
+      navigate({ to: "/eventos" });
+    }
   };
 
   // Common tags component
   const Tags = () => {
-    if (!event.tags || event.tags.length === 0) return null;
+    if (tagsList.length === 0) return null;
     return (
       <div className="flex flex-wrap gap-1.5 mt-2">
-        {event.tags.map((tag: any) => (
+        {tagsList.map((tag: any) => (
           <span
             key={tag}
             className="bg-secondary/50 text-secondary-foreground text-[10px] font-bold px-2 py-0.5 rounded-sm"
@@ -155,16 +182,16 @@ export function EventCard({ event, variant = "compact" }: EventCardProps) {
     return (
       <div onClick={handleCardClick} className="flex gap-3 group cursor-pointer w-full">
         <img
-          src={event.cover}
-          alt={event.name}
+          src={coverUrl}
+          alt={eventName}
           className="w-[60px] h-[60px] rounded object-cover border border-border shrink-0"
         />
         <div className="flex flex-col justify-center min-w-0">
           <h5 className="text-[13px] font-bold text-foreground group-hover:text-primary transition-colors truncate">
-            {event.name}
+            {eventName}
           </h5>
-          <span className="text-[12px] text-muted-foreground truncate">{event.location}</span>
-          <span className="text-[11px] font-medium text-primary mt-0.5">{event.event_date}</span>
+          <span className="text-[12px] text-muted-foreground truncate">{eventLocation}</span>
+          <span className="text-[11px] font-medium text-primary mt-0.5">{eventDateDisplay}</span>
         </div>
       </div>
     );
@@ -190,9 +217,9 @@ export function EventCard({ event, variant = "compact" }: EventCardProps) {
         </div>
 
         <div className="w-full md:w-3/5 h-[200px] md:h-auto shrink-0 relative border-r border-border/50">
-          <img src={event.cover} alt={event.name} className="w-full h-full object-cover" />
+          <img src={coverUrl} alt={eventName} className="w-full h-full object-cover" />
           <div className="absolute top-3 right-3 bg-black/60 backdrop-blur-sm text-white px-2.5 py-1 rounded-sm text-[12px] font-medium">
-            {event.category}
+            {eventCategory}
           </div>
         </div>
 
@@ -200,25 +227,25 @@ export function EventCard({ event, variant = "compact" }: EventCardProps) {
           <div className="flex flex-col gap-3">
             <div className="flex justify-between items-start">
               <h3 className="text-xl font-bold text-foreground leading-tight line-clamp-2 pr-2">
-                {event.name}
+                {eventName}
               </h3>
               <div className="hidden md:block shrink-0">
                 <DesktopMoreOptions />
               </div>
             </div>
 
-            <p className="text-[14px] text-muted-foreground line-clamp-2">{event.description}</p>
+            <p className="text-[14px] text-muted-foreground line-clamp-2">{eventDescription}</p>
 
             <div className="flex flex-col gap-2 mt-1">
               <div className="flex items-center gap-2 text-[13px] text-foreground font-medium">
                 <MapPin className="size-4 text-muted-foreground shrink-0" />
                 <span className="truncate">
-                  {event.location}, {event.city}
+                  {eventLocation}, {eventCity}
                 </span>
               </div>
               <div className="flex items-center gap-2 text-[13px] text-foreground font-medium">
                 <Clock className="size-4 text-muted-foreground shrink-0" />
-                <span>{event.event_time}</span>
+                <span>{eventTimeDisplay}</span>
               </div>
               <div className="flex items-center gap-2 text-[13px] text-foreground font-medium">
                 <Users className="size-4 text-muted-foreground shrink-0" />
@@ -272,13 +299,13 @@ export function EventCard({ event, variant = "compact" }: EventCardProps) {
       className="bg-card rounded-sm border border-[#c2c9d6] flex flex-col shadow-sm hover:border-primary/50 hover:shadow-md transition-all duration-200 overflow-hidden cursor-pointer w-full h-full group"
     >
       <div className={`w-full shrink-0 relative ${imageClasses}`}>
-        <img src={event.cover} alt={event.name} className="w-full h-full object-cover" />
+        <img src={coverUrl} alt={eventName} className="w-full h-full object-cover" />
         <div className="absolute top-2 left-2 flex flex-col items-center justify-center bg-background text-foreground shadow-md rounded-sm w-[42px] h-[46px] border border-border">
           <span className="text-[18px] font-extrabold leading-none text-primary">{day}</span>
           <span className="text-[9px] font-bold uppercase">{month}</span>
         </div>
         <div className="absolute top-2 right-2 bg-black/60 backdrop-blur-sm text-white px-2 py-0.5 rounded-sm text-[11px] font-medium">
-          {event.category}
+          {eventCategory}
         </div>
       </div>
 
@@ -287,7 +314,7 @@ export function EventCard({ event, variant = "compact" }: EventCardProps) {
           <h3
             className={`${titleClasses} font-bold text-foreground leading-tight line-clamp-2 pr-2`}
           >
-            {event.name}
+            {eventName}
           </h3>
           <div className="shrink-0">
             <DropdownMenu>
@@ -320,26 +347,26 @@ export function EventCard({ event, variant = "compact" }: EventCardProps) {
           </div>
         </div>
 
-        <p className="text-[13px] text-muted-foreground line-clamp-2 mb-3">{event.description}</p>
+        <p className="text-[13px] text-muted-foreground line-clamp-2 mb-3">{eventDescription}</p>
 
         <div className="flex flex-col gap-1.5 mt-auto mb-4">
           <div className="flex items-center gap-2 text-[12px] text-muted-foreground">
             <MapPin className="size-3.5 shrink-0" />
             <span className="truncate">
-              {event.location}, {event.city}
+              {eventLocation}, {eventCity}
             </span>
           </div>
           <div className="flex items-center gap-2 text-[12px] text-muted-foreground">
             <Clock className="size-3.5 shrink-0" />
-            <span>{event.event_time}</span>
+            <span>{eventTimeDisplay}</span>
           </div>
           <div className="flex items-center gap-2 text-[12px] text-muted-foreground">
             <span className="font-bold text-foreground shrink-0">
-              {event.price === 0 ? "Gratis" : `${event.price}€`}
+              {event.price === 0 || !event.price ? "Gratis" : `${event.price}€`}
             </span>
-            {event.organizer && (
+            {organizerName && (
               <span className="truncate opacity-80 border-l pl-2 border-border/50">
-                Por {event.organizer}
+                Por {organizerName}
               </span>
             )}
           </div>
@@ -348,22 +375,26 @@ export function EventCard({ event, variant = "compact" }: EventCardProps) {
 
         <div className="flex items-center justify-between pt-3 border-t border-border/50">
           <div className="flex items-center gap-2">
-            {event.attendees.length > 0 ? (
+            {attendeesList.length > 0 ? (
               <div className="flex -space-x-1.5">
-                {event.attendees.slice(0, 3).map((attendee: any, i: number) => (
+                {attendeesList.slice(0, 3).map((attendee: any, i: number) => (
                   <TooltipProvider key={attendee.id}>
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <img
-                          src={attendee.avatar}
-                          alt={attendee.name}
+                          src={
+                            attendee.avatar ||
+                            attendee.avatar_url ||
+                            "https://github.com/shadcn.png"
+                          }
+                          alt={attendee.name || "Usuario"}
                           className="w-6 h-6 rounded-full border border-card object-cover"
                           style={{ zIndex: 3 - i }}
                           onClick={(e) => e.stopPropagation()}
                         />
                       </TooltipTrigger>
                       <TooltipContent>
-                        <p>{attendee.name}</p>
+                        <p>{attendee.name || "Usuario"}</p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>

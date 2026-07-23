@@ -34,7 +34,7 @@ function SidebarLayout() {
           "id, username, display_name, avatar_url, bio, status_message, online_status, visits_count, location",
         )
         .eq("id", userId)
-        .single();
+        .maybeSingle();
       return data;
     },
   });
@@ -49,7 +49,7 @@ function SidebarLayout() {
         .eq("type", "music")
         .order("created_at", { ascending: false })
         .limit(1)
-        .single();
+        .maybeSingle();
       return data;
     },
   });

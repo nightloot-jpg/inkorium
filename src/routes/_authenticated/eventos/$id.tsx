@@ -23,7 +23,7 @@ function EventDetailPage() {
         .from("events")
         .select("*, creator:profiles!events_author_id_fkey(*)")
         .or(`id.eq.${id},slug.eq.${id}`)
-        .single();
+        .maybeSingle();
 
       if (eventError) throw eventError;
 

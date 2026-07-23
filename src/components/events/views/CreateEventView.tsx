@@ -320,7 +320,7 @@ export function CreateEventView({ existingEvent }: CreateEventViewProps) {
           .update(eventPayload)
           .eq("id", existingEvent.id)
           .select()
-          .single();
+          .maybeSingle();
         newEvent = res.data;
         error = res.error;
       } else {
@@ -328,7 +328,7 @@ export function CreateEventView({ existingEvent }: CreateEventViewProps) {
           .from("events")
           .insert({ ...eventPayload, author_id } as any)
           .select()
-          .single();
+          .maybeSingle();
         newEvent = res.data;
         error = res.error;
       }
