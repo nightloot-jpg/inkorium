@@ -26,9 +26,9 @@ export function CalendarView() {
             Eventos para {date.toLocaleDateString("es-ES", { day: "numeric", month: "long" })}
           </h2>
           {dateEvents.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {dateEvents.map((event) => (
-                <EventCard key={event.id} event={event} />
+                <EventCard key={event.id} event={event} variant="important" />
               ))}
             </div>
           ) : (

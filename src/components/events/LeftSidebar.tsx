@@ -18,7 +18,7 @@ export function LeftSidebar() {
   };
 
   return (
-    <aside className="space-y-4 hidden lg:block w-full">
+    <aside className="space-y-6 hidden lg:block w-full">
       <div className="bg-card rounded-sm border border-[#c2c9d6] p-4 flex flex-col gap-1">
         <MenuLink icon={Star} label="Eventos destacados" to="/eventos" exact />
         <MenuLink icon={CalendarIcon} label="Mis eventos" to="/eventos/mis-eventos" />
