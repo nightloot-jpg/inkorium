@@ -8,6 +8,93 @@ export type Database = {
   };
   public: {
     Tables: {
+      event_attendees: {
+        Row: {
+          created_at: string;
+          event_id: string;
+          status: Database["public"]["Enums"]["event_attendee_status"];
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          event_id: string;
+          status?: Database["public"]["Enums"]["event_attendee_status"];
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
+          event_id?: string;
+          status?: Database["public"]["Enums"]["event_attendee_status"];
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "event_attendees_event_id_fkey";
+            columns: ["event_id"];
+            isOneToOne: false;
+            referencedRelation: "events";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "event_attendees_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      events: {
+        Row: {
+          category: string;
+          city: string;
+          cover_url: string | null;
+          created_at: string;
+          created_by: string;
+          date: string;
+          description: string;
+          id: string;
+          location: string;
+          time: string;
+          title: string;
+        };
+        Insert: {
+          category: string;
+          city: string;
+          cover_url?: string | null;
+          created_at?: string;
+          created_by: string;
+          date: string;
+          description: string;
+          id?: string;
+          location: string;
+          time: string;
+          title: string;
+        };
+        Update: {
+          category?: string;
+          city?: string;
+          cover_url?: string | null;
+          created_at?: string;
+          created_by?: string;
+          date?: string;
+          description?: string;
+          id?: string;
+          location?: string;
+          time?: string;
+          title?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "events_created_by_fkey";
+            columns: ["created_by"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+
       comments: {
         Row: {
           author_id: string;
@@ -325,6 +412,7 @@ export type Database = {
       };
     };
     Enums: {
+      event_attendee_status: "attending" | "interested";
       friendship_status: "pending" | "accepted";
       post_type:
         | "status"
