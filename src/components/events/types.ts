@@ -23,6 +23,8 @@ export interface EventData {
   dateISO: string;
   friendsAttending: number;
   createdAt: string;
+  tags?: string[];
+  status?: "saved" | "attending" | "interested" | null;
 }
 
 // Current date in memory is 2026-07-23.
@@ -53,6 +55,8 @@ export const MOCK_EVENTS: EventData[] = [
     dateISO: "2026-10-15T21:00:00Z",
     friendsAttending: 2,
     createdAt: "2026-07-01T10:00:00Z",
+    tags: ["De pago"],
+    status: "interested",
   },
   {
     id: "2",
@@ -77,6 +81,8 @@ export const MOCK_EVENTS: EventData[] = [
     dateISO: "2026-07-23T10:00:00Z",
     friendsAttending: 0,
     createdAt: "2026-07-15T10:00:00Z",
+    tags: ["Gratis", "Hoy", "Nuevo"],
+    status: "attending",
   },
   {
     id: "3",
@@ -98,6 +104,8 @@ export const MOCK_EVENTS: EventData[] = [
     dateISO: "2026-07-25T17:00:00Z",
     friendsAttending: 1,
     createdAt: "2026-07-20T10:00:00Z",
+    tags: ["Online", "Gratis", "Este fin de semana"],
+    status: null,
   },
   {
     id: "4",
@@ -124,6 +132,8 @@ export const MOCK_EVENTS: EventData[] = [
     dateISO: "2026-07-28T12:00:00Z",
     friendsAttending: 3,
     createdAt: "2026-07-22T10:00:00Z",
+    tags: ["De pago", "Patrocinado"],
+    status: "saved",
   },
 ];
 

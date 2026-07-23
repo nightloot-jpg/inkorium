@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { Search, X } from "lucide-react";
-import { FeaturedEvent } from "@/components/events/FeaturedEvent";
 import { EventCard } from "@/components/events/EventCard";
 import { MOCK_EVENTS, MOCK_CATEGORIES } from "@/components/events/types";
 import { Route } from "@/routes/_authenticated/eventos/route";
@@ -297,12 +296,12 @@ export function FeaturedEventsView() {
       {/* Conditional Featured Event (hidden when filtering) */}
       {!isFilteringActive && MOCK_EVENTS.length > 0 && (
         <div className="mt-2">
-          <FeaturedEvent event={MOCK_EVENTS[0]} />
+          <EventCard event={MOCK_EVENTS[0]} />
         </div>
       )}
 
       {/* Event List */}
-      <div className="flex flex-col gap-5 mt-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-4">
         {filteredEvents.length > 0 ? (
           filteredEvents.map((event) => <EventCard key={event.id} event={event} />)
         ) : (

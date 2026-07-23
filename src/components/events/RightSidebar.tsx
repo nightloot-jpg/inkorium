@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Calendar } from "@/components/ui/calendar";
-import { MiniEvent } from "./MiniEvent";
+import { EventCard } from "./EventCard";
 import { MOCK_EVENTS } from "./types";
 
 export function RightSidebar() {
@@ -72,7 +72,7 @@ export function RightSidebar() {
         </h4>
         <div className="flex flex-col gap-4">
           {MOCK_EVENTS.map((event) => (
-            <MiniEvent key={event.id} event={event} />
+            <EventCard key={event.id} event={event} />
           ))}
         </div>
       </div>
