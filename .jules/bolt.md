@@ -26,5 +26,6 @@ Completed tests and fixed UI Event issues
 **Action:** Si necesitas desconectar mocks en archivos sin tiempo para refactorizar la query final (ej. `RightSidebar` que muestra eventos recomendados pero no era prioridad del scope), es mejor usar `([] as any[])` o similar para que el tipo infiera las propiedades y el compilador permita la ejecución sin romperse, manteniendo la interfaz viva.
 
 ## 2026-07-24 - [Errores 400 por tabla/bucket no encontrados]
+
 **Learning:** El entorno de Vite utiliza el `SUPABASE_PROJECT_ID` y `SUPABASE_URL` de las variables de entorno `.env` (`mgzajnjzzfilmbuptdrg`). Si aplicas una migración SQL en un proyecto diferente (`ycepybbbwytrtuiksdsb`), las peticiones a la DB y Storage desde el frontend fallarán con HTTP 400 (Bad Request) o relaciones que no existen.
 **Action:** Siempre verificar exhaustivamente cuál es el proyecto de base de datos que está usando el frontend leyendo el `.env` antes de ejecutar una migración de Supabase.
