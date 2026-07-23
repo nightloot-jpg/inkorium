@@ -25,6 +25,8 @@ export function EventComments({ eventId }: EventCommentsProps) {
   });
 
   const [content, setContent] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+  const [videoUrl, setVideoUrl] = useState("");
 
   const { data: posts, isLoading } = useQuery({
     queryKey: ["event_posts", eventId],
@@ -66,12 +68,31 @@ export function EventComments({ eventId }: EventCommentsProps) {
   const createPostMutation = useMutation({
     mutationFn: async () => {
       if (!currentUserId || !content.trim()) return;
+      // Handle youtube URLs
+      let finalType: "status" | "photo" | "video" = "status";
+      let ytId = null;
+      let finalVideoUrl = videoUrl || null;
+      const finalImageUrl = imageUrl || null;
+
+      if (finalImageUrl) finalType = "photo";
+      if (finalVideoUrl) {
+        finalType = "video";
+        const ytMatch = finalVideoUrl.match(
+          /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/,
+        );
+        if (ytMatch) {
+          ytId = ytMatch[1];
+          finalVideoUrl = null; // Use youtube_id instead
+        }
+      }
+
       const { error } = await supabase.from("posts").insert({
         author_id: currentUserId,
         content: content.trim(),
-        type: "status",
-        video_url: null,
-        youtube_id: null,
+        type: finalType,
+        image_url: finalImageUrl,
+        video_url: finalVideoUrl,
+        youtube_id: ytId,
         youtube_title: null,
         youtube_channel: null,
         youtube_duration: null,
@@ -83,6 +104,8 @@ export function EventComments({ eventId }: EventCommentsProps) {
     },
     onSuccess: () => {
       setContent("");
+      setImageUrl("");
+      setVideoUrl("");
       queryClient.invalidateQueries({ queryKey: ["event_posts", eventId] });
     },
   });
@@ -109,19 +132,49 @@ export function EventComments({ eventId }: EventCommentsProps) {
               value={content}
               onChange={(e) => setContent(e.target.value)}
             />
+            {imageUrl && (
+              <div className="relative mt-2">
+                <img src={imageUrl} className="max-h-40 rounded object-cover" />
+                <button
+                  onClick={() => setImageUrl("")}
+                  className="absolute top-1 right-1 bg-black/50 text-white p-1 rounded-full text-xs"
+                >
+                  X
+                </button>
+              </div>
+            )}
+            {videoUrl && (
+              <div className="relative mt-2 p-2 bg-secondary rounded text-xs truncate">
+                Vídeo adjunto: {videoUrl}
+                <button
+                  onClick={() => setVideoUrl("")}
+                  className="absolute top-1 right-1 bg-black/50 text-white p-1 rounded-full text-xs"
+                >
+                  X
+                </button>
+              </div>
+            )}
             <div className="flex justify-between items-center pt-2 border-t border-border/50">
               <div className="flex gap-1">
                 <Button
+                  onClick={() => {
+                    const url = prompt("Introduce la URL de la imagen:");
+                    if (url) setImageUrl(url);
+                  }}
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 text-primary/80 hover:text-primary rounded-full"
+                  className={`h-8 w-8 rounded-full ${imageUrl ? "text-primary" : "text-primary/80 hover:text-primary"}`}
                 >
                   <ImageIcon className="size-4" />
                 </Button>
                 <Button
+                  onClick={() => {
+                    const url = prompt("Introduce la URL del vídeo (YouTube, MP4):");
+                    if (url) setVideoUrl(url);
+                  }}
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 text-primary/80 hover:text-primary rounded-full"
+                  className={`h-8 w-8 rounded-full ${videoUrl ? "text-primary" : "text-primary/80 hover:text-primary"}`}
                 >
                   <Video className="size-4" />
                 </Button>

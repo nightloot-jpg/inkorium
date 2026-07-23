@@ -271,6 +271,13 @@ Also, `Math.random()` and `new Date()` within initial render inside server-rende
 
 **Learning:** For conditional rendering of complex widgets in a standard multi-column layout with react-router, `useMatches()` from `@tanstack/react-router` can be a powerful way to override the default RightSidebar component in a parent route based on a specific child route context, without restructuring the whole router setup.
 **Action:** Use `useMatches()` when you need a sibling component in a layout to adapt significantly based on the current child route without rewriting the parent layout's DOM structure.
+
 ## 2024-08-14 - React Forms con drag & drop
+
 **Learning:** En React con react-hook-form y zod, es crítico asegurar que los eventos de DOM (`onClick`, `onDrop`) estén propiamente bindeados en el JSX después de actualizarlos, o el componente visual se desconectará de la lógica y Zod rechazará la validación estricta de archivos requeridos.
 **Action:** Al usar scripts customizados para parchar código, siempre verificar con `cat` o un regex que el output del HTML de hecho haya sido reemplazado correctamente.
+
+## 2026-07-23 - Event Detail Implementation
+
+**Learning:** When using TanStack query and Supabase for data-driven UI, it is essential to consider the exact schema expected by the frontend vs what actually exists in Supabase. Creating the `saved_events` table through a migration rather than using a mock state ensures that the data layer remains consistent and respects the "real backend" requirements. Also, properly propagating the props from a Tanstack Router layout to deeper components (e.g. passing attendees from `route.tsx` to `EventRightSidebar.tsx`) simplifies state management and prevents redundant network requests.
+**Action:** Always verify if a required table exists via `types.ts` before attempting to use it in `useMutation` hooks. If it doesn't exist, create a migration first. For routing and layouts, ensure data loaded at the route level trickles down correctly to sidebar and main-content components instead of re-fetching individually.

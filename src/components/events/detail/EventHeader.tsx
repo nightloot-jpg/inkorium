@@ -1,4 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { Route as AuthRoute } from "@/routes/_authenticated/route";
+import { toast } from "sonner";
 import { Share, Bookmark, MapPin, Clock, Heart, Users, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -9,9 +13,131 @@ interface EventHeaderProps {
 }
 
 export function EventHeader({ event, organizer, attendeesCount }: EventHeaderProps) {
+  const queryClient = useQueryClient();
+  const auth = AuthRoute.useRouteContext();
+  const currentUserId = auth.userId;
+
+  // State is now managed via react-query data, but we can keep local state for optimistic updates
+  const { data: userStatus } = useQuery({
+    queryKey: ["event_status", event.id, currentUserId],
+    queryFn: async () => {
+      if (!currentUserId) return { status: null, saved: false };
+
+      const { data: attData } = await supabase
+        .from("event_attendees")
+        .select("status")
+        .eq("event_id", event.id)
+        .eq("user_id", currentUserId)
+        .maybeSingle();
+
+      const { data: savedData } = await supabase
+        .from("saved_events")
+        .select("id")
+        .eq("event_id", event.id)
+        .eq("user_id", currentUserId)
+        .maybeSingle();
+
+      return {
+        status: attData?.status || null,
+        saved: !!savedData,
+      };
+    },
+    enabled: !!currentUserId && !!event.id,
+  });
+
   const [isInterested, setIsInterested] = useState(false);
   const [isAttending, setIsAttending] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
+
+  useEffect(() => {
+    if (userStatus) {
+      setIsInterested(userStatus.status === "interested");
+      setIsAttending(userStatus.status === "attending");
+      setIsSaved(userStatus.saved);
+    }
+  }, [userStatus]);
+
+  const toggleStatusMutation = useMutation({
+    mutationFn: async (status: "attending" | "interested" | null) => {
+      if (!currentUserId) throw new Error("Not authenticated");
+
+      if (status === null) {
+        await supabase
+          .from("event_attendees")
+          .delete()
+          .eq("event_id", event.id)
+          .eq("user_id", currentUserId);
+      } else {
+        const { error } = await supabase.from("event_attendees").upsert(
+          {
+            event_id: event.id,
+            user_id: currentUserId,
+            status: status,
+          },
+          { onConflict: "event_id,user_id" },
+        );
+
+        if (error) throw error;
+      }
+    },
+    onMutate: async (status) => {
+      setIsInterested(status === "interested");
+      setIsAttending(status === "attending");
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["event_status", event.id, currentUserId] });
+      queryClient.invalidateQueries({ queryKey: ["event", event.id] });
+    },
+    onError: () => {
+      toast.error("Error al actualizar el estado");
+      // Revert optimistic update
+      if (userStatus) {
+        setIsInterested(userStatus.status === "interested");
+        setIsAttending(userStatus.status === "attending");
+      }
+    },
+  });
+
+  const toggleSaveMutation = useMutation({
+    mutationFn: async (save: boolean) => {
+      if (!currentUserId) throw new Error("Not authenticated");
+
+      if (!save) {
+        await supabase
+          .from("saved_events")
+          .delete()
+          .eq("event_id", event.id)
+          .eq("user_id", currentUserId);
+      } else {
+        await supabase.from("saved_events").insert({
+          event_id: event.id,
+          user_id: currentUserId,
+        });
+      }
+    },
+    onMutate: async (save) => {
+      setIsSaved(save);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["event_status", event.id, currentUserId] });
+    },
+    onError: () => {
+      toast.error("Error al guardar el evento");
+      setIsSaved(userStatus?.saved || false);
+    },
+  });
+
+  const handleInterest = () => {
+    toggleStatusMutation.mutate(isInterested ? null : "interested");
+  };
+
+  const handleAttend = () => {
+    toggleStatusMutation.mutate(isAttending ? null : "attending");
+  };
+
+  const handleSave = () => {
+    toggleSaveMutation.mutate(!isSaved);
+  };
 
   const dateObj = new Date(event.date);
   // event.date is likely a string like "2026-10-15"
@@ -70,7 +196,7 @@ export function EventHeader({ event, organizer, attendeesCount }: EventHeaderPro
 
         <div className="flex flex-wrap items-center gap-3 mt-2 border-t border-border/50 pt-6">
           <Button
-            onClick={() => setIsInterested(!isInterested)}
+            onClick={handleInterest}
             variant="outline"
             className={`flex-1 md:flex-none flex items-center justify-center gap-2 font-bold h-11 px-6 rounded-sm ${
               isInterested
@@ -83,7 +209,7 @@ export function EventHeader({ event, organizer, attendeesCount }: EventHeaderPro
           </Button>
 
           <Button
-            onClick={() => setIsAttending(!isAttending)}
+            onClick={handleAttend}
             className={`flex-1 md:flex-none flex items-center justify-center gap-2 font-bold h-11 px-6 rounded-sm ${
               isAttending
                 ? "bg-primary text-primary-foreground hover:bg-primary/90"
@@ -103,7 +229,7 @@ export function EventHeader({ event, organizer, attendeesCount }: EventHeaderPro
           </Button>
 
           <Button
-            onClick={() => setIsSaved(!isSaved)}
+            onClick={handleSave}
             variant="outline"
             className={`flex-1 md:flex-none flex items-center justify-center gap-2 h-11 px-6 rounded-sm ${isSaved ? "text-primary border-primary/50" : ""}`}
           >
