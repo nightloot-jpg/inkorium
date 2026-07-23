@@ -134,10 +134,16 @@ export function FeaturedEventsView() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-1 w-full flex-row justify-between items-start">
         <h1 className="text-3xl font-extrabold text-foreground tracking-tight">
           Eventos destacados
         </h1>
+        <button
+          onClick={() => navigate({ to: "/eventos/crear" })}
+          className="ml-auto bg-primary text-primary-foreground font-bold px-4 py-2 text-sm rounded-sm hover:bg-primary/90 transition-colors shadow-sm hidden sm:block"
+        >
+          Crear Evento
+        </button>
         <p className="text-muted-foreground text-[15px]">
           Descubre conciertos, festivales y actividades cerca de ti.
         </p>

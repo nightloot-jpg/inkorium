@@ -16,9 +16,15 @@ Completed tests and fixed UI Event issues
 **Action:** Always prefer `if (!data) return null;` or similar graceful fallback behaviors in layout loader definitions over throwing raw Exceptions, especially when the layout encompasses index and generic views that don't depend on the explicit single record.
 
 ## 2026-07-24 - [Implementación Interactiva de Eventos]
+
 **Learning:** Las comprobaciones de tipos TypeScript y el linter ESLint son extremadamente estrictos cuando modificas los objetos base, particularmente si reemplazas datos "mockeados" por datos reales de Supabase. Los nombres de los campos y las validaciones de tipo deben cuidarse rigurosamente.
 **Action:** Al mapear datos obtenidos de la BD que difieren de interfaces ya definidas en frontend, es prioritario actualizar la interfaz y asegurarse de castear o adaptar el objeto antes de pasarlo a componentes que esperan ciertas props obligatorias.
 
 ## 2026-07-24 - [Actualización masiva de schemas y tipos]
+
 **Learning:** Cuando se introducen componentes que originalmente consumían `MOCK_EVENTS` a bases de datos reales y las estructuras de datos difieren fuertemente, puede generarse una gran cantidad de errores si se reemplaza `MOCK_EVENTS` por `[]` directamente (TypeScript evalúa un array vacío como `never[]`, disparando alertas de missing properties).
 **Action:** Si necesitas desconectar mocks en archivos sin tiempo para refactorizar la query final (ej. `RightSidebar` que muestra eventos recomendados pero no era prioridad del scope), es mejor usar `([] as any[])` o similar para que el tipo infiera las propiedades y el compilador permita la ejecución sin romperse, manteniendo la interfaz viva.
+
+## 2026-07-24 - [Errores 400 por tabla/bucket no encontrados]
+**Learning:** El entorno de Vite utiliza el `SUPABASE_PROJECT_ID` y `SUPABASE_URL` de las variables de entorno `.env` (`mgzajnjzzfilmbuptdrg`). Si aplicas una migración SQL en un proyecto diferente (`ycepybbbwytrtuiksdsb`), las peticiones a la DB y Storage desde el frontend fallarán con HTTP 400 (Bad Request) o relaciones que no existen.
+**Action:** Siempre verificar exhaustivamente cuál es el proyecto de base de datos que está usando el frontend leyendo el `.env` antes de ejecutar una migración de Supabase.
