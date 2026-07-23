@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Calendar } from "@/components/ui/calendar";
 import { EventCard } from "./EventCard";
-import { MOCK_EVENTS } from "./types";
 
 export function RightSidebar() {
   const [date, setDate] = useState<Date | undefined>(new Date());
@@ -12,13 +11,13 @@ export function RightSidebar() {
       id: "f1",
       name: "Carlos Gómez",
       avatar: "https://i.pravatar.cc/150?u=a2",
-      event: MOCK_EVENTS[0],
+      event: [][0],
     },
     {
       id: "f2",
       name: "Sofía Martínez",
       avatar: "https://i.pravatar.cc/150?u=a5",
-      event: MOCK_EVENTS[1],
+      event: [][1],
     },
   ];
 
@@ -48,15 +47,17 @@ export function RightSidebar() {
                 <div className="mt-1.5 p-2 bg-muted/30 rounded border border-border/50">
                   <div className="flex gap-2">
                     <img
-                      src={friend.event.cover}
+                      src={(friend.event as any)?.cover_url}
                       alt=""
                       className="w-10 h-10 rounded object-cover"
                     />
                     <div className="flex flex-col min-w-0 justify-center">
                       <span className="text-[10px] font-bold text-foreground truncate">
-                        {friend.event.title}
+                        {(friend.event as any)?.title}
                       </span>
-                      <span className="text-[10px] text-muted-foreground">{friend.event.date}</span>
+                      <span className="text-[10px] text-muted-foreground">
+                        {(friend.event as any)?.start_date}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -71,7 +72,7 @@ export function RightSidebar() {
           EVENTOS RECOMENDADOS
         </h4>
         <div className="flex flex-col gap-3">
-          {MOCK_EVENTS.map((event) => (
+          {([] as any[]).map((event: any) => (
             <EventCard key={event.id} event={event} variant="sidebar" />
           ))}
         </div>

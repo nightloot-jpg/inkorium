@@ -1,13 +1,12 @@
 import React from "react";
 import { Calendar } from "@/components/ui/calendar";
 import { EventCard } from "@/components/events/EventCard";
-import { MOCK_EVENTS } from "@/components/events/types";
 
 export function CalendarView() {
   const [date, setDate] = React.useState<Date | undefined>(new Date());
 
   // Simulated events for the selected date
-  const dateEvents = MOCK_EVENTS.slice(2, 4);
+  const dateEvents = ([] as any[]).slice(2, 4);
 
   return (
     <>
@@ -27,7 +26,7 @@ export function CalendarView() {
           </h2>
           {dateEvents.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {dateEvents.map((event) => (
+              {dateEvents.map((event: any) => (
                 <EventCard key={event.id} event={event} variant="important" />
               ))}
             </div>

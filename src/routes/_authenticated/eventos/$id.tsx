@@ -19,6 +19,12 @@ function EventDetailPage() {
     queryKey: ["event", id],
     queryFn: async () => {
       // Fetch event
+      // Get current user to see their status
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      // Fetch event
       const { data: event, error: eventError } = await supabase
         .from("events")
         .select("*, creator:profiles!events_author_id_fkey(*)")
@@ -32,19 +38,28 @@ function EventDetailPage() {
       const { data: attendeesData, error: attError } = await supabase
         .from("event_attendees")
         .select("status, user:profiles(*)")
-        .eq("event_id", id)
-        .eq("status", "attending");
+        .eq("event_id", event?.id);
 
       if (attError) throw attError;
 
       // Map attendees
-      const attendees = (attendeesData || []).map((att: any) => ({
-        id: att.user.id,
-        name: att.user.display_name,
-        username: att.user.username,
-        avatar: att.user.avatar_url,
-        status: att.status,
-      }));
+      const attendingList = (attendeesData || [])
+        .filter((a: any) => a.status === "attending")
+        .map((att: any) => ({
+          id: att.user.id,
+          name: att.user.display_name,
+          username: att.user.username,
+          avatar: att.user.avatar_url,
+          status: att.status,
+        }));
+
+      const interestedList = (attendeesData || []).filter((a: any) => a.status === "interested");
+      const userStatus = user
+        ? (attendeesData || []).find((a: any) => a.user?.id === user.id)?.status
+        : null;
+
+      (event as any).status = userStatus;
+      (event as any).interestedCount = interestedList.length;
 
       // Find related events
       const { data: relatedEventsData, error: relatedError } = await supabase
@@ -52,7 +67,7 @@ function EventDetailPage() {
         .select("*")
         .eq("author_id", event.author_id)
         .neq("id", event.id)
-        .order("event_date", { ascending: true })
+        .order("start_date", { ascending: true })
         .limit(3);
 
       if (relatedError) {
@@ -87,7 +102,7 @@ function EventDetailPage() {
           price: 0,
         },
         organizer: event.creator,
-        attendees,
+        attendees: attendingList,
         relatedEvents,
         images,
       };

@@ -1,9 +1,8 @@
 import React from "react";
 import { EventCard } from "@/components/events/EventCard";
-import { MOCK_EVENTS } from "@/components/events/types";
 
 export function FriendsAttendingView() {
-  const friendEvents = MOCK_EVENTS.slice(1, 3);
+  const friendEvents = [].slice(1, 3);
 
   return (
     <>
@@ -18,7 +17,7 @@ export function FriendsAttendingView() {
 
       {friendEvents.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {friendEvents.map((event) => (
+          {friendEvents.map((event: any) => (
             <EventCard key={event.id} event={event} variant="compact" />
           ))}
         </div>
