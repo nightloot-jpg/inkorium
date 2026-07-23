@@ -13,6 +13,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedMensajesRouteImport } from './routes/_authenticated/mensajes'
+import { Route as AuthenticatedEventosRouteImport } from './routes/_authenticated/eventos'
 import { Route as AuthenticatedAmigosRouteImport } from './routes/_authenticated/amigos'
 import { Route as AuthenticatedSidebarRouteImport } from './routes/_authenticated/_sidebar'
 import { Route as AuthenticatedPerfilUsernameRouteImport } from './routes/_authenticated/perfil.$username'
@@ -24,7 +25,6 @@ import { Route as AuthenticatedSidebarGuardadosRouteImport } from './routes/_aut
 import { Route as AuthenticatedSidebarGruposRouteImport } from './routes/_authenticated/_sidebar/grupos'
 import { Route as AuthenticatedSidebarFotosRouteImport } from './routes/_authenticated/_sidebar/fotos'
 import { Route as AuthenticatedSidebarFeedRouteImport } from './routes/_authenticated/_sidebar/feed'
-import { Route as AuthenticatedSidebarEventosRouteImport } from './routes/_authenticated/_sidebar/eventos'
 import { Route as AuthenticatedSidebarEncuestasRouteImport } from './routes/_authenticated/_sidebar/encuestas'
 import { Route as AuthenticatedSidebarConfiguracionRouteImport } from './routes/_authenticated/_sidebar/configuracion'
 
@@ -45,6 +45,11 @@ const IndexRoute = IndexRouteImport.update({
 const AuthenticatedMensajesRoute = AuthenticatedMensajesRouteImport.update({
   id: '/mensajes',
   path: '/mensajes',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedEventosRoute = AuthenticatedEventosRouteImport.update({
+  id: '/eventos',
+  path: '/eventos',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedAmigosRoute = AuthenticatedAmigosRouteImport.update({
@@ -110,12 +115,6 @@ const AuthenticatedSidebarFeedRoute =
     path: '/feed',
     getParentRoute: () => AuthenticatedSidebarRoute,
   } as any)
-const AuthenticatedSidebarEventosRoute =
-  AuthenticatedSidebarEventosRouteImport.update({
-    id: '/eventos',
-    path: '/eventos',
-    getParentRoute: () => AuthenticatedSidebarRoute,
-  } as any)
 const AuthenticatedSidebarEncuestasRoute =
   AuthenticatedSidebarEncuestasRouteImport.update({
     id: '/encuestas',
@@ -133,10 +132,10 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/amigos': typeof AuthenticatedAmigosRoute
+  '/eventos': typeof AuthenticatedEventosRoute
   '/mensajes': typeof AuthenticatedMensajesRouteWithChildren
   '/configuracion': typeof AuthenticatedSidebarConfiguracionRoute
   '/encuestas': typeof AuthenticatedSidebarEncuestasRoute
-  '/eventos': typeof AuthenticatedSidebarEventosRoute
   '/feed': typeof AuthenticatedSidebarFeedRoute
   '/fotos': typeof AuthenticatedSidebarFotosRoute
   '/grupos': typeof AuthenticatedSidebarGruposRoute
@@ -151,10 +150,10 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/amigos': typeof AuthenticatedAmigosRoute
+  '/eventos': typeof AuthenticatedEventosRoute
   '/mensajes': typeof AuthenticatedMensajesRouteWithChildren
   '/configuracion': typeof AuthenticatedSidebarConfiguracionRoute
   '/encuestas': typeof AuthenticatedSidebarEncuestasRoute
-  '/eventos': typeof AuthenticatedSidebarEventosRoute
   '/feed': typeof AuthenticatedSidebarFeedRoute
   '/fotos': typeof AuthenticatedSidebarFotosRoute
   '/grupos': typeof AuthenticatedSidebarGruposRoute
@@ -172,10 +171,10 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/_authenticated/_sidebar': typeof AuthenticatedSidebarRouteWithChildren
   '/_authenticated/amigos': typeof AuthenticatedAmigosRoute
+  '/_authenticated/eventos': typeof AuthenticatedEventosRoute
   '/_authenticated/mensajes': typeof AuthenticatedMensajesRouteWithChildren
   '/_authenticated/_sidebar/configuracion': typeof AuthenticatedSidebarConfiguracionRoute
   '/_authenticated/_sidebar/encuestas': typeof AuthenticatedSidebarEncuestasRoute
-  '/_authenticated/_sidebar/eventos': typeof AuthenticatedSidebarEventosRoute
   '/_authenticated/_sidebar/feed': typeof AuthenticatedSidebarFeedRoute
   '/_authenticated/_sidebar/fotos': typeof AuthenticatedSidebarFotosRoute
   '/_authenticated/_sidebar/grupos': typeof AuthenticatedSidebarGruposRoute
@@ -192,10 +191,10 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/amigos'
+    | '/eventos'
     | '/mensajes'
     | '/configuracion'
     | '/encuestas'
-    | '/eventos'
     | '/feed'
     | '/fotos'
     | '/grupos'
@@ -210,10 +209,10 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/amigos'
+    | '/eventos'
     | '/mensajes'
     | '/configuracion'
     | '/encuestas'
-    | '/eventos'
     | '/feed'
     | '/fotos'
     | '/grupos'
@@ -230,10 +229,10 @@ export interface FileRouteTypes {
     | '/auth'
     | '/_authenticated/_sidebar'
     | '/_authenticated/amigos'
+    | '/_authenticated/eventos'
     | '/_authenticated/mensajes'
     | '/_authenticated/_sidebar/configuracion'
     | '/_authenticated/_sidebar/encuestas'
-    | '/_authenticated/_sidebar/eventos'
     | '/_authenticated/_sidebar/feed'
     | '/_authenticated/_sidebar/fotos'
     | '/_authenticated/_sidebar/grupos'
@@ -279,6 +278,13 @@ declare module '@tanstack/react-router' {
       path: '/mensajes'
       fullPath: '/mensajes'
       preLoaderRoute: typeof AuthenticatedMensajesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/eventos': {
+      id: '/_authenticated/eventos'
+      path: '/eventos'
+      fullPath: '/eventos'
+      preLoaderRoute: typeof AuthenticatedEventosRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/amigos': {
@@ -358,13 +364,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSidebarFeedRouteImport
       parentRoute: typeof AuthenticatedSidebarRoute
     }
-    '/_authenticated/_sidebar/eventos': {
-      id: '/_authenticated/_sidebar/eventos'
-      path: '/eventos'
-      fullPath: '/eventos'
-      preLoaderRoute: typeof AuthenticatedSidebarEventosRouteImport
-      parentRoute: typeof AuthenticatedSidebarRoute
-    }
     '/_authenticated/_sidebar/encuestas': {
       id: '/_authenticated/_sidebar/encuestas'
       path: '/encuestas'
@@ -385,7 +384,6 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedSidebarRouteChildren {
   AuthenticatedSidebarConfiguracionRoute: typeof AuthenticatedSidebarConfiguracionRoute
   AuthenticatedSidebarEncuestasRoute: typeof AuthenticatedSidebarEncuestasRoute
-  AuthenticatedSidebarEventosRoute: typeof AuthenticatedSidebarEventosRoute
   AuthenticatedSidebarFeedRoute: typeof AuthenticatedSidebarFeedRoute
   AuthenticatedSidebarFotosRoute: typeof AuthenticatedSidebarFotosRoute
   AuthenticatedSidebarGruposRoute: typeof AuthenticatedSidebarGruposRoute
@@ -399,7 +397,6 @@ const AuthenticatedSidebarRouteChildren: AuthenticatedSidebarRouteChildren = {
   AuthenticatedSidebarConfiguracionRoute:
     AuthenticatedSidebarConfiguracionRoute,
   AuthenticatedSidebarEncuestasRoute: AuthenticatedSidebarEncuestasRoute,
-  AuthenticatedSidebarEventosRoute: AuthenticatedSidebarEventosRoute,
   AuthenticatedSidebarFeedRoute: AuthenticatedSidebarFeedRoute,
   AuthenticatedSidebarFotosRoute: AuthenticatedSidebarFotosRoute,
   AuthenticatedSidebarGruposRoute: AuthenticatedSidebarGruposRoute,
@@ -428,6 +425,7 @@ const AuthenticatedMensajesRouteWithChildren =
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedSidebarRoute: typeof AuthenticatedSidebarRouteWithChildren
   AuthenticatedAmigosRoute: typeof AuthenticatedAmigosRoute
+  AuthenticatedEventosRoute: typeof AuthenticatedEventosRoute
   AuthenticatedMensajesRoute: typeof AuthenticatedMensajesRouteWithChildren
   AuthenticatedPerfilUsernameRoute: typeof AuthenticatedPerfilUsernameRoute
 }
@@ -435,6 +433,7 @@ interface AuthenticatedRouteRouteChildren {
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedSidebarRoute: AuthenticatedSidebarRouteWithChildren,
   AuthenticatedAmigosRoute: AuthenticatedAmigosRoute,
+  AuthenticatedEventosRoute: AuthenticatedEventosRoute,
   AuthenticatedMensajesRoute: AuthenticatedMensajesRouteWithChildren,
   AuthenticatedPerfilUsernameRoute: AuthenticatedPerfilUsernameRoute,
 }
