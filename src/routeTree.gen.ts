@@ -23,6 +23,7 @@ import { Route as AuthenticatedEventosMisEventosRouteImport } from './routes/_au
 import { Route as AuthenticatedEventosCrearRouteImport } from './routes/_authenticated/eventos/crear'
 import { Route as AuthenticatedEventosCalendarioRouteImport } from './routes/_authenticated/eventos/calendario'
 import { Route as AuthenticatedEventosAmigosRouteImport } from './routes/_authenticated/eventos/amigos'
+import { Route as AuthenticatedEventosIdRouteImport } from './routes/_authenticated/eventos/$id'
 import { Route as AuthenticatedSidebarVideosRouteImport } from './routes/_authenticated/_sidebar/videos'
 import { Route as AuthenticatedSidebarPaginasRouteImport } from './routes/_authenticated/_sidebar/paginas'
 import { Route as AuthenticatedSidebarMusicaRouteImport } from './routes/_authenticated/_sidebar/musica'
@@ -109,6 +110,11 @@ const AuthenticatedEventosAmigosRoute =
     path: '/amigos',
     getParentRoute: () => AuthenticatedEventosRouteRoute,
   } as any)
+const AuthenticatedEventosIdRoute = AuthenticatedEventosIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AuthenticatedEventosRouteRoute,
+} as any)
 const AuthenticatedSidebarVideosRoute =
   AuthenticatedSidebarVideosRouteImport.update({
     id: '/videos',
@@ -179,6 +185,7 @@ export interface FileRoutesByFullPath {
   '/musica': typeof AuthenticatedSidebarMusicaRoute
   '/paginas': typeof AuthenticatedSidebarPaginasRoute
   '/videos': typeof AuthenticatedSidebarVideosRoute
+  '/eventos/$id': typeof AuthenticatedEventosIdRoute
   '/eventos/amigos': typeof AuthenticatedEventosAmigosRoute
   '/eventos/calendario': typeof AuthenticatedEventosCalendarioRoute
   '/eventos/crear': typeof AuthenticatedEventosCrearRoute
@@ -201,6 +208,7 @@ export interface FileRoutesByTo {
   '/musica': typeof AuthenticatedSidebarMusicaRoute
   '/paginas': typeof AuthenticatedSidebarPaginasRoute
   '/videos': typeof AuthenticatedSidebarVideosRoute
+  '/eventos/$id': typeof AuthenticatedEventosIdRoute
   '/eventos/amigos': typeof AuthenticatedEventosAmigosRoute
   '/eventos/calendario': typeof AuthenticatedEventosCalendarioRoute
   '/eventos/crear': typeof AuthenticatedEventosCrearRoute
@@ -227,6 +235,7 @@ export interface FileRoutesById {
   '/_authenticated/_sidebar/musica': typeof AuthenticatedSidebarMusicaRoute
   '/_authenticated/_sidebar/paginas': typeof AuthenticatedSidebarPaginasRoute
   '/_authenticated/_sidebar/videos': typeof AuthenticatedSidebarVideosRoute
+  '/_authenticated/eventos/$id': typeof AuthenticatedEventosIdRoute
   '/_authenticated/eventos/amigos': typeof AuthenticatedEventosAmigosRoute
   '/_authenticated/eventos/calendario': typeof AuthenticatedEventosCalendarioRoute
   '/_authenticated/eventos/crear': typeof AuthenticatedEventosCrearRoute
@@ -252,6 +261,7 @@ export interface FileRouteTypes {
     | '/musica'
     | '/paginas'
     | '/videos'
+    | '/eventos/$id'
     | '/eventos/amigos'
     | '/eventos/calendario'
     | '/eventos/crear'
@@ -274,6 +284,7 @@ export interface FileRouteTypes {
     | '/musica'
     | '/paginas'
     | '/videos'
+    | '/eventos/$id'
     | '/eventos/amigos'
     | '/eventos/calendario'
     | '/eventos/crear'
@@ -299,6 +310,7 @@ export interface FileRouteTypes {
     | '/_authenticated/_sidebar/musica'
     | '/_authenticated/_sidebar/paginas'
     | '/_authenticated/_sidebar/videos'
+    | '/_authenticated/eventos/$id'
     | '/_authenticated/eventos/amigos'
     | '/_authenticated/eventos/calendario'
     | '/_authenticated/eventos/crear'
@@ -414,6 +426,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedEventosAmigosRouteImport
       parentRoute: typeof AuthenticatedEventosRouteRoute
     }
+    '/_authenticated/eventos/$id': {
+      id: '/_authenticated/eventos/$id'
+      path: '/$id'
+      fullPath: '/eventos/$id'
+      preLoaderRoute: typeof AuthenticatedEventosIdRouteImport
+      parentRoute: typeof AuthenticatedEventosRouteRoute
+    }
     '/_authenticated/_sidebar/videos': {
       id: '/_authenticated/_sidebar/videos'
       path: '/videos'
@@ -481,6 +500,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedEventosRouteRouteChildren {
+  AuthenticatedEventosIdRoute: typeof AuthenticatedEventosIdRoute
   AuthenticatedEventosAmigosRoute: typeof AuthenticatedEventosAmigosRoute
   AuthenticatedEventosCalendarioRoute: typeof AuthenticatedEventosCalendarioRoute
   AuthenticatedEventosCrearRoute: typeof AuthenticatedEventosCrearRoute
@@ -490,6 +510,7 @@ interface AuthenticatedEventosRouteRouteChildren {
 
 const AuthenticatedEventosRouteRouteChildren: AuthenticatedEventosRouteRouteChildren =
   {
+    AuthenticatedEventosIdRoute: AuthenticatedEventosIdRoute,
     AuthenticatedEventosAmigosRoute: AuthenticatedEventosAmigosRoute,
     AuthenticatedEventosCalendarioRoute: AuthenticatedEventosCalendarioRoute,
     AuthenticatedEventosCrearRoute: AuthenticatedEventosCrearRoute,
