@@ -15,7 +15,9 @@ interface EventDetailProps {
 }
 
 export function EventDetail({ event, organizer, attendees, images }: EventDetailProps) {
-  const isPast = event.date ? new Date(event.date).getTime() < new Date().getTime() : false;
+  const isPast = event.event_date
+    ? new Date(event.event_date).getTime() < new Date().getTime()
+    : false;
 
   return (
     <div className="flex flex-col gap-6 min-w-0">

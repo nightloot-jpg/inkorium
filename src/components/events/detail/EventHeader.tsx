@@ -139,8 +139,8 @@ export function EventHeader({ event, organizer, attendeesCount }: EventHeaderPro
     toggleSaveMutation.mutate(!isSaved);
   };
 
-  const dateObj = new Date(event.date);
-  // event.date is likely a string like "2026-10-15"
+  const dateObj = new Date(event.event_date || new Date());
+  // event.event_date is likely a string like "2026-10-15"
   const day = dateObj.getDate();
   const month = dateObj.toLocaleString("es-ES", { month: "short" });
 
@@ -151,29 +151,36 @@ export function EventHeader({ event, organizer, attendeesCount }: EventHeaderPro
   return (
     <div className="bg-card rounded-sm border border-[#c2c9d6] overflow-hidden flex flex-col shadow-sm">
       <div className="w-full h-[300px] relative">
-        <img src={coverUrl} alt={event.name} className="w-full h-full object-cover" />
+        <img
+          src={coverUrl}
+          alt={event.name || "Evento sin título"}
+          className="w-full h-full object-cover"
+        />
         <div className="absolute top-4 left-4 flex flex-col items-center justify-center bg-background text-foreground shadow-md rounded-sm w-[60px] h-[65px] border border-border">
           <span className="text-[26px] font-extrabold leading-none text-primary">{day}</span>
           <span className="text-[13px] font-bold uppercase">{month}</span>
         </div>
         <div className="absolute top-4 right-4 bg-black/60 backdrop-blur-sm text-white px-3 py-1 rounded-sm text-[14px] font-medium">
-          {event.category}
+          {event.category || "Categoría"}
         </div>
       </div>
 
       <div className="p-6 md:p-8 flex flex-col">
-        <h1 className="text-3xl font-extrabold text-foreground mb-4">{event.name}</h1>
+        <h1 className="text-3xl font-extrabold text-foreground mb-4">
+          {event.name || "Evento sin título"}
+        </h1>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           <div className="flex items-center gap-3 text-[15px] text-muted-foreground font-medium">
             <MapPin className="size-5 text-muted-foreground shrink-0" />
             <span>
-              {event.location}, {event.city}
+              {event.location || event.city || "Sin ubicación"}
+              {event.location && event.city ? `, ${event.city}` : ""}
             </span>
           </div>
           <div className="flex items-center gap-3 text-[15px] text-muted-foreground font-medium">
             <Clock className="size-5 text-muted-foreground shrink-0" />
-            <span>{event.time}</span>
+            <span>{event.event_time || "Hora pendiente"}</span>
           </div>
           <div className="flex items-center gap-3 text-[15px] text-muted-foreground font-medium">
             <Users className="size-5 text-muted-foreground shrink-0" />

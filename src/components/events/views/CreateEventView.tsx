@@ -239,7 +239,7 @@ export function CreateEventView({ existingEvent }: CreateEventViewProps) {
         // Si el usuario sube un archivo real, se debería subir aquí. Para este componente vamos a hacer un mock de subida real con storage de supabase
         if (data.coverImage instanceof FileList && data.coverImage.length > 0) {
           const file = data.coverImage[0];
-          const fileExt = file.name.split(".").pop();
+          const fileExt = (file.name || "").split(".").pop();
           const fileName = `${Math.random()}.${fileExt}`;
           const filePath = `events/${slug}/${fileName}`;
 
@@ -257,7 +257,7 @@ export function CreateEventView({ existingEvent }: CreateEventViewProps) {
       if (data.posterImage) {
         if (data.posterImage instanceof FileList && data.posterImage.length > 0) {
           const file = data.posterImage[0];
-          const fileExt = file.name.split(".").pop();
+          const fileExt = (file.name || "").split(".").pop();
           const fileName = `${Math.random()}.${fileExt}`;
           const filePath = `events/${slug}/poster_${fileName}`;
 
