@@ -261,7 +261,12 @@ Also, `Math.random()` and `new Date()` within initial render inside server-rende
 
 **Learning:** When replacing static, scattered event cards with a single robust, interactive component, managing the layout responsively inside a grid is much more maintainable than styling individual components contextually. By using `e.stopPropagation()` on nested interactive elements (buttons, menus) we allow the whole card to remain easily clickable for navigation while providing quick access to specific actions.
 **Action:** Always advocate for creating a single source of truth for repeated UI elements like cards. Keep complex layout grids on the parent container, and let the card itself be responsive to its bounding box using flex layouts or percentage-based width parameters.
+
 ## 2026-07-23 - Event Cards Layout & Hierarchy
 
 **Learning:** Visual hierarchy is vastly improved by breaking the monotony of simple uniform grids. By introducing `featured`, `important`, and `compact` variants for a single `EventCard` component, the page flow naturally leads the user's eye from the most important single block (16:9 panoramic), to secondary blocks (2 columns), and finally to the rest (3 columns). Keeping heights controlled via `h-full` on flex-box containers prevents broken alignment when text content dynamically varies.
 **Action:** When designing lists of content (posts, events, products), suggest employing structural variant hierarchies (1 featured -> 2 large -> grid of smalls) instead of just dumping everything into a massive uniform 3-column grid. Control uniform heights across variants using CSS flexbox classes (`h-full`, `flex-col`, `mt-auto`).
+
+## 2024-11-20 - Events Detail Implementation
+**Learning:** For conditional rendering of complex widgets in a standard multi-column layout with react-router, `useMatches()` from `@tanstack/react-router` can be a powerful way to override the default RightSidebar component in a parent route based on a specific child route context, without restructuring the whole router setup.
+**Action:** Use `useMatches()` when you need a sibling component in a layout to adapt significantly based on the current child route without rewriting the parent layout's DOM structure.
