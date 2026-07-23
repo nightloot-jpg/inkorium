@@ -1,14 +1,8 @@
 $ vite dev
 The plugin "vite-tsconfig-paths" is detected. Vite now supports tsconfig paths resolution natively via the resolve.tsconfigPaths option. You can remove the plugin and set resolve.tsconfigPaths: true in your Vite config instead.
 
-  VITE v8.1.5  ready in 1479 ms
+  VITE v8.1.5  ready in 2345 ms
 
   ➜  Local:   http://localhost:8080/
   ➜  Network: http://192.168.0.2:8080/
-10:32:08 PM [vite] (client) page reload playwright-report/index.html
-10:32:08 PM [vite] (client) page reload playwright-report/index.html
-10:32:43 PM [vite] (client) page reload playwright-report/index.html
-10:32:53 PM [vite] (ssr) connected.
-10:32:58 PM [vite] (client) page reload playwright-report/index.html
-10:33:19 PM [vite] (client) page reload playwright-report/index.html
-10:34:40 PM [vite] (client) page reload playwright-report/index.html
+11:34:10 PM [vite] (client) [optimizer] bundling dependencies...
