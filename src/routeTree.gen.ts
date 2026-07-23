@@ -13,11 +13,16 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedMensajesRouteImport } from './routes/_authenticated/mensajes'
-import { Route as AuthenticatedEventosRouteImport } from './routes/_authenticated/eventos'
 import { Route as AuthenticatedAmigosRouteImport } from './routes/_authenticated/amigos'
 import { Route as AuthenticatedSidebarRouteImport } from './routes/_authenticated/_sidebar'
+import { Route as AuthenticatedEventosRouteRouteImport } from './routes/_authenticated/eventos/route'
+import { Route as AuthenticatedEventosIndexRouteImport } from './routes/_authenticated/eventos/index'
 import { Route as AuthenticatedPerfilUsernameRouteImport } from './routes/_authenticated/perfil.$username'
 import { Route as AuthenticatedMensajesUsernameRouteImport } from './routes/_authenticated/mensajes.$username'
+import { Route as AuthenticatedEventosMisEventosRouteImport } from './routes/_authenticated/eventos/mis-eventos'
+import { Route as AuthenticatedEventosCrearRouteImport } from './routes/_authenticated/eventos/crear'
+import { Route as AuthenticatedEventosCalendarioRouteImport } from './routes/_authenticated/eventos/calendario'
+import { Route as AuthenticatedEventosAmigosRouteImport } from './routes/_authenticated/eventos/amigos'
 import { Route as AuthenticatedSidebarVideosRouteImport } from './routes/_authenticated/_sidebar/videos'
 import { Route as AuthenticatedSidebarPaginasRouteImport } from './routes/_authenticated/_sidebar/paginas'
 import { Route as AuthenticatedSidebarMusicaRouteImport } from './routes/_authenticated/_sidebar/musica'
@@ -47,11 +52,6 @@ const AuthenticatedMensajesRoute = AuthenticatedMensajesRouteImport.update({
   path: '/mensajes',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
-const AuthenticatedEventosRoute = AuthenticatedEventosRouteImport.update({
-  id: '/eventos',
-  path: '/eventos',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const AuthenticatedAmigosRoute = AuthenticatedAmigosRouteImport.update({
   id: '/amigos',
   path: '/amigos',
@@ -61,6 +61,18 @@ const AuthenticatedSidebarRoute = AuthenticatedSidebarRouteImport.update({
   id: '/_sidebar',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedEventosRouteRoute =
+  AuthenticatedEventosRouteRouteImport.update({
+    id: '/eventos',
+    path: '/eventos',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedEventosIndexRoute =
+  AuthenticatedEventosIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedEventosRouteRoute,
+  } as any)
 const AuthenticatedPerfilUsernameRoute =
   AuthenticatedPerfilUsernameRouteImport.update({
     id: '/perfil/$username',
@@ -72,6 +84,30 @@ const AuthenticatedMensajesUsernameRoute =
     id: '/$username',
     path: '/$username',
     getParentRoute: () => AuthenticatedMensajesRoute,
+  } as any)
+const AuthenticatedEventosMisEventosRoute =
+  AuthenticatedEventosMisEventosRouteImport.update({
+    id: '/mis-eventos',
+    path: '/mis-eventos',
+    getParentRoute: () => AuthenticatedEventosRouteRoute,
+  } as any)
+const AuthenticatedEventosCrearRoute =
+  AuthenticatedEventosCrearRouteImport.update({
+    id: '/crear',
+    path: '/crear',
+    getParentRoute: () => AuthenticatedEventosRouteRoute,
+  } as any)
+const AuthenticatedEventosCalendarioRoute =
+  AuthenticatedEventosCalendarioRouteImport.update({
+    id: '/calendario',
+    path: '/calendario',
+    getParentRoute: () => AuthenticatedEventosRouteRoute,
+  } as any)
+const AuthenticatedEventosAmigosRoute =
+  AuthenticatedEventosAmigosRouteImport.update({
+    id: '/amigos',
+    path: '/amigos',
+    getParentRoute: () => AuthenticatedEventosRouteRoute,
   } as any)
 const AuthenticatedSidebarVideosRoute =
   AuthenticatedSidebarVideosRouteImport.update({
@@ -131,8 +167,8 @@ const AuthenticatedSidebarConfiguracionRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/eventos': typeof AuthenticatedEventosRouteRouteWithChildren
   '/amigos': typeof AuthenticatedAmigosRoute
-  '/eventos': typeof AuthenticatedEventosRoute
   '/mensajes': typeof AuthenticatedMensajesRouteWithChildren
   '/configuracion': typeof AuthenticatedSidebarConfiguracionRoute
   '/encuestas': typeof AuthenticatedSidebarEncuestasRoute
@@ -143,14 +179,18 @@ export interface FileRoutesByFullPath {
   '/musica': typeof AuthenticatedSidebarMusicaRoute
   '/paginas': typeof AuthenticatedSidebarPaginasRoute
   '/videos': typeof AuthenticatedSidebarVideosRoute
+  '/eventos/amigos': typeof AuthenticatedEventosAmigosRoute
+  '/eventos/calendario': typeof AuthenticatedEventosCalendarioRoute
+  '/eventos/crear': typeof AuthenticatedEventosCrearRoute
+  '/eventos/mis-eventos': typeof AuthenticatedEventosMisEventosRoute
   '/mensajes/$username': typeof AuthenticatedMensajesUsernameRoute
   '/perfil/$username': typeof AuthenticatedPerfilUsernameRoute
+  '/eventos/': typeof AuthenticatedEventosIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/amigos': typeof AuthenticatedAmigosRoute
-  '/eventos': typeof AuthenticatedEventosRoute
   '/mensajes': typeof AuthenticatedMensajesRouteWithChildren
   '/configuracion': typeof AuthenticatedSidebarConfiguracionRoute
   '/encuestas': typeof AuthenticatedSidebarEncuestasRoute
@@ -161,17 +201,22 @@ export interface FileRoutesByTo {
   '/musica': typeof AuthenticatedSidebarMusicaRoute
   '/paginas': typeof AuthenticatedSidebarPaginasRoute
   '/videos': typeof AuthenticatedSidebarVideosRoute
+  '/eventos/amigos': typeof AuthenticatedEventosAmigosRoute
+  '/eventos/calendario': typeof AuthenticatedEventosCalendarioRoute
+  '/eventos/crear': typeof AuthenticatedEventosCrearRoute
+  '/eventos/mis-eventos': typeof AuthenticatedEventosMisEventosRoute
   '/mensajes/$username': typeof AuthenticatedMensajesUsernameRoute
   '/perfil/$username': typeof AuthenticatedPerfilUsernameRoute
+  '/eventos': typeof AuthenticatedEventosIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_authenticated/eventos': typeof AuthenticatedEventosRouteRouteWithChildren
   '/_authenticated/_sidebar': typeof AuthenticatedSidebarRouteWithChildren
   '/_authenticated/amigos': typeof AuthenticatedAmigosRoute
-  '/_authenticated/eventos': typeof AuthenticatedEventosRoute
   '/_authenticated/mensajes': typeof AuthenticatedMensajesRouteWithChildren
   '/_authenticated/_sidebar/configuracion': typeof AuthenticatedSidebarConfiguracionRoute
   '/_authenticated/_sidebar/encuestas': typeof AuthenticatedSidebarEncuestasRoute
@@ -182,16 +227,21 @@ export interface FileRoutesById {
   '/_authenticated/_sidebar/musica': typeof AuthenticatedSidebarMusicaRoute
   '/_authenticated/_sidebar/paginas': typeof AuthenticatedSidebarPaginasRoute
   '/_authenticated/_sidebar/videos': typeof AuthenticatedSidebarVideosRoute
+  '/_authenticated/eventos/amigos': typeof AuthenticatedEventosAmigosRoute
+  '/_authenticated/eventos/calendario': typeof AuthenticatedEventosCalendarioRoute
+  '/_authenticated/eventos/crear': typeof AuthenticatedEventosCrearRoute
+  '/_authenticated/eventos/mis-eventos': typeof AuthenticatedEventosMisEventosRoute
   '/_authenticated/mensajes/$username': typeof AuthenticatedMensajesUsernameRoute
   '/_authenticated/perfil/$username': typeof AuthenticatedPerfilUsernameRoute
+  '/_authenticated/eventos/': typeof AuthenticatedEventosIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/auth'
-    | '/amigos'
     | '/eventos'
+    | '/amigos'
     | '/mensajes'
     | '/configuracion'
     | '/encuestas'
@@ -202,14 +252,18 @@ export interface FileRouteTypes {
     | '/musica'
     | '/paginas'
     | '/videos'
+    | '/eventos/amigos'
+    | '/eventos/calendario'
+    | '/eventos/crear'
+    | '/eventos/mis-eventos'
     | '/mensajes/$username'
     | '/perfil/$username'
+    | '/eventos/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
     | '/amigos'
-    | '/eventos'
     | '/mensajes'
     | '/configuracion'
     | '/encuestas'
@@ -220,16 +274,21 @@ export interface FileRouteTypes {
     | '/musica'
     | '/paginas'
     | '/videos'
+    | '/eventos/amigos'
+    | '/eventos/calendario'
+    | '/eventos/crear'
+    | '/eventos/mis-eventos'
     | '/mensajes/$username'
     | '/perfil/$username'
+    | '/eventos'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/_authenticated/eventos'
     | '/_authenticated/_sidebar'
     | '/_authenticated/amigos'
-    | '/_authenticated/eventos'
     | '/_authenticated/mensajes'
     | '/_authenticated/_sidebar/configuracion'
     | '/_authenticated/_sidebar/encuestas'
@@ -240,8 +299,13 @@ export interface FileRouteTypes {
     | '/_authenticated/_sidebar/musica'
     | '/_authenticated/_sidebar/paginas'
     | '/_authenticated/_sidebar/videos'
+    | '/_authenticated/eventos/amigos'
+    | '/_authenticated/eventos/calendario'
+    | '/_authenticated/eventos/crear'
+    | '/_authenticated/eventos/mis-eventos'
     | '/_authenticated/mensajes/$username'
     | '/_authenticated/perfil/$username'
+    | '/_authenticated/eventos/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -280,13 +344,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedMensajesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/eventos': {
-      id: '/_authenticated/eventos'
-      path: '/eventos'
-      fullPath: '/eventos'
-      preLoaderRoute: typeof AuthenticatedEventosRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/amigos': {
       id: '/_authenticated/amigos'
       path: '/amigos'
@@ -301,6 +358,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSidebarRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/eventos': {
+      id: '/_authenticated/eventos'
+      path: '/eventos'
+      fullPath: '/eventos'
+      preLoaderRoute: typeof AuthenticatedEventosRouteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/eventos/': {
+      id: '/_authenticated/eventos/'
+      path: '/'
+      fullPath: '/eventos/'
+      preLoaderRoute: typeof AuthenticatedEventosIndexRouteImport
+      parentRoute: typeof AuthenticatedEventosRouteRoute
+    }
     '/_authenticated/perfil/$username': {
       id: '/_authenticated/perfil/$username'
       path: '/perfil/$username'
@@ -314,6 +385,34 @@ declare module '@tanstack/react-router' {
       fullPath: '/mensajes/$username'
       preLoaderRoute: typeof AuthenticatedMensajesUsernameRouteImport
       parentRoute: typeof AuthenticatedMensajesRoute
+    }
+    '/_authenticated/eventos/mis-eventos': {
+      id: '/_authenticated/eventos/mis-eventos'
+      path: '/mis-eventos'
+      fullPath: '/eventos/mis-eventos'
+      preLoaderRoute: typeof AuthenticatedEventosMisEventosRouteImport
+      parentRoute: typeof AuthenticatedEventosRouteRoute
+    }
+    '/_authenticated/eventos/crear': {
+      id: '/_authenticated/eventos/crear'
+      path: '/crear'
+      fullPath: '/eventos/crear'
+      preLoaderRoute: typeof AuthenticatedEventosCrearRouteImport
+      parentRoute: typeof AuthenticatedEventosRouteRoute
+    }
+    '/_authenticated/eventos/calendario': {
+      id: '/_authenticated/eventos/calendario'
+      path: '/calendario'
+      fullPath: '/eventos/calendario'
+      preLoaderRoute: typeof AuthenticatedEventosCalendarioRouteImport
+      parentRoute: typeof AuthenticatedEventosRouteRoute
+    }
+    '/_authenticated/eventos/amigos': {
+      id: '/_authenticated/eventos/amigos'
+      path: '/amigos'
+      fullPath: '/eventos/amigos'
+      preLoaderRoute: typeof AuthenticatedEventosAmigosRouteImport
+      parentRoute: typeof AuthenticatedEventosRouteRoute
     }
     '/_authenticated/_sidebar/videos': {
       id: '/_authenticated/_sidebar/videos'
@@ -381,6 +480,28 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedEventosRouteRouteChildren {
+  AuthenticatedEventosAmigosRoute: typeof AuthenticatedEventosAmigosRoute
+  AuthenticatedEventosCalendarioRoute: typeof AuthenticatedEventosCalendarioRoute
+  AuthenticatedEventosCrearRoute: typeof AuthenticatedEventosCrearRoute
+  AuthenticatedEventosMisEventosRoute: typeof AuthenticatedEventosMisEventosRoute
+  AuthenticatedEventosIndexRoute: typeof AuthenticatedEventosIndexRoute
+}
+
+const AuthenticatedEventosRouteRouteChildren: AuthenticatedEventosRouteRouteChildren =
+  {
+    AuthenticatedEventosAmigosRoute: AuthenticatedEventosAmigosRoute,
+    AuthenticatedEventosCalendarioRoute: AuthenticatedEventosCalendarioRoute,
+    AuthenticatedEventosCrearRoute: AuthenticatedEventosCrearRoute,
+    AuthenticatedEventosMisEventosRoute: AuthenticatedEventosMisEventosRoute,
+    AuthenticatedEventosIndexRoute: AuthenticatedEventosIndexRoute,
+  }
+
+const AuthenticatedEventosRouteRouteWithChildren =
+  AuthenticatedEventosRouteRoute._addFileChildren(
+    AuthenticatedEventosRouteRouteChildren,
+  )
+
 interface AuthenticatedSidebarRouteChildren {
   AuthenticatedSidebarConfiguracionRoute: typeof AuthenticatedSidebarConfiguracionRoute
   AuthenticatedSidebarEncuestasRoute: typeof AuthenticatedSidebarEncuestasRoute
@@ -423,17 +544,17 @@ const AuthenticatedMensajesRouteWithChildren =
   )
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedEventosRouteRoute: typeof AuthenticatedEventosRouteRouteWithChildren
   AuthenticatedSidebarRoute: typeof AuthenticatedSidebarRouteWithChildren
   AuthenticatedAmigosRoute: typeof AuthenticatedAmigosRoute
-  AuthenticatedEventosRoute: typeof AuthenticatedEventosRoute
   AuthenticatedMensajesRoute: typeof AuthenticatedMensajesRouteWithChildren
   AuthenticatedPerfilUsernameRoute: typeof AuthenticatedPerfilUsernameRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedEventosRouteRoute: AuthenticatedEventosRouteRouteWithChildren,
   AuthenticatedSidebarRoute: AuthenticatedSidebarRouteWithChildren,
   AuthenticatedAmigosRoute: AuthenticatedAmigosRoute,
-  AuthenticatedEventosRoute: AuthenticatedEventosRoute,
   AuthenticatedMensajesRoute: AuthenticatedMensajesRouteWithChildren,
   AuthenticatedPerfilUsernameRoute: AuthenticatedPerfilUsernameRoute,
 }

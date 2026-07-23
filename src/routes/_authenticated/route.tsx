@@ -119,7 +119,7 @@ function AuthenticatedLayout() {
               inkorium
             </Link>
 
-                        <nav className="hidden lg:flex items-center h-full">
+            <nav className="hidden lg:flex items-center h-full">
               <TopNavIcon to="/feed" label="Inicio" active={pathname === "/feed"} />
               <TopNavIcon
                 to="/perfil/$username"

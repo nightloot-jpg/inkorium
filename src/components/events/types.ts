@@ -54,6 +54,39 @@ export const MOCK_EVENTS: EventData[] = [
     ],
     interested: 342,
   },
+  {
+    id: "3",
+    title: "Torneo de eSports 2026",
+    description: "La final mundial de League of Legends.",
+    cover:
+      "https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+    category: "Gaming",
+    location: "Palacio Vistalegre",
+    city: "Madrid",
+    date: "05 Nov",
+    time: "17:00",
+    attendees: [{ id: "a6", name: "Javier", avatar: "https://i.pravatar.cc/150?u=a6" }],
+    interested: 890,
+  },
+  {
+    id: "4",
+    title: "Feria Gastronómica Internacional",
+    description: "Prueba los mejores platillos del mundo en un solo lugar.",
+    cover:
+      "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+    category: "Gastronomía",
+    location: "IFEMA",
+    city: "Madrid",
+    date: "12 Nov",
+    time: "12:00",
+    attendees: [
+      { id: "a7", name: "Lucía", avatar: "https://i.pravatar.cc/150?u=a7" },
+      { id: "a8", name: "Marcos", avatar: "https://i.pravatar.cc/150?u=a8" },
+      { id: "a9", name: "María", avatar: "https://i.pravatar.cc/150?u=a9" },
+      { id: "a10", name: "Pedro", avatar: "https://i.pravatar.cc/150?u=a10" },
+    ],
+    interested: 2100,
+  },
 ];
 
 export const MOCK_CATEGORIES = [
