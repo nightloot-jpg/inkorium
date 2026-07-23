@@ -236,5 +236,11 @@ Also, `Math.random()` and `new Date()` within initial render inside server-rende
 **Action:** Next time large structural changes in JSX files are needed, prioritize using an AST tool or a custom script parsing specific markers before trying to apply regex on multiline tags.
 
 ## 2024-05-23 - Build full music player architecture using YouTube API
+
 **Learning:** React contexts connected to singleton state machines (like `YouTubeProviderClass`) are a very powerful pattern to decouple React state updates from API logic while maintaining access to React features.
 **Action:** Use singletons initialized outside React that expose listeners (like `onStateChange`) when wrapping 3rd party APIs that contain their own state management (like the YouTube iframe API), and simply subscribe to them from a React context.
+
+## 2024-05-18 - Nested Layouts in TanStack Router
+
+**Learning:** When converting a single page into a nested layout with tabs/subviews in TanStack Router, it's essential to move the parent structural logic to a `route.tsx` file for the directory and use `<Outlet />` for the central content. Categories that act as filters on a list are best implemented via search parameters to keep the URLs shareable and refresh-resistant. `validateSearch` via Zod on the route definition helps strongly type and default these parameters.
+**Action:** When asked to make a section a Single Page Application without full reloads, first identify the layout envelope. Extract it to a parent route file. Then define sub-routes for each nested view. Use URL search parameters for state that should survive a refresh (like active filters or categories).

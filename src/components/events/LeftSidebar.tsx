@@ -1,20 +1,30 @@
 import React, { useState } from "react";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { Star, Calendar as CalendarIcon, Users, CalendarDays, PlusCircle } from "lucide-react";
 import { MOCK_CATEGORIES } from "./types";
+import { Route } from "@/routes/_authenticated/eventos/route";
 
 export function LeftSidebar() {
-  const [activeCategory, setActiveCategory] = useState("Todos");
+  const navigate = useNavigate();
+  const search = Route.useSearch();
+  const activeCategory = search.category || "Todos";
   const [activeFilter, setActiveFilter] = useState("Próximos 7 días");
+
+  const handleCategoryChange = (category: string) => {
+    navigate({
+      to: "/eventos",
+      search: { category },
+    });
+  };
 
   return (
     <aside className="space-y-4 hidden lg:block w-full">
       <div className="bg-card rounded-sm border border-[#c2c9d6] p-4 flex flex-col gap-1">
-        <MenuLink icon={Star} label="Eventos destacados" />
-        <MenuLink icon={CalendarIcon} label="Mis eventos" />
-        <MenuLink icon={Users} label="Amigos que asistirán" />
-        <MenuLink icon={CalendarDays} label="Calendario" />
-        <MenuLink icon={PlusCircle} label="Crear evento" />
+        <MenuLink icon={Star} label="Eventos destacados" to="/eventos" exact />
+        <MenuLink icon={CalendarIcon} label="Mis eventos" to="/eventos/mis-eventos" />
+        <MenuLink icon={Users} label="Amigos que asistirán" to="/eventos/amigos" />
+        <MenuLink icon={CalendarDays} label="Calendario" to="/eventos/calendario" />
+        <MenuLink icon={PlusCircle} label="Crear evento" to="/eventos/crear" />
       </div>
 
       <div className="bg-card rounded-sm border border-[#c2c9d6] p-4">
@@ -23,7 +33,7 @@ export function LeftSidebar() {
           {MOCK_CATEGORIES.slice(1, 11).map((category) => (
             <button
               key={category}
-              onClick={() => setActiveCategory(category)}
+              onClick={() => handleCategoryChange(category)}
               className={`flex items-center gap-3 px-3 py-2 rounded text-[13px] font-medium transition-colors text-left ${
                 activeCategory === category
                   ? "bg-primary/10 text-primary font-bold"
@@ -72,9 +82,12 @@ export function LeftSidebar() {
         </div>
         <h4 className="text-[14px] font-bold text-foreground mb-1">¿Organizas eventos?</h4>
         <p className="text-[13px] text-muted-foreground mb-4">Crea un evento en Inkorium.</p>
-        <button className="w-full bg-primary text-primary-foreground font-bold text-[13px] py-2 rounded transition-colors hover:bg-primary/90">
+        <Link
+          to="/eventos/crear"
+          className="w-full bg-primary text-primary-foreground font-bold text-[13px] py-2 rounded transition-colors hover:bg-primary/90 flex justify-center"
+        >
           Crear evento
-        </button>
+        </Link>
       </div>
     </aside>
   );
@@ -83,24 +96,28 @@ export function LeftSidebar() {
 function MenuLink({
   icon: Icon,
   label,
-  active,
+  to,
+  exact,
 }: {
   icon: React.ElementType;
   label: string;
-  active?: boolean;
+  to: string;
+  exact?: boolean;
 }) {
   return (
-    <button
-      className={`flex items-center gap-3.5 px-3 py-2 rounded transition-colors justify-between text-left ${
-        active
-          ? "bg-primary/10 text-primary font-bold text-[13px]"
-          : "hover:bg-secondary/50 text-foreground font-medium text-[13px]"
-      }`}
+    <Link
+      to={to}
+      activeOptions={{ exact }}
+      activeProps={{ className: "bg-primary/10 text-primary font-bold text-[13px]" }}
+      inactiveProps={{ className: "hover:bg-secondary/50 text-foreground font-medium text-[13px]" }}
+      className="flex items-center gap-3.5 px-3 py-2 rounded transition-colors justify-between text-left"
     >
-      <div className="flex items-center gap-3.5">
-        <Icon className={`size-[18px] ${active ? "text-primary" : "text-muted-foreground"}`} />
-        {label}
-      </div>
-    </button>
+      {({ isActive }) => (
+        <div className="flex items-center gap-3.5">
+          <Icon className={`size-[18px] ${isActive ? "text-primary" : "text-muted-foreground"}`} />
+          {label}
+        </div>
+      )}
+    </Link>
   );
 }
