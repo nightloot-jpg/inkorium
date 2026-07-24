@@ -39,3 +39,8 @@ Completed tests and fixed UI Event issues
 
 **Learning:** PostgREST strictly enforces type safety when querying. If a query like `.or('id.eq.MY-SLUG,slug.eq.MY-SLUG')` is executed, and `id` is a UUID column but `MY-SLUG` is not a valid UUID format, PostgREST will fail the entire query with a 400 Bad Request error (invalid UUID).
 **Action:** When querying by either an ID or a slug, dynamically construct the query in JavaScript by checking if the parameter is a valid UUID regex before appending `.eq('id', param)` vs `.eq('slug', param)`.
+
+## 2026-07-24 - Eventos Destacados Redesign
+
+**Learning:** Designing intricate UIs with highly nested components and mapping values to arrays directly inside render functions requires ensuring that the map returns proper component structures, especially when integrating responsive breakpoints.
+**Action:** Next time similar structural redesigns are requested, I should start directly with extracting smaller internal UI fragments into reusable variables to ensure the final layout remains exceptionally tidy and debuggable.

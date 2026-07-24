@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { Search } from "lucide-react";
+import { Search, ChevronLeft, ChevronRight, MapPin, Clock } from "lucide-react";
 import { EventCard } from "@/components/events/EventCard";
 import { Route } from "@/routes/_authenticated/eventos/route";
 import { supabase } from "@/integrations/supabase/client";
@@ -13,6 +13,129 @@ const SORT_OPTIONS = [
   "Alfabético",
   "Más recientes",
 ];
+
+function HeroCarousel({ events, navigate }: { events: any[]; navigate: any }) {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    if (events.length <= 1) return;
+    const timer = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % events.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [events.length]);
+
+  if (events.length === 0) return null;
+
+  const event = events[currentIndex];
+
+  const next = () => setCurrentIndex((prev) => (prev + 1) % events.length);
+  const prev = () => setCurrentIndex((prev) => (prev - 1 + events.length) % events.length);
+
+  return (
+    <div className="relative w-full h-[400px] sm:h-[480px] rounded-[16px] overflow-hidden group">
+      {events.map((ev, idx) => (
+        <div
+          key={ev.id}
+          className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${idx === currentIndex ? "opacity-100 z-10" : "opacity-0 z-0"}`}
+        >
+          <img
+            src={
+              ev.cover_url ||
+              "https://images.unsplash.com/photo-1540039155732-d68832aeb482?ixlib=rb-4.0.3"
+            }
+            alt={ev.title}
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
+
+          <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-10 flex flex-col items-start text-white">
+            {ev.category && (
+              <span className="bg-white/20 backdrop-blur-md px-3 py-1 rounded-[8px] text-[12px] font-bold mb-4">
+                {ev.category}
+              </span>
+            )}
+
+            <h2 className="text-3xl sm:text-5xl font-extrabold mb-4 leading-tight tracking-tight drop-shadow-md">
+              {ev.title}
+            </h2>
+
+            <div className="flex flex-wrap items-center gap-4 text-white/90 text-[14px] font-medium mb-6">
+              <div className="flex items-center gap-1.5">
+                <MapPin className="size-4" />
+                <span>{ev.city || "Ciudad"}</span>
+                {ev.location && (
+                  <span className="opacity-60 hidden sm:inline"> • {ev.location}</span>
+                )}
+              </div>
+              <div className="flex items-center gap-1.5">
+                <Clock className="size-4" />
+                <span>21:00</span>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between w-full gap-4">
+              <div className="flex items-center gap-3">
+                <div className="flex -space-x-3">
+                  {[1, 2, 3, 4].map((i) => (
+                    <img
+                      key={i}
+                      src={`https://i.pravatar.cc/150?u=${ev.id}${i}`}
+                      alt="Attendee"
+                      className="w-9 h-9 rounded-full border-2 border-black object-cover"
+                    />
+                  ))}
+                </div>
+                <span className="text-[13px] font-medium text-white/80">
+                  <strong className="text-white">{ev.attendeesCount || 24}</strong> amigos asisten
+                </span>
+              </div>
+
+              <div className="flex items-center gap-3 w-full sm:w-auto">
+                <button className="flex-1 sm:flex-none px-6 py-3 rounded-[12px] text-[14px] font-bold bg-white/10 hover:bg-white/20 backdrop-blur transition-all text-white border border-white/20">
+                  Me interesa
+                </button>
+                <button
+                  onClick={() => navigate({ to: `/eventos/${ev.slug || ev.id}` })}
+                  className="flex-1 sm:flex-none px-6 py-3 rounded-[12px] text-[14px] font-bold bg-primary text-primary-foreground hover:bg-primary/90 transition-all shadow-lg"
+                >
+                  Ver evento
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      ))}
+
+      {events.length > 1 && (
+        <>
+          <button
+            onClick={prev}
+            className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-black/30 hover:bg-black/50 text-white flex items-center justify-center backdrop-blur opacity-0 group-hover:opacity-100 transition-all border border-white/10"
+          >
+            <ChevronLeft className="size-6" />
+          </button>
+          <button
+            onClick={next}
+            className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 rounded-full bg-black/30 hover:bg-black/50 text-white flex items-center justify-center backdrop-blur opacity-0 group-hover:opacity-100 transition-all border border-white/10"
+          >
+            <ChevronRight className="size-6" />
+          </button>
+
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+            {events.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => setCurrentIndex(idx)}
+                className={`w-2 h-2 rounded-full transition-all ${idx === currentIndex ? "bg-white w-6" : "bg-white/40"}`}
+              />
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
 
 export function FeaturedEventsView() {
   const navigate = useNavigate();
@@ -133,79 +256,71 @@ export function FeaturedEventsView() {
   const compactEvents = filteredEvents.slice(3);
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-1 w-full flex-row justify-between items-start">
-        <h1 className="text-3xl font-extrabold text-foreground tracking-tight">
+    <div className="flex flex-col gap-8 w-full max-w-[1000px] mx-auto xl:mx-0">
+      <div className="flex flex-col gap-2 w-full">
+        <h1 className="text-[32px] sm:text-[40px] font-extrabold text-foreground tracking-tight leading-tight">
           Eventos destacados
         </h1>
-        <button
-          onClick={() => navigate({ to: "/eventos/crear" })}
-          className="ml-auto bg-primary text-primary-foreground font-bold px-4 py-2 text-sm rounded-sm hover:bg-primary/90 transition-colors shadow-sm hidden sm:block"
-        >
-          Crear Evento
-        </button>
-        <p className="text-muted-foreground text-[15px]">
-          Descubre conciertos, festivales y actividades cerca de ti.
+        <p className="text-muted-foreground text-[16px] font-medium">
+          Descubre los mejores conciertos, festivales y actividades cerca de ti.
         </p>
       </div>
 
-      {/* Search and Sort Row */}
-      <div className="flex flex-col sm:flex-row gap-4">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-          <input
-            type="text"
-            placeholder="Buscar por evento, artista, ciudad, categoría..."
-            value={localSearch}
-            onChange={(e) => setLocalSearch(e.target.value)}
-            className="w-full h-10 pl-9 pr-4 rounded-sm border border-input bg-background text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-          />
-        </div>
-        <select
-          value={activeSort}
-          onChange={handleSortChange}
-          className="h-10 px-3 rounded-sm border border-input bg-background text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring w-full sm:w-48"
-        >
-          {SORT_OPTIONS.map((opt) => (
-            <option key={opt} value={opt}>
-              {opt}
-            </option>
-          ))}
-        </select>
+      <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0">
+        {[
+          "Todos",
+          "Conciertos",
+          "Festivales",
+          "Fiestas",
+          "Teatro",
+          "Deportes",
+          "Arte y cultura",
+        ].map((cat) => (
+          <button
+            key={cat}
+            onClick={() => navigate({ to: "/eventos", search: { ...searchParams, category: cat } })}
+            className={`px-4 py-2 rounded-full text-[13px] font-bold whitespace-nowrap transition-colors border ${
+              activeCategory === cat ||
+              (cat === "Todos" && (!activeCategory || activeCategory === "Todos"))
+                ? "bg-primary text-primary-foreground border-primary"
+                : "bg-card border-border hover:border-primary/50 text-foreground"
+            }`}
+          >
+            {cat}
+          </button>
+        ))}
       </div>
 
       {filteredEvents.length === 0 ? (
-        <div className="text-center py-10 bg-card rounded-sm border border-[#c2c9d6]">
-          <p className="text-muted-foreground font-medium text-lg mb-1">
-            No se han encontrado eventos.
-          </p>
-          <p className="text-muted-foreground text-sm">
-            Prueba a cambiar los filtros o la búsqueda.
+        <div className="text-center py-16 bg-card rounded-[16px] border border-[#c2c9d6] shadow-sm">
+          <p className="text-foreground font-bold text-xl mb-2">No se han encontrado eventos.</p>
+          <p className="text-muted-foreground text-[15px]">
+            Prueba a cambiar los filtros o explora otras categorías.
           </p>
         </div>
       ) : (
-        <div className="flex flex-col gap-6">
-          {featuredEvent && (
-            <div className="w-full">
-              <EventCard event={featuredEvent} variant="featured" />
-            </div>
-          )}
+        <div className="flex flex-col gap-10">
+          <HeroCarousel events={filteredEvents.slice(0, 4)} navigate={navigate} />
 
-          {importantEvents.length > 0 && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {importantEvents.map((event) => (
-                <EventCard key={event.id} event={event} variant="important" />
-              ))}
+          <div className="flex flex-col gap-6">
+            <div className="flex items-center justify-between">
+              <h2 className="text-[24px] font-extrabold text-foreground">Próximos eventos</h2>
+              <button className="text-[14px] font-bold text-primary hover:underline">
+                Ver todos
+              </button>
             </div>
-          )}
 
-          {compactEvents.length > 0 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-              {compactEvents.map((event) => (
-                <EventCard key={event.id} event={event} variant="compact" />
+            <div className="flex flex-col gap-4">
+              {filteredEvents.slice(4).map((event) => (
+                <EventCard key={event.id} event={event} variant="horizontal" />
               ))}
+              {/* Fallback to horizontal variant for the first events if we don't have many */}
+              {filteredEvents.length <= 4 &&
+                filteredEvents.map((event) => (
+                  <EventCard key={event.id} event={event} variant="horizontal" />
+                ))}
             </div>
-          )}
+          </div>
         </div>
       )}
     </div>

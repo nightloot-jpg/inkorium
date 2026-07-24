@@ -68,7 +68,7 @@ function EventosLayout() {
   });
 
   return (
-    <main className="flex flex-col lg:grid lg:grid-cols-[280px_1fr] xl:grid-cols-[280px_1fr_300px] gap-[30px] py-4 w-full">
+    <main className="mx-auto flex flex-col lg:grid lg:grid-cols-[260px_1fr] xl:grid-cols-[260px_1fr_320px] gap-8 py-6 w-full max-w-[1700px] px-4 md:px-8">
       <LeftSidebar />
       <div className="flex flex-col gap-6 min-w-0">
         <Outlet />
