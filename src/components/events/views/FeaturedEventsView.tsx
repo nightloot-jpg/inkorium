@@ -56,7 +56,7 @@ export function FeaturedEventsView() {
         .select(
           `
           *,
-          author:profiles!events_author_id_fkey(*),
+          creator:profiles!events_author_id_fkey(*),
           event_attendees(user_id, status)
         `,
         )
@@ -79,8 +79,8 @@ export function FeaturedEventsView() {
           attendeesCount: attendees.length,
           interestedCount: interested.length,
           status: userStatus,
-          author_name: (event.author as any)?.name || event.organizer_name || "Desconocido",
-          author_avatar: (event.author as any)?.avatar_url || "https://github.com/shadcn.png",
+          author_name: (event.creator as any)?.name || event.organizer_name || "Desconocido",
+          author_avatar: (event.creator as any)?.avatar_url || "https://github.com/shadcn.png",
         };
       });
     },
