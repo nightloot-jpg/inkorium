@@ -17,6 +17,13 @@ const SORT_OPTIONS = [
 function HeroCarousel({ events, navigate }: { events: any[]; navigate: any }) {
   const [currentIndex, setCurrentIndex] = useState(0);
 
+  const getImageUrl = (urlOrPath: string) => {
+    if (!urlOrPath) return "https://images.unsplash.com/photo-1540039155732-d68832aeb482?ixlib=rb-4.0.3";
+    if (urlOrPath.startsWith('http')) return urlOrPath;
+    return supabase.storage.from("media").getPublicUrl(urlOrPath).data.publicUrl;
+  };
+
+
   useEffect(() => {
     if (events.length <= 1) return;
     const timer = setInterval(() => {
@@ -40,11 +47,8 @@ function HeroCarousel({ events, navigate }: { events: any[]; navigate: any }) {
           className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${idx === currentIndex ? "opacity-100 z-10" : "opacity-0 z-0"}`}
         >
           <img
-            src={
-              ev.cover_url || ev.cover ||
-              "https://images.unsplash.com/photo-1540039155732-d68832aeb482?ixlib=rb-4.0.3"
-            }
-            alt={ev.name || ev.title}
+            src={getImageUrl(ev.cover_url || ev.cover)}
+            alt={ev.name || (ev.name || ev.title)}
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
@@ -57,7 +61,7 @@ function HeroCarousel({ events, navigate }: { events: any[]; navigate: any }) {
             )}
 
             <h2 className="text-3xl sm:text-5xl font-extrabold mb-4 leading-tight tracking-tight drop-shadow-md">
-              {ev.name || ev.title}
+              {ev.name || (ev.name || ev.title)}
             </h2>
 
             <div className="flex flex-wrap items-center gap-4 text-white/90 text-[14px] font-medium mb-6">
