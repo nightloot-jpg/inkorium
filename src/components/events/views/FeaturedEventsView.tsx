@@ -41,10 +41,10 @@ function HeroCarousel({ events, navigate }: { events: any[]; navigate: any }) {
         >
           <img
             src={
-              ev.cover_url ||
+              ev.cover_url || ev.cover ||
               "https://images.unsplash.com/photo-1540039155732-d68832aeb482?ixlib=rb-4.0.3"
             }
-            alt={ev.title}
+            alt={ev.name || ev.title}
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
@@ -57,7 +57,7 @@ function HeroCarousel({ events, navigate }: { events: any[]; navigate: any }) {
             )}
 
             <h2 className="text-3xl sm:text-5xl font-extrabold mb-4 leading-tight tracking-tight drop-shadow-md">
-              {ev.title}
+              {ev.name || ev.title}
             </h2>
 
             <div className="flex flex-wrap items-center gap-4 text-white/90 text-[14px] font-medium mb-6">

@@ -147,7 +147,7 @@ export function EventHeader({ event, organizer, attendeesCount }: EventHeaderPro
   const month = dateObj.toLocaleString("es-ES", { month: "short" });
 
   const coverUrl =
-    event.cover_url ||
+    event.cover_url || event.cover ||
     "https://images.unsplash.com/photo-1540039155732-d68832aeb482?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80";
 
   return (
