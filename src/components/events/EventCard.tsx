@@ -55,10 +55,12 @@ export function EventCard({ event, variant = "compact" }: EventCardProps) {
   const eventTimeDisplay = event.event_time || "Hora pendiente";
   const eventDescription = event.description || "";
   const eventCategory = event.category || "Categoría";
-  const coverUrl =
-    event.cover ||
-    event.cover_url || event.cover ||
-    "https://images.unsplash.com/photo-1540039155732-d68832aeb482?ixlib=rb-4.0.3";
+    const getImageUrl = (urlOrPath: string) => {
+    if (!urlOrPath) return "https://images.unsplash.com/photo-1540039155732-d68832aeb482?ixlib=rb-4.0.3";
+    if (urlOrPath.startsWith('http')) return urlOrPath;
+    return "https://wzscbqxawivhndwexqqn.supabase.co/storage/v1/object/public/media/" + urlOrPath;
+  };
+  const coverUrl = getImageUrl(event.cover_url || event.cover);
   const tagsList = Array.isArray(event.tags) ? event.tags : [];
   const organizerName = event.organizer || event.organizer_name || "";
 
@@ -207,11 +209,8 @@ export function EventCard({ event, variant = "compact" }: EventCardProps) {
       >
         <div className="w-full sm:w-[280px] h-[160px] sm:h-full relative overflow-hidden shrink-0">
           <img
-            src={
-              event.cover_url || event.cover ||
-              "https://images.unsplash.com/photo-1540039155732-d68832aeb482?ixlib=rb-4.0.3"
-            }
-            alt={event.name || event.title}
+            src={coverUrl}
+            alt={event.name || (event.name || event.title)}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
           <div className="absolute top-3 left-3 flex flex-col items-center bg-background/95 backdrop-blur px-2.5 py-1 rounded-[8px] shadow-sm">
@@ -232,7 +231,7 @@ export function EventCard({ event, variant = "compact" }: EventCardProps) {
         <div className="flex-1 p-5 flex flex-col min-w-0">
           <div className="flex justify-between items-start gap-4 mb-2">
             <h3 className="text-[18px] font-extrabold text-foreground truncate group-hover:text-primary transition-colors">
-              {event.name || event.title}
+              {event.name || (event.name || event.title)}
             </h3>
 
             <div

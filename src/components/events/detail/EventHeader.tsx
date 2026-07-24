@@ -146,9 +146,12 @@ export function EventHeader({ event, organizer, attendeesCount }: EventHeaderPro
   const day = dateObj.getDate();
   const month = dateObj.toLocaleString("es-ES", { month: "short" });
 
-  const coverUrl =
-    event.cover_url || event.cover ||
-    "https://images.unsplash.com/photo-1540039155732-d68832aeb482?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80";
+    const getImageUrl = (urlOrPath: string) => {
+    if (!urlOrPath) return "https://images.unsplash.com/photo-1540039155732-d68832aeb482?ixlib=rb-4.0.3";
+    if (urlOrPath.startsWith('http')) return urlOrPath;
+    return "https://wzscbqxawivhndwexqqn.supabase.co/storage/v1/object/public/media/" + urlOrPath;
+  };
+  const coverUrl = getImageUrl(event.cover_url || event.cover);
 
   return (
     <div className="bg-card rounded-sm border border-[#c2c9d6] overflow-hidden flex flex-col shadow-sm">
