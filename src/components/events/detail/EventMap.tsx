@@ -38,7 +38,7 @@ export function EventMap({ location, city }: EventMapProps) {
           style={{ border: 0 }}
           loading="lazy"
           allowFullScreen
-          src={`https://www.google.com/maps/embed/v1/place?key=FAKE_API_KEY_FOR_DEMO&q=${query}`}
+          src={`https://www.google.com/maps/embed/v1/place?key=${import.meta.env.VITE_GOOGLE_MAPS_API_KEY}&q=${query}`}
         ></iframe>
       </div>
     </div>
