@@ -5,6 +5,8 @@ import { Route as AuthRoute } from "@/routes/_authenticated/route";
 import { toast } from "sonner";
 import { Share, Bookmark, MapPin, Clock, Heart, Users, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Link } from "@tanstack/react-router";
+import { Edit } from "lucide-react";
 
 interface EventHeaderProps {
   event: any; // Using any for now until we fully type the supabase event
@@ -202,6 +204,23 @@ export function EventHeader({ event, organizer, attendeesCount }: EventHeaderPro
         </div>
 
         <div className="flex flex-wrap items-center gap-3 mt-2 border-t border-border/50 pt-6">
+
+          {currentUserId === event.author_id && (
+            <Link
+              to="/eventos/editar/$id"
+              params={{ id: event.id }}
+              className="flex-1 md:flex-none"
+            >
+              <Button
+                variant="outline"
+                className="w-full flex items-center justify-center gap-2 h-11 px-6 rounded-sm bg-orange-500/10 text-orange-500 hover:bg-orange-500/20 border-orange-500/20 font-bold"
+              >
+                <Edit className="size-4" />
+                Editar Evento
+              </Button>
+            </Link>
+          )}
+
           <Button
             onClick={handleInterest}
             variant="outline"
