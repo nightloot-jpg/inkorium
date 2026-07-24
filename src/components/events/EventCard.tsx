@@ -27,7 +27,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 
 interface EventCardProps {
   event: any;
-  variant?: "featured" | "important" | "compact" | "sidebar";
+  variant?: "featured" | "important" | "compact" | "sidebar" | "horizontal";
 }
 
 export function EventCard({ event, variant = "compact" }: EventCardProps) {
@@ -198,6 +198,149 @@ export function EventCard({ event, variant = "compact" }: EventCardProps) {
   }
 
   // FEATURED VARIANT
+
+  if (variant === "horizontal") {
+    return (
+      <div
+        onClick={handleCardClick}
+        className="group flex flex-col sm:flex-row h-auto sm:h-[180px] bg-card rounded-[16px] border border-[#c2c9d6] overflow-hidden hover:shadow-md transition-all duration-150 cursor-pointer"
+      >
+        <div className="w-full sm:w-[280px] h-[160px] sm:h-full relative overflow-hidden shrink-0">
+          <img
+            src={
+              event.cover_url ||
+              "https://images.unsplash.com/photo-1540039155732-d68832aeb482?ixlib=rb-4.0.3"
+            }
+            alt={event.title}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          />
+          <div className="absolute top-3 left-3 flex flex-col items-center bg-background/95 backdrop-blur px-2.5 py-1 rounded-[8px] shadow-sm">
+            <span className="text-[10px] font-bold text-muted-foreground uppercase">
+              {dateParts.month}
+            </span>
+            <span className="text-[16px] font-extrabold text-foreground leading-tight">
+              {dateParts.day}
+            </span>
+          </div>
+          {event.category && (
+            <div className="absolute bottom-3 left-3 px-2.5 py-1 bg-black/60 backdrop-blur rounded-[6px] text-white text-[11px] font-bold">
+              {event.category}
+            </div>
+          )}
+        </div>
+
+        <div className="flex-1 p-5 flex flex-col min-w-0">
+          <div className="flex justify-between items-start gap-4 mb-2">
+            <h3 className="text-[18px] font-extrabold text-foreground truncate group-hover:text-primary transition-colors">
+              {event.title}
+            </h3>
+
+            <div
+              className="flex items-center gap-1.5 shrink-0"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <TooltipProvider delayDuration={300}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      onClick={handleSave}
+                      className={`h-8 w-8 rounded-full flex items-center justify-center transition-colors ${
+                        isSaved
+                          ? "bg-primary/10 text-primary"
+                          : "bg-secondary text-muted-foreground hover:bg-secondary/80 hover:text-foreground"
+                      }`}
+                    >
+                      <Bookmark
+                        className="size-[14px]"
+                        fill={isSaved ? "currentColor" : "none"}
+                      />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{isSaved ? "Quitar de guardados" : "Guardar evento"}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="h-8 w-8 rounded-full flex items-center justify-center bg-secondary text-muted-foreground hover:bg-secondary/80 hover:text-foreground transition-colors">
+                    <MoreHorizontal className="size-[14px]" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-[160px]">
+                  <DropdownMenuItem onClick={() => {}}>
+                    <Share className="size-4 mr-2" /> Compartir
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem className="text-destructive focus:bg-destructive/10 focus:text-destructive">
+                    <Flag className="size-4 mr-2" /> Reportar
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-y-2 gap-x-4 text-[13px] text-muted-foreground mb-4">
+            <div className="flex items-center gap-1.5">
+              <MapPin className="size-3.5" />
+              <span className="truncate max-w-[120px]">{event.city || "Ciudad"}</span>
+            </div>
+            {event.location && (
+              <>
+                <span className="w-1 h-1 rounded-full bg-muted-foreground/30"></span>
+                <span className="truncate max-w-[150px]">{event.location}</span>
+              </>
+            )}
+            <span className="w-1 h-1 rounded-full bg-muted-foreground/30"></span>
+            <div className="flex items-center gap-1.5">
+              <Clock className="size-3.5" />
+              <span>{dateParts.time}</span>
+            </div>
+          </div>
+
+          <div className="mt-auto flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="flex -space-x-2">
+                {[1, 2, 3].map((i) => (
+                  <img
+                    key={i}
+                    src={`https://i.pravatar.cc/150?u=${event.id}${i}`}
+                    alt="Attendee"
+                    className="w-7 h-7 rounded-full border-2 border-background object-cover"
+                  />
+                ))}
+              </div>
+              <span className="text-[12px] font-medium text-muted-foreground">
+                <strong className="text-foreground">{event.attendeesCount || 24}</strong> asisten
+              </span>
+            </div>
+
+            <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+              <button
+                onClick={handleInterest}
+                className={`px-4 py-2 rounded-[8px] text-[13px] font-bold transition-all ${
+                  isInterested
+                    ? "bg-primary/10 text-primary"
+                    : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                }`}
+              >
+                {isInterested ? "Te interesa" : "Me interesa"}
+              </button>
+
+              <button
+                onClick={() => navigate({ to: `/eventos/${event.slug || event.id}` })}
+                className="px-4 py-2 rounded-[8px] text-[13px] font-bold bg-primary text-primary-foreground hover:bg-primary/90 transition-all"
+              >
+                Ver evento
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (variant === "featured") {
     return (
       <div

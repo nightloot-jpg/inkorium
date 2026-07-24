@@ -58,7 +58,10 @@ function SidebarLayout() {
     ? {
         provider:
           ((latestMusicPost.metadata as Record<string, string>)?.provider as
-            "YouTube" | "Spotify" | "Deezer" | "SoundCloud") || "YouTube",
+            | "YouTube"
+            | "Spotify"
+            | "Deezer"
+            | "SoundCloud") || "YouTube",
         videoId: latestMusicPost.youtube_id || "",
         url:
           (latestMusicPost.metadata as Record<string, string>)?.url ||
